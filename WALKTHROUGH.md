@@ -1,5 +1,10 @@
 # From partner application to a real DressMe demo integration
 
+The browser demo and public dashboard use the included
+[JavaScript SDK with TypeScript declarations](sdks/javascript/README.md), under
+MIT. Download the complete public source from the dashboard, or inspect it here.
+See [Getting started](docs/GETTING_STARTED.md) for the quickest path.
+
 [Register interest](https://studio.v3lox.com/#contact) · [Quick start](README.md)
 
 Mention **Partner API / DressMe** in the existing contact form. The dedicated
@@ -138,8 +143,11 @@ leaves a lock requiring operator reconciliation; never discard it or the journal
 to resume blindly. See the README's recovery and public-hosting limitations.
 
 `demo.mjs` uses memory only because it is an explicitly selected disposable mock.
-A production hosted service needs durable transactional storage, an outbox/lease
-strategy and agreed operator recovery. A UI timeout must never create another job.
+Your production hosted service needs durable storage, exclusive dispatch ownership
+and agreed operator recovery. Velox's Studio host adapter uses its existing
+database single-writer ownership proof and durable journal with this same queue
+state machine; that private deployment adapter is not required to run this public
+local example. A UI timeout must never create another job.
 
 ## 5. Read the result
 

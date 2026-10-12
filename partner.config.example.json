@@ -1,8 +1,8 @@
 {
-  "baseUrl": "https://partner-api.example.invalid/v1",
-  "clientId": "YOUR_ASSIGNED_DEMO_PARTNER_ID",
+  "baseUrl": "https://studio.v3lox.com/partner/v1",
+  "clientId": "demo",
   "applicationKey": "va_INVALID_APPLY_TO_VELOX_FOR_ACCESS",
-  "environment": "YOUR_ASSIGNED_ENVIRONMENT",
+  "environment": "production",
   "sessionSecret": "REPLACE_WITH_A_PRIVATE_RANDOM_SECRET_OF_AT_LEAST_32_CHARACTERS",
   "demoIntegration": true,
   "allowRealGeneration": false,

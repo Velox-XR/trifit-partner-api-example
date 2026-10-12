@@ -1,149 +1,121 @@
-# DressMe Partner API example
+# Velox Developer Hub — DressMe & TriFit
 
-Bring virtual try-on into your own website, app or retail platform.
-**DressMe** creates an AI outfit preview from a shopper photo and a clothing image.
-**TriFit** is Velox's consumer experience; the Partner API lets you build your own.
+Build virtual try-on into your website, app or retail platform. **DressMe** turns
+a shopper photo and a garment image into an AI outfit preview. **TriFit** is
+Velox's consumer experience.
 
-**[Register Partner API interest](https://studio.v3lox.com/#contact)** ·
-[Try TriFit](https://trifit.v3lox.com/) · [Technical walkthrough](WALKTHROUGH.md)
+This repository is the public home for Velox SDK source, runnable integrations,
+tutorials and AI-agent integration skills. Start with the demo, then inspect the
+exact SDK implementation behind it.
 
-For now, use the existing Velox contact form and mention **Partner API / DressMe**
-in your message. The dedicated [Partner API application page](https://studio.v3lox.com/partner-api#apply)
-is being prepared and is not live yet. This example is available independently
-of that website release.
+## Start here
 
-## Apply first for real access
+| Want to… | Go here |
+| --- | --- |
+| Try the Velox-hosted example | [Demo](https://studio.v3lox.com/partners/demo/demo) — **hosting release pending; not live yet** |
+| See your demo requests and download the SDK ZIP | [Demo dashboard & SDKs](https://studio.v3lox.com/partners/demo/admin) — **hosting release pending; not live yet** |
+| Explore immediately on your computer, without credentials | Download this repository; run `npm run preview` with Node.js 22+ |
+| Build a real integration | [Getting started](docs/GETTING_STARTED.md) · [Apply for access](https://studio.v3lox.com/#contact) |
+| Read the API flow | [Technical walkthrough](WALKTHROUGH.md) |
+| Choose an SDK | [SDK catalogue](docs/SDK_CATALOG.md) |
+| Work with an AI coding agent | [Velox Partner API skill](skills/velox-partner-api/SKILL.md) |
 
-**The public example key is deliberately invalid.** Downloading this code does not
-grant API access. A free TriFit account is not a partner credential.
+**Two public pages, not the Velox operator admin.** The dashboard shows only the
+visitor's own browser-session requests and public SDK downloads. It exposes no
+keys, routing, quota editing, other visitors' photos or traffic-test controls.
+The public pages must pass the Studio release gates before they are marked live.
 
-1. [Apply to Velox](https://studio.v3lox.com/#contact). Include your use case, platform,
-   expected volume and timing. Do not send credentials or customer photos.
-2. Velox reviews the request and agrees the evaluation scope with you.
-3. After approval, Velox creates your unique partner integration and emails private
-   configuration files for that integration and environment.
-4. Save the supplied `partner.config.json` beside `package.json`. Do not commit,
-   publish or forward it; it contains a backend-only application key. The checked-in
-   `partner.config.example.json` is a non-working template, not a shared public key.
+## One demo, one inspectable SDK integration
 
-Install Node.js 22 or later, download/extract this repository and run:
+The hosted application is this repository's browser UI, demo backend and shared
+queue, using [the JavaScript SDK](sdks/javascript/index.mjs). It is not a separate
+partner-specific application or a mock presented as real generation.
 
-```sh
-npm start
-```
+- Dedicated hosted partner identity: `demo`.
+- Real DressMe requests; AnimateMe is not enabled for the public demo.
+- One active generation, and at least **10 seconds between starts**.
+- The dashboard ZIP contains this same public source, SDK, examples and guides.
+- No API key is needed to visit the hosted demo once launched.
+- To run your own real backend, apply for **your own** partner configuration.
 
-Open the printed local URL (normally `http://127.0.0.1:5190`). Select two permitted
-images, confirm permission and join the queue. **This mode uses real DressMe API
-requests and can incur generation charges**, including in Development. It requires
-Velox-issued configuration with `demoIntegration` and `allowRealGeneration` enabled.
-Missing/placeholder configuration stops before making API calls; it never silently
-falls back to a mock. No package installation is needed.
+The checked-in [configuration template](partner.config.example.json) identifies
+the `demo` integration and Production API URL, but its key is deliberately
+invalid and real generation is disabled. **It is not a public API credential.**
+The hosted service loads the real key privately on Velox's server. It never
+appears in GitHub, JavaScript sent to the browser or public ZIP downloads.
 
-## The demo-only 10-second queue
+## Run locally
 
-- All visitors to one demo instance share the same backend queue and dedicated
-  demo integration. They do not receive or enter its API key.
-- Starts are at least **10 seconds apart**, with **one generation active at a time**.
-  If a job takes longer than 10 seconds, the next waits for it to finish.
-- `queueGapSeconds` is operator-controlled in the private configuration (default
-  `10`; for example, change to `30` after draining/stopping the evaluator). Browsers
-  cannot override it. This is a demo policy, not a limit on all partner integrations.
-- There is no fixed lifetime request count in the example. Upstream permissions,
-  quotas and available credit still apply; this code does not disable them.
-- One pending request per visitor and `maxPending: 25` bound the waiting backlog.
-  These are temporary capacity limits, not a total generation allowance.
-- The page shows queued position and actual API status. Ten seconds is not an ETA
-  or generation speed claim. There are no automatic paid retries.
-
-**The Velox-hosted, publicly accessible demo is not yet launched.** This repository
-provides the local evaluator and queue implementation. Public hosting requires its
-own approved dedicated integration, deployment and security/operational acceptance.
-Anyone may inspect the source; clients building their own app must apply for their
-own unique integration, not reuse the hosted demo credential.
-
-## Preview or inspect offline — optional, not real generation
+Install Node.js 22 or later. No dependency installation is required:
 
 ```sh
 npm run preview
-npm run demo:mock
-npm run demo:failure
-npm test
 ```
 
-`preview` serves the browser UI with submission disabled and makes no API calls.
-The two `demo:*` commands use only a loopback mock, dummy credentials and a one-pixel
-PNG. They do not read your private configuration, upload to Velox or generate AI
-results. The mock shuts down automatically. Tests use local fixtures and fake time;
-CI never invokes the real configured server or submits a paid generation.
+Open the printed URL. The demo and dashboard work locally; the preview cannot
+upload or generate. The dashboard's ZIP download works in preview too.
 
-## What is in this example?
+For real access:
 
-| File | Purpose |
-| --- | --- |
-| [server.mjs](server.mjs) | Real configured demo, local-only by default |
-| [partner.config.example.json](partner.config.example.json) | Invalid public configuration template |
-| [src/queue.mjs](src/queue.mjs) | Shared, durable, single-dispatcher queue |
-| [web/index.html](web/index.html) | Upload, queue status and private result UI |
-| [demo.mjs](demo.mjs) | Explicitly optional offline simulation |
-| [src/client.mjs](src/client.mjs) | Small, server-side fetch client |
-| [src/mock-api.mjs](src/mock-api.mjs) | Deliberately limited local teaching fixture |
-| [WALKTHROUGH.md](WALKTHROUGH.md) | Requests, ownership, recovery and production checklist |
-| [test/queue.test.mjs](test/queue.test.mjs) | Queue timing, restart, ownership and safety checks |
+1. [Contact Velox](https://studio.v3lox.com/#contact), mentioning Partner API /
+   DressMe, your platform, expected usage and launch timing.
+2. Velox reviews your request, creates a unique partner integration and emails
+   private, environment-specific configuration.
+3. Save the supplied `partner.config.json` beside `package.json`.
+4. Run `npm start`. Startup verifies the assigned API identity and environment.
 
-This example illustrates a subset of the application-credential contract. It is
-not the full Velox SDK, a hosted sandbox, a production authentication system or a
-performance benchmark. Approved partners receive the current SDK and their
-environment-specific onboarding details. Routes and models are assigned by Velox;
-the example does not select or provision workers.
+A free TriFit account is not a partner credential. Real API use can incur charges,
+including in Development. Never commit the private configuration or reuse the
+Velox-hosted demo key in another deployment.
 
-## Ready to evaluate a real integration?
+## Available SDKs
 
-[Tell Velox what you are building](https://studio.v3lox.com/#contact).
-Include your platform, estimated monthly try-ons, use case and target timing.
-Do **not** send credentials or customer photos with your application.
+**JavaScript (Node.js) + TypeScript declarations** are available now, under MIT:
+[SDK source](sdks/javascript) · [SDK reference](sdks/javascript/README.md).
 
-Access is reviewed. Development access, usage limits, privacy requirements and
-support are agreed during onboarding. Production access and commercial pricing
-are agreed separately. A free TriFit consumer account is not a Partner API key.
-AnimateMe animation is optional and requires separate enablement.
+The runnable demo is one complete integration of this SDK. More language packages,
+framework examples and agent guides can be added to this hub; the catalogue lists
+only implementations that actually exist. Other languages may use the documented
+HTTP API, but are not advertised as downloadable SDKs until shipped and tested.
 
-AI outfit previews are not measurements or guarantees of garment fit, sizing,
-colour or detail. Evaluate quality with agreed, consented material before launch.
+## Queue, privacy and safe recovery
 
-## Persistence, recovery and public hosting
+The 10-second gap is a minimum start interval, not an ETA or performance guarantee.
+A job taking longer keeps the active slot until it finishes. One pending request
+per visitor and a backlog of 25 bound temporary admission; there is no lifetime
+request cap in the example. **Velox API quotas and commercial permissions still
+apply.** The newly created hosted partner currently has its default 100/month
+allowance; this repository does not silently increase it.
 
-The evaluator writes receipts to ignored `.demo-state/`, syncing a submission's
-exact payload, idempotency key and timestamp before its single paid POST. It saves
-job IDs, not keys, image bytes or signed result URLs. Protect this directory: it
-still contains private asset IDs and pseudonymous visitor records.
+Browser sessions are private, signed and HttpOnly, with Secure cookies on HTTPS.
+The dashboard is session-scoped; clearing cookies loses access to that session's
+history. A 48-hour cookie expiry is not automatic media deletion. Image consent,
+the privacy policy and agreed retention apply.
 
-One process owns that directory through an exclusive lock. A graceful Ctrl+C
-releases the lock; a crash leaves it in place deliberately. Never delete the lock
-or receipts to make an uncertain request run again. An operator must first confirm
-the old process is stopped and reconcile any `submitting`/`needs_review` receipt
-with Velox. Accepted jobs resume by GET only. Interrupted uploads retain their
-provisional IDs and are not automatically repeated. Partial/corrupt journals fail
-closed. There is no automated repair or replay command.
+The local evaluator stores receipts in ignored `.demo-state/`, with a single
+exclusive owner. It saves input IDs, idempotency keys and job IDs, not image bytes,
+API keys or signed URLs. An uncertain submission pauses the queue; it is never
+automatically replayed. After a crash, retain the journal and lock for operator
+reconciliation. Do not run multiple copies with the shared demo credential.
 
-Do not run separate demo copies with the same key and different state directories:
-that would bypass the shared limit. The file journal is for one local evaluator,
-not distributed locking or a production database. Public hosting needs one durable
-dispatcher, a shared transactional store if scaled, TLS, secure visitor sessions,
-abuse/bot controls, spend monitoring, and approved media/record retention and
-deletion. Anonymous cookies are not a bot defence. A 10-second gap alone can still
-permit up to 8,640 starts per day if jobs complete quickly enough.
+See [hosting and release requirements](docs/HOSTING.md) and [security](SECURITY.md).
+The queue's rate limit alone is not a financial budget or full bot defence.
 
-The local server deliberately binds only to loopback and rejects external origins
-and Hosts. Do not expose it through a public tunnel. Never deploy the mock publicly.
-Never commit private configuration, `.demo-state/`, `.env` files, customer images,
-signed URLs or private SDK bundles. Use a secret manager for a deployed integration.
+## Test without paid API calls
 
-See [SECURITY.md](SECURITY.md).
+```sh
+npm test
+npm run demo:mock
+npm run demo:failure
+```
+
+Tests and explicit mock modes use local fixtures only. They do not read private
+configuration or call Velox. A mock result is not a real AI result or latency proof.
 
 ## Licence
 
-The example code and accompanying documentation in this repository are available
-under the [MIT licence](LICENSE). You may copy and adapt them for your integration.
-This licence does not cover Velox's hosted API, separately supplied SDK, product
-code, trademarks or customer material. API access and usage remain subject to
-separately agreed partner terms.
+The **public SDKs, examples, documentation and agent skill** in this repository
+are [MIT licensed](LICENSE). This does not license Velox's hosted API service,
+private product code, trademarks or customer material. API access and usage remain
+subject to separately agreed terms. AI previews are not guarantees of fit, sizing,
+colour or garment detail.

@@ -1,4 +1,5 @@
-// Small server-side example, not a replacement for the full Velox SDK.
+// Demo adapter around the same public SDK shipped in the downloadable ZIP.
+import { VeloxDressMe } from '../sdks/javascript/index.mjs';
 export class ApiError extends Error {
   constructor(message, { status, code, requestId, retryAfter } = {}) {
     super(message);
@@ -18,21 +19,12 @@ export class DressMeClient {
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.fetch = fetchImpl.bind(globalThis);
     this.headers = { 'X-Velox-Client-Id': clientId, 'X-Velox-Integration-Key': applicationKey, 'X-Velox-Subject': subject };
+    this.sdk = new VeloxDressMe({ baseUrl, clientId, integrationKey: applicationKey, subject, fetch: (...args) => this.fetch(...args), autoRefresh: false });
   }
 
   async request(path, { method = 'GET', body, headers = {}, signal } = {}) {
-    const response = await this.fetch(`${this.baseUrl}${path}`, {
-      method, redirect: 'error',
-      signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000),
-      headers: { ...this.headers, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...headers },
-      body: body === undefined ? undefined : JSON.stringify(body)
-    });
-    const data = await response.json();
-    if (!response.ok) throw new ApiError(data?.error?.message || 'API request failed.', {
-      status: response.status, code: data?.error?.code,
-      requestId: response.headers.get('x-request-id'), retryAfter: response.headers.get('retry-after')
-    });
-    return data;
+    try { return await this.sdk.request(path, { method, body, headers, signal }); }
+    catch (error) { throw new ApiError(error.message, error); }
   }
 
   async verifyEnvironment(expected) {

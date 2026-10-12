@@ -1,10 +1,10 @@
 {
   "name": "trifit-partner-api-example",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "private": true,
   "type": "module",
-  "description": "A server-side DressMe demo integration with a shared 10-second queue. Partner credentials required for real generation.",
+  "description": "Velox public SDKs, runnable DressMe demo, developer dashboard, tutorials and AI-agent integration skill.",
   "engines": { "node": ">=22" },
   "scripts": {
     "start": "node server.mjs",

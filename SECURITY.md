@@ -1,6 +1,8 @@
 # Security
 
-This is a local evaluator, not an approved publicly hosted service. Its real mode
+This repository contains the local evaluator and the source for Velox's public
+demo and visitor dashboard. Publishing it does not launch or approve a hosted
+service; the README records the hosting release status. Its real mode
 can upload images and incur paid generation charges when configured. Its mock and
 preview modes are explicitly separate and cannot use the real configuration.
 
@@ -9,6 +11,13 @@ contains credentials; the second contains private request/asset IDs. Restrict lo
 filesystem permissions (including Windows ACLs). Configure a strong random session
 secret through Velox onboarding; changing it invalidates existing queue ownership.
 Never reuse the demo key in other processes, deployments or client-side code.
+
+The public dashboard is not an operator admin. History and results are bound to
+the visitor's signed, HttpOnly browser cookie, scoped to the demo path and marked
+Secure on HTTPS. Cookies expire after 48 hours; this does not delete stored media.
+The public ZIP is built from an explicit source-file allowlist and never includes
+private partner configuration, uploaded images or request journals. The bundled
+`partner.config.example.json` contains an intentionally invalid key.
 
 The shared 10-second queue and one-active limit apply to this dedicated demo only.
 They do not make anonymous public use abuse-proof or free. Before public launch,

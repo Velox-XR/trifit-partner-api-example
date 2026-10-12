@@ -1,11 +1,12 @@
 const form = document.querySelector('#try-on');
 const button = document.querySelector('#submit');
 const status = document.querySelector('#status');
+const base = new URL('./', location.href);
 const storageKey = 'velox-demo-pending-request';
 let pending = sessionStorage.getItem(storageKey);
 let configured = false;
 async function request(path, options) {
-  const response = await fetch(path, { ...options, signal: AbortSignal.timeout(120000), credentials: 'same-origin' });
+  const response = await fetch(new URL(path.replace(/^\//, ''), base), { ...options, signal: AbortSignal.timeout(120000), credentials: 'same-origin' });
   const data = await response.json();
   if (!response.ok) throw Object.assign(new Error(data.error || 'Request could not be confirmed.'), { notAccepted: data.notAccepted === true });
   return data;

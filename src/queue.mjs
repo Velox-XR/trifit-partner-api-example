@@ -113,6 +113,8 @@ export class DemoQueue {
       if (!next) return;
       // Persist identity, exact payload and start time BEFORE the only paid POST.
       await this.change(next.id, { status: 'submitting', submittedAt: this.now(), idempotencyKey: next.id });
+      // Hosted adapters must still own the dispatcher immediately before an API call.
+      if (this.assertOwnership) await this.assertOwnership();
       // File sync may be slow. Measure the gap from the actual call, not before I/O.
       const submittedAt = this.now();
       this.lastSubmittedAt = submittedAt;

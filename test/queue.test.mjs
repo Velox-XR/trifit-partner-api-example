@@ -118,7 +118,7 @@ test('preview is disabled, serves no configuration and rejects cross-origin writ
   const server = await startDemoServer({ port: 0 }); t.after(server.close);
   const response = await fetch(`${server.origin}/api/session`); assert.equal((await response.json()).configured, false);
   assert.match(response.headers.get('set-cookie'), /HttpOnly; SameSite=Strict/);
-  assert.equal((await fetch(`${server.origin}/partner.config.json`)).status, 503);
+  assert.equal((await fetch(`${server.origin}/partner.config.json`)).status, 401);
   assert.equal((await fetch(`${server.origin}/api/requests`, { method: 'POST', headers: { Origin: 'https://untrusted.example' } })).status, 403);
   const html = await (await fetch(server.origin)).text(); assert.match(html, /10 seconds/); assert.doesNotMatch(html, /va_/);
 });
