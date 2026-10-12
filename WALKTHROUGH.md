@@ -1,9 +1,23 @@
-# From local example to an approved DressMe integration
+# From partner application to a real DressMe demo integration
 
 [Register interest](https://studio.v3lox.com/#contact) · [Quick start](README.md)
 
 Mention **Partner API / DressMe** in the existing contact form. The dedicated
 application page is awaiting its website release; see the [README](README.md).
+
+## Before running real requests
+
+The public configuration has an invalid key. Apply first. After review and approval,
+Velox creates a unique integration and emails private, environment-specific
+configuration files. Save the supplied `partner.config.json` locally, outside Git.
+`npm start` starts the real evaluator only after valid configuration and an exact
+`/me` identity/environment check. `npm run preview` and `npm run demo:mock` are
+separate, explicit no-generation modes.
+
+The intended public Velox demo uses its own dedicated partner integration. Visitors
+do not apply individually just to try that hosted demo and never see its key.
+Clients integrating into their own products apply for separate access. The hosted
+demo has not been launched by publishing this repository.
 
 ## 1. Understand the boundary
 
@@ -16,8 +30,10 @@ Shopper's browser → your authenticated backend → Velox Partner API
 Your backend authenticates your shopper, binds an opaque subject from that session,
 keeps the application key secret and enforces your own usage limits. The browser
 must not supply another user's subject, asset ID or job ID without your backend
-checking ownership. The local demo hardcodes one fictional shopper; it does not
-implement your production login or session store.
+checking ownership. The real evaluator assigns an opaque, server-derived subject
+to each HttpOnly visitor cookie; it never accepts a browser-supplied subject. Cookie
+identity is not production authentication or bot protection. Only the optional
+offline mock hardcodes a fictional shopper.
 
 Approved partners are assigned a client ID, environment-specific API base URL and
 scoped `va_` application credential. This is the **application** credential flow,
@@ -102,9 +118,28 @@ job failed. Reconcile using the **same key and payload** within the API's agreed
 idempotency window. Never generate a new key automatically to repeat an uncertain
 request; escalate if reconciliation remains uncertain.
 
-`demo.mjs` stores receipts in memory only because it is a disposable simulation.
-Replace this with durable storage and a transaction/outbox strategy before live
-use. A job timeout in your UI must not cause another paid submission.
+The real evaluator's `src/queue.mjs` persists receipts before dispatch. Its shared
+queue starts no more than one job every **10 seconds**, with one job active until a
+definitive terminal status is read. A queued Partner API job still occupies this
+slot. Waiting requests are not submitted to DressMe until admitted. The browser
+cannot override timing. `queueGapSeconds` is private operator configuration.
+
+Uploads precede queue admission to generation; their temporary IDs and final asset
+IDs are recorded separately. One pending request per visitor and a bounded backlog
+protect the local evaluator. There is no fixed total request allowance, but no
+upstream quota or commercial permission is changed by this code.
+
+The journal and exclusive owner lock are single-process safeguards. An interrupted
+paid POST enters `needs_review`; the whole queue stops rather than replaying it or
+releasing an uncertain active slot. An upstream `submission_unconfirmed` failure
+also holds the queue. Polling errors hold it for review, not a second paid POST.
+An accepted job survives a graceful restart and is polled by saved job ID. A crash
+leaves a lock requiring operator reconciliation; never discard it or the journal
+to resume blindly. See the README's recovery and public-hosting limitations.
+
+`demo.mjs` uses memory only because it is an explicitly selected disposable mock.
+A production hosted service needs durable transactional storage, an outbox/lease
+strategy and agreed operator recovery. A UI timeout must never create another job.
 
 ## 5. Read the result
 
@@ -150,6 +185,12 @@ under separately configured access. Do not invent a callback URL or signing key.
 The client surfaces status, safe error code, request ID and retry-after metadata.
 Do not log full headers, keys, signed URLs or shopper data. The demo uses no
 automatic retries; `npm run demo:failure` shows the failed-job path.
+
+The real browser evaluator gives generic error messages rather than exposing raw
+upstream responses. After an uncertain browser submission, retain its request
+reference and reload to read it; do not send a new request. Result URLs are returned
+only to the owning visitor session. The real queue refuses simulated API responses
+rather than presenting placeholders as generated results.
 
 ## Production checklist — not implemented by this teaching example
 

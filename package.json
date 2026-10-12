@@ -4,10 +4,12 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "description": "A local, simulated DressMe Partner API integration with dummy credentials. No paid API calls.",
+  "description": "A server-side DressMe demo integration with a shared 10-second queue. Partner credentials required for real generation.",
   "engines": { "node": ">=22" },
   "scripts": {
-    "start": "node demo.mjs",
+    "start": "node server.mjs",
+    "preview": "node server.mjs --preview",
+    "demo:mock": "node demo.mjs",
     "demo:failure": "node demo.mjs --failure",
     "test": "node --test test/*.test.mjs"
   }

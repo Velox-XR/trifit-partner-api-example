@@ -7,3 +7,5 @@ node_modules/
 credentials*
 uploads/
 results/
+partner.config.json
+.demo-state/

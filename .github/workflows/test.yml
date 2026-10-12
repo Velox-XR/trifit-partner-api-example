@@ -14,5 +14,5 @@ jobs:
         with:
           node-version: '22.x'
       - run: npm test
-      - run: npm start
+      - run: npm run demo:mock
       - run: npm run demo:failure

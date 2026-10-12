@@ -1,0 +1,12 @@
+{
+  "baseUrl": "https://partner-api.example.invalid/v1",
+  "clientId": "YOUR_ASSIGNED_DEMO_PARTNER_ID",
+  "applicationKey": "va_INVALID_APPLY_TO_VELOX_FOR_ACCESS",
+  "environment": "YOUR_ASSIGNED_ENVIRONMENT",
+  "sessionSecret": "REPLACE_WITH_A_PRIVATE_RANDOM_SECRET_OF_AT_LEAST_32_CHARACTERS",
+  "demoIntegration": true,
+  "allowRealGeneration": false,
+  "queueGapSeconds": 10,
+  "maxPending": 25,
+  "port": 5190
+}
