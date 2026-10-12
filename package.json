@@ -1,0 +1,14 @@
+{
+  "name": "trifit-partner-api-example",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "description": "A local, simulated DressMe Partner API integration with dummy credentials. No paid API calls.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node demo.mjs",
+    "demo:failure": "node demo.mjs --failure",
+    "test": "node --test test/*.test.mjs"
+  }
+}
