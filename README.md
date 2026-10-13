@@ -12,8 +12,8 @@ exact SDK implementation behind it.
 
 | Want to… | Go here |
 | --- | --- |
-| Try the Velox-hosted example | [Demo](https://studio.v3lox.com/partners/demo/demo) — **hosting release pending; not live yet** |
-| See your demo requests and download the SDK ZIP | [Demo dashboard & SDKs](https://studio.v3lox.com/partners/demo/admin) — **hosting release pending; not live yet** |
+| Try the Velox-hosted example | [Demo](https://studio.v3lox.com/partners/demo/demo) |
+| See your demo requests and download the SDK ZIP | [Demo dashboard & SDKs](https://studio.v3lox.com/partners/demo/admin) |
 | Explore immediately on your computer, without credentials | Download this repository; run `npm run preview` with Node.js 22+ |
 | Build a real integration | [Getting started](docs/GETTING_STARTED.md) · [Apply for access](https://studio.v3lox.com/#contact) |
 | Read the API flow | [Technical walkthrough](WALKTHROUGH.md) |
@@ -23,7 +23,8 @@ exact SDK implementation behind it.
 **Two public pages, not the Velox operator admin.** The dashboard shows only the
 visitor's own browser-session requests and public SDK downloads. It exposes no
 keys, routing, quota editing, other visitors' photos or traffic-test controls.
-The public pages must pass the Studio release gates before they are marked live.
+Hosted UI updates follow the Studio Development-to-Production release gates;
+the public host may run an earlier accepted version than the source you inspect.
 
 ## Install the Codex plugin
 
@@ -40,7 +41,7 @@ partner-specific application or a mock presented as real generation.
 - Real DressMe requests; AnimateMe is not enabled for the public demo.
 - One active generation, and at least **10 seconds between starts**.
 - The dashboard ZIP contains this same public source, SDK, examples and guides.
-- No API key is needed to visit the hosted demo once launched.
+- No API key is needed to visit the Velox-hosted demo.
 - To run your own real backend, apply for **your own** partner configuration.
 
 The checked-in [configuration template](partner.config.example.json) identifies
@@ -59,6 +60,28 @@ npm run preview
 
 Open the printed URL. The demo and dashboard work locally; the preview cannot
 upload or generate. The dashboard's ZIP download works in preview too.
+
+### Explore the reference workspace
+
+The public workspace follows the fuller partner-demo layout, with a developer
+sidebar linking to the public code, SDK ZIP, walkthrough and access application.
+
+- Add up to eight shopper photos and eight product images to **local trays**.
+  Select a pair and inspect it before sending a request. Adding, selecting or
+  removing a preview performs no upload or generation.
+- PNG, JPEG and WebP inputs are limited to 5 MiB and 16.8 megapixels each.
+- Only an explicit consented submission sends the selected pair. The example
+  uploads the pair for each new request; trays are not a persistent asset-ID
+  catalogue or a shared partner library.
+- Review the request stages, original inputs, completed result and side-by-side
+  shopper/result comparison. Local inputs are held only in the open page's memory;
+  after reload, request history and available results can be read, not old inputs.
+- History shows only this signed browser session's latest 25 requests. Refreshing
+  history or checking an uncertain request is read-only and never replays a job.
+
+No production/development selector, shared photo library, routing, webhook
+registration or load-test controls are exposed by this public UI. The private
+partner workbench is unchanged.
 
 For real access:
 

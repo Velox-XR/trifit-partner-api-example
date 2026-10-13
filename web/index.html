@@ -1,9 +1,78 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>DressMe · Partner integration demo</title><link rel="stylesheet" href="./style.css"><script type="module" src="./app.mjs"></script></head>
-<body><header><a href="https://studio.v3lox.com/">VELOX</a><nav aria-label="Developer navigation"><a href="./demo" aria-current="page">Live demo</a><a href="./admin">Dashboard & SDKs</a><a href="https://github.com/Velox-XR/trifit-partner-api-example">GitHub ↗</a></nav></header>
-<main><p class="eyebrow">Your experience. Powered by DressMe.</p><h1>See the integration.<br><em>Try your next look.</em></h1><p class="lead">A shopper photo. A product image. A real AI outfit preview.</p>
-<div class="notice" id="mode" role="status">Checking demo availability…</div>
-<div class="layout"><section><form id="try-on"><div class="inputs"><label><span>01 / Your photo</span><input type="file" name="personal" accept="image/png,image/jpeg,image/webp" required><small>A clear photo you have permission to use.</small></label><label><span>02 / Product image</span><input type="file" name="product" accept="image/png,image/jpeg,image/webp" required><small>One garment from your own or an authorised catalogue.</small></label></div><p class="hint">PNG, JPEG or WebP · up to 5 MiB each. Avoid sensitive images.</p><label class="consent"><input type="checkbox" name="consent" required><span>I have permission to use both images and understand that they will be sent to Velox for AI processing.</span></label><button id="submit" disabled>Join the demo queue ↗</button></form><p id="status" role="status" aria-live="polite"></p><p id="receipt"></p><div id="result" hidden><img alt="Your DressMe AI outfit preview" referrerpolicy="no-referrer"><p>AI previews are not measurements or guarantees of fit, sizing, colour or garment detail.</p></div></section>
-<aside><h2>A shared queue.<br>Real generation.</h2><p>Requests wait their turn. The demo starts no more than one new DressMe request every <strong id="gap">10 seconds</strong>, with one generation active at a time.</p><p>This is a minimum start interval—not a promised wait or generation time. Other visitors and processing time affect your wait.</p><p>No fixed lifetime request count is imposed by this example. Access, upstream quotas and service availability still apply.</p><hr><h2>Build your own integration.</h2><p>Apply for a unique partner API key. After approval, Velox creates your integration and emails configuration files for your specific access.</p><a href="https://studio.v3lox.com/#contact">Apply for Partner API access ↗</a><p class="hint">Mention Partner API / DressMe. Keep the configuration on your backend; never share it with visitors.</p></aside></div>
-<footer>This demo uses the JavaScript SDK and source available on <a href="https://github.com/Velox-XR/trifit-partner-api-example">GitHub</a>. <a href="./admin">Download the SDK integration ZIP</a> and build your own. Browser-session access expires after 48 hours; that is not a promise of media deletion. See the <a href="https://studio.v3lox.com/legal/privacy">Velox privacy policy</a> for privacy enquiries.</footer></main></body></html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+  <title>Velox × Demo · DressMe integration workspace</title>
+  <link rel="stylesheet" href="./style.css"><script type="module" src="./app.mjs"></script>
+</head>
+<body class="demo-workspace">
+  <a class="skip-link" href="#main">Skip to workspace</a>
+  <header class="shell topbar">
+    <a class="wordmark" href="https://studio.v3lox.com/">VELOX <span>× DEMO</span></a>
+    <nav aria-label="Developer navigation"><a href="./demo" aria-current="page">Integration demo</a><a href="./admin">Dashboard & SDKs</a><a class="github-link" href="https://github.com/Velox-XR/trifit-partner-api-example" target="_blank" rel="noopener">GitHub ↗</a></nav>
+  </header>
+  <main id="main" class="shell">
+    <section class="workspace-hero">
+      <div><p class="eyebrow">TRIFIT PARTNER API / INTERACTIVE WORKSPACE</p><h1>From product to<br><em>personal experience.</em></h1><p class="lead">Your photos. Your products. A real DressMe try-on.<br>Explore the experience, then build it into your platform.</p></div>
+      <section class="card connection-card" aria-label="Demo connection">
+        <p class="eyebrow">VELOX-HOSTED EXAMPLE</p><span id="connection-badge" class="pill">Checking connection</span>
+        <dl><div><dt>Experience</dt><dd>DressMe · virtual try-on</dd></div><div><dt>Active generations</dt><dd>One at a time</dd></div><div><dt>Minimum start interval</dt><dd id="gap">10 seconds</dd></div></dl>
+        <p class="small">A shared queue, not a countdown. Processing time, other visitors and the demo allowance affect availability.</p>
+      </section>
+    </section>
+    <p class="notice" id="mode" role="status">Checking demo availability…</p>
+    <div class="workspace-layout">
+      <div class="workspace-main">
+        <section class="card library-section" aria-labelledby="product-heading">
+          <div class="section-heading"><div><p class="eyebrow">01 / CHOOSE YOUR COLLECTION</p><h2 id="product-heading">Your product tray.</h2></div><label class="file-button">Add products<input id="product-files" type="file" name="product" multiple accept="image/png,image/jpeg,image/webp" aria-label="Add product images" aria-describedby="product-status"></label></div>
+          <p class="small">Add garment images and select the one you want to try. These local previews are not a shared or saved partner catalogue.</p>
+          <div id="product-library" class="image-library"><p class="empty-library">Your collection starts here.<br><span>Add a product image to see it in the tray.</span></p></div>
+          <p id="product-status" class="small" role="status">PNG, JPEG or WebP · up to 5 MiB and 16.8 megapixels each · 8 images per tray.</p>
+        </section>
+        <section class="card library-section" aria-labelledby="personal-heading">
+          <div class="section-heading"><div><p class="eyebrow">02 / MAKE IT PERSONAL</p><h2 id="personal-heading">Your photo tray.</h2></div><label class="file-button">Add photos<input id="personal-files" type="file" name="personal" multiple accept="image/png,image/jpeg,image/webp" aria-label="Add shopper photos" aria-describedby="personal-status"></label></div>
+          <p class="small">Choose a clear, front-facing photo you have permission to use. Select a photo below to pair with your product.</p>
+          <div id="personal-library" class="image-library"><p class="empty-library">Put yourself in the picture.<br><span>Add a shopper photo to preview it here.</span></p></div>
+          <p id="personal-status" class="small" role="status">Previewing and selecting images does not upload them or start a generation.</p>
+        </section>
+        <div class="journey" aria-label="Integration architecture"><span>Your browser</span><b>→</b><span>Demo backend</span><b>→</b><span>Velox Partner API</span><b>→</b><span>Your result</span></div>
+        <div class="experience-columns">
+          <section class="card" aria-labelledby="create-heading">
+            <p class="eyebrow">03 / CREATE AN EXPERIENCE</p><h2 id="create-heading">Try a look.</h2>
+            <form id="try-on">
+              <div class="selected-pair"><div><span class="small">SHOPPER</span><div id="selected-personal" class="selected-image">Choose a photo above</div></div><span class="pair-plus" aria-hidden="true">+</span><div><span class="small">PRODUCT</span><div id="selected-product" class="selected-image">Choose a product above</div></div></div>
+              <p class="small">Only the selected pair is sent when you submit. Each new request uploads that pair; this public example does not reuse server asset IDs.</p>
+              <label class="consent"><input type="checkbox" name="consent" required><span>I have permission to use both images and understand that they will be sent to Velox for AI processing.</span></label>
+              <button id="submit" disabled>Create my DressMe look ↗</button>
+              <p id="selection-hint" class="small">Select one photo and one product to get started.</p>
+            </form>
+            <ol id="request-steps" class="request-steps" aria-label="Request progress"><li data-stage="0">Upload</li><li data-stage="1">Queue</li><li data-stage="2">Generate</li><li data-stage="3">Result</li></ol>
+            <p id="status" role="status" aria-live="polite">No request submitted.</p>
+            <p id="receipt" class="small"></p><button id="check-request" type="button" class="quiet" hidden>Check this request</button>
+          </section>
+          <section class="card result-card" aria-labelledby="result-heading">
+            <div class="section-heading"><div><p class="eyebrow">04 / RECEIVE & REVIEW</p><h2 id="result-heading">Your result.</h2></div><span id="review-state" class="pill">Ready when you are</span></div>
+            <div class="review-tabs" role="group" aria-label="Review images"><button type="button" data-review="result" aria-pressed="true">Result</button><button type="button" data-review="personal" aria-pressed="false">Shopper</button><button type="button" data-review="product" aria-pressed="false">Product</button><button type="button" data-review="compare" aria-pressed="false">Compare</button></div>
+            <div id="result" class="result-stage" aria-live="polite"><div class="result-empty"><span aria-hidden="true">✦</span><h3>A new look, made for you.</h3><p>Select your images and create a DressMe look. Review the inputs and compare them with the finished preview here.</p></div></div>
+            <div class="actions"><a id="open-result" class="quiet button-link" hidden target="_blank" rel="noopener noreferrer">Open full-size result ↗</a></div>
+            <p id="review-details" class="small">Input previews stay in this page's memory and disappear on reload. Result history is available only to this browser session.</p>
+            <p class="small">AI previews are not measurements or guarantees of fit, sizing, colour or garment detail.</p>
+          </section>
+        </div>
+        <section class="card history-panel" aria-labelledby="history-heading">
+          <div class="section-heading"><div><p class="eyebrow">REQUEST JOURNEY</p><h2 id="history-heading">This browser session.</h2></div><button id="refresh-history" class="quiet" type="button">Refresh history</button></div>
+          <p id="history-status" class="small" role="status">Loading your requests…</p><div id="history" class="history-list"></div>
+          <p class="small">Latest 25 requests · status checks never resubmit a generation · no other visitors' requests are shown.</p>
+        </section>
+      </div>
+      <aside class="developer-rail" aria-label="Build with Velox">
+        <section class="card developer-card"><p class="eyebrow">FROM DEMO TO YOUR PRODUCT</p><h2>Try it here.<br>Build it your way.</h2><p>This workspace is a runnable JavaScript SDK integration. Explore the code behind the experience—not just a video of it.</p><a class="button-link" href="https://github.com/Velox-XR/trifit-partner-api-example" target="_blank" rel="noopener">Explore on GitHub ↗</a><a class="quiet button-link" href="./admin">Dashboard & SDK downloads</a><p class="small">JavaScript SDK + TypeScript declarations. Public SDKs and examples are MIT licensed.</p></section>
+        <section class="card"><p class="eyebrow">A CLEAR PATH TO INTEGRATION</p><ol class="build-steps"><li><strong>Explore the live experience</strong><span>Bring a photo and a garment. Follow the request from inputs to result.</span></li><li><strong>Inspect the working example</strong><span>Download the SDK, read the walkthrough, or use the AI-agent integration guide.</span></li><li><strong>Apply for your own access</strong><span>Velox reviews your request, creates a unique partner integration and emails your private configuration.</span></li></ol><a class="text-link" href="https://studio.v3lox.com/#contact">Apply for Partner API access ↗</a></section>
+        <details class="card developer-notes"><summary>What happens behind the scenes?</summary><ol><li>The browser sends the selected pair to the demo backend.</li><li>The backend uploads the images and queues one DressMe request.</li><li>The server-only SDK credential calls the Partner API.</li><li>The browser reads request status and receives its authorised result.</li></ol><p class="small">No API key is exposed in this page. Uncertain submissions stop for review; they are never automatically replayed. This example checks status; it does not claim webhook delivery.</p><a class="text-link" href="https://github.com/Velox-XR/trifit-partner-api-example/blob/main/WALKTHROUGH.md" target="_blank" rel="noopener">Read the technical walkthrough ↗</a></details>
+        <section class="privacy-note"><p class="eyebrow">YOUR IMAGES, YOUR SESSION</p><p>Trays are local to this open page. Removing a preview only removes it from the tray; it does not delete an already uploaded asset. Avoid sensitive images.</p><p>Browser-session access expires after 48 hours; that is not a promise of media deletion. <a href="https://studio.v3lox.com/legal/privacy">Privacy policy ↗</a></p></section>
+      </aside>
+    </div>
+    <footer><span>VELOX × DEMO <span class="footer-detail">TriFit partner integration workspace</span></span><span>One SDK integration. A starting point for your own experience.</span></footer>
+  </main>
+</body>
+</html>
