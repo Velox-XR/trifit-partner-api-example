@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { DemoQueue } from '../src/queue.mjs';
 import { validateConfig } from '../src/config.mjs';
 import { startDemoServer } from '../src/demo-server.mjs';
+import { DressMeClient } from '../src/client.mjs';
 
 async function fixture(t, overrides = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'velox-demo-queue-'));
@@ -126,6 +127,7 @@ test('preview is disabled, serves no configuration and rejects cross-origin writ
 test('browser submissions use server-owned subjects, real adapter, private receipts and one queue', async t => {
   const subjects = []; let uploads = 0; let submits = 0;
   const apiFor = owner => ({
+    uploadPair: DressMeClient.prototype.uploadPair,
     upload: async (_image, options) => { subjects.push(owner); uploads++; await options.onReserved('reserved-' + uploads); return { id: 'completed-' + uploads }; },
     createJob: async (_payload, key) => { submits++; return { id: key }; },
     request: async path => ({ id: path.split('/').at(-1), status: 'succeeded', result: { id: 'private-result', url: 'https://result.example.invalid/private-image' } })

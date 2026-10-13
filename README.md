@@ -40,6 +40,9 @@ partner-specific application or a mock presented as real generation.
 - Dedicated hosted partner identity: `demo`.
 - Real DressMe requests; AnimateMe is not enabled for the public demo.
 - One active generation, and at least **10 seconds between starts**.
+- Personal and product uploads overlap, with durable receipts for both assets.
+  This removes sequential upload waiting without changing generation quality or
+  bypassing the queue and usage limits.
 - The dashboard ZIP contains this same public source, SDK, examples and guides.
 - No API key is needed to visit the Velox-hosted demo.
 - To run your own real backend, apply for **your own** partner configuration.
