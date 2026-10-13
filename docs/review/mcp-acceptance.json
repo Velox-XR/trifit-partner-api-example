@@ -1,0 +1,651 @@
+{
+  "checkedAt": "2026-10-13T09:05:02.048Z",
+  "host": "http://127.0.0.1:4319",
+  "cases": [
+    {
+      "prompt": "How do I integrate Velox VTO without asking each shopper for an email code?",
+      "tool": "search",
+      "arguments": {
+        "query": "application authentication"
+      },
+      "elapsedMs": 17,
+      "isError": false,
+      "output": {
+        "results": [
+          {
+            "id": "sdk-reference",
+            "title": "JavaScript SDK, authentication, uploads, jobs and polling",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/sdks/javascript/README.md"
+          },
+          {
+            "id": "walkthrough",
+            "title": "Backend integration walkthrough and recovery",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/WALKTHROUGH.md"
+          },
+          {
+            "id": "hosting",
+            "title": "Hosting the example backend",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/HOSTING.md"
+          },
+          {
+            "id": "getting-started",
+            "title": "Partner access and getting started",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GETTING_STARTED.md"
+          },
+          {
+            "id": "sdk-catalog",
+            "title": "Available languages and SDKs",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/SDK_CATALOG.md"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Read the official application-authentication contract.",
+      "tool": "fetch",
+      "arguments": {
+        "id": "sdk-reference"
+      },
+      "elapsedMs": 10,
+      "isError": false,
+      "output": {
+        "id": "sdk-reference",
+        "title": "JavaScript SDK, authentication, uploads, jobs and polling",
+        "text": "# @velox/dressme-sdk — preview\n\nSmall, dependency-free ESM SDK with TypeScript declarations for the Velox Partner API. Works with Node 22+ and modern browsers that support `fetch`, `Blob`, `AbortSignal.any` and `AbortSignal.timeout`. Application credentials belong on your backend, not in browser code. React Native and native Swift/Kotlin compatibility have not been verified.\n\n## Use the public source\n\nThis SDK source is MIT licensed; Velox's hosted API remains separately licensed.\nFrom the root of the downloaded public example, import it directly:\n\n```js\nimport { VeloxDressMe, VeloxError } from './sdks/javascript/index.mjs';\n```\n\nAlternatively, install the local folder into your backend with\n`npm install ./sdks/javascript` and use the package import shown below.\nDo not assume a public npm registry release exists. The full SDK reference below\ncovers optional capabilities and older session authentication too; the public\ndemo uses only the backend application flow and DressMe. Downloading the library\ndoes not enable AnimateMe, webhooks or any unassigned scope.\n\n## Upload products once, through Partner API\n\nUpload catalogue products on your backend before a campaign. Save each returned\nasset ID against your product and environment; reuse that ID with later shopper\nphotos. Do not upload the product again for each DressMe job. The public upload,\ncompletion and asset-read endpoints remain in **Partner API**. Internal Velox\nUpload/storage/preprocessing services and their credentials are not partner-facing.\n\n```js\nconst catalogue = new VeloxDressMe({baseUrl, clientId, integrationKey: applicationKey});\nconst product = await catalogue.uploadProductImage(productFile, {\n  fileName: 'blue-jeans.webp',\n  onAssetCreated: async id => savePendingProductId(id) // persist before bytes transfer\n});\nawait saveProductIdForEnvironment(product.id);\nconst current = await catalogue.getAsset(product.id);\n// current.status === 'ready' proves upload completion only.\n// current.preparation?.status === 'ready' is shared description-cache evidence.\n```\n\nPreparation is asynchronous and does not submit a shopper-generation job. Missing\nservice configuration is reported as `unavailable`, not success. `simulated` is\nonly a no-GPU integration check. The reference library deduplicates identical\nuploads within the same environment and keeps original IDs after uncertain\nresponses; reconcile `getAsset`/`completeImageUpload` before creating another asset.\nDo not persist signed upload/read URLs. They expire; refresh access via `getAsset`.\n\nThe Partner API also deduplicates binary uploads at completion, using its own\nSHA-256 of the validated bytes, not a filename or client-supplied digest. Identical\nproducts in the same owner/catalog and environment return the **existing asset\nID**, even for simultaneous upload/import requests. Always save the ID returned\nby completion (it can differ from the provisional upload ID). The provisional ID\nremains a durable retry receipt. Deleted products are not reused, and personal\nimages are never deduplicated. Reuse preserves existing preparation evidence;\nstale evidence is revalidated asynchronously rather than treated as a new upload.\n\n**Readiness check:** inspect `getAsset(productAssetId).preparation.status` after\nawaiting the asset read. Only `ready` confirms that product's shared description\ncache is prepared. Top-level asset `status: ready` confirms upload completion,\nnot cache readiness. Missing descriptions can still be prepared during generation;\nsimulation does not prove a real cache.\n\nThis preview can target the separately configured Development or Production Partner API through your own backend, or the companion local sandbox. Use only the base URL and scoped application credential supplied for the intended environment, and verify `applicationInfo().environment` before uploading or generating. Never fall back between environments. Downloading this package does not provision access or certify your integration's Production acceptance. There are no live API, Azure, RunPod, Vast or Shopify credentials in the SDK.\n\n## Application integration (explicit environment and scoped backend credential)\n\nVelox explicitly provisions a scoped `va_` application credential after migration\n005. Existing `vi_` credentials retain their previous session-based permissions.\nYour backend can use the same upload/job methods without email or Velox accounts:\n\n```js\nconst shopper = new VeloxDressMe({baseUrl, clientId, integrationKey: applicationKey,\n  subject: session.opaqueShopperId}); // Bind from your authenticated server session.\nconst application = await shopper.applicationInfo();\nconst photo = await shopper.uploadPersonalPhoto(personFile);\nconst job = await shopper.createDressMeJob({personalAssetId: photo.id, productAssetId},\n  {idempotencyKey: savedRequestId});\n```\n\nProduct assets are shared inside the application catalog. Personal images, jobs\nand results require the same opaque subject (1–128 letters/digits/underscore/hyphen).\nNever let a browser choose another shopper's subject. Velox stores a hash of the\nreference, not a new user account. Two rotated keys share the same application\nownership; revoking one does not delete history. Keep secrets on your backend.\nScopes are `assets:read`, `assets:write`, `assets:delete`, `jobs:read`, `jobs:write`,\n`webhooks:write`, and reserved tenant monitoring scope `admin:read`.\nKey revocation stops API calls, not already accepted generation or unexpired\nupload/read capabilities (five minutes / one minute respectively).\n\n`importProductImage(url)` imports public HTTPS PNG/JPEG/WebP with pinned DNS,\nredirect and full decoder checks. Identical ready content is reused within the\napplication's catalog. Uploads/imports are limited to 5 MiB, 8192px per dimension,\n16 megapixels and one frame. No source URL query/secret is retained.\n\nNew personal/result assets expire after seven days by default; Velox can configure\n1–30 days for subsequently created assets. Catalog products remain until explicitly\ndeleted. Older assets without a retention date are not retroactively expired.\n`deleteAsset(id)` and `deleteSubject()` immediately remove API/capability access\nand suppress dependent late results. Physical cache/blob deletion is retried and\nreported separately (`pending`, `waiting_for_job`, `blocked`, `complete`). A\ndeleted subject reference cannot be reused. Backup expiry and provider-side data\nretention are separate from API deletion and require release verification.\n\nThe older session-based flow remains supported:\n\n```js\nimport { readFile } from 'node:fs/promises';\nimport { VeloxDressMe, VeloxError } from '@velox/dressme-sdk';\n\n// Backend example: create this private file using credentials supplied separately.\n// The downloadable source ZIP contains configuration templates, not live secrets.\nconst config = JSON.parse(await readFile('./config.local.json', 'utf8'));\n\nconst velox = new VeloxDressMe({\n  baseUrl: config.apiBaseUrl,\n  clientId: config.clientId,\n  integrationKey: config.integrationKey\n});\n\nconst { challengeId } = await velox.requestCode('user@example.com');\n// Collect the verification code delivered to the user's email.\nawait velox.verifyCode(challengeId, codeEnteredByUser);\n\n// Browser File objects are Blobs. Set image/png or image/jpeg for Node Blobs.\nconst person = await velox.uploadPersonalPhoto(personFile);\nconst product = await velox.uploadProductImage(productFile);\n\n// Keep this key for retries of the SAME submission, including uncertain network failures.\nconst idempotencyKey = crypto.randomUUID();\nconst job = await velox.createDressMeJob({\n  personalAssetId: person.id,\n  productAssetId: product.id\n}, { idempotencyKey });\n\nconst completed = await velox.waitForDressMe(job.id, {\n  timeoutMs: 120000,\n  intervalMs: 1000,\n  onStatus: job => { console.log(job.id, job.status); }\n});\nconsole.log(completed.result.url, completed.simulated);\nawait velox.logout();\n```\n\n## Methods\n\n| Method | Behavior |\n|---|---|\n| `requestCode(email)` | Returns a challenge ID; does not authenticate |\n| `verifyCode(challengeId, code)` | Stores session tokens in this SDK instance's memory |\n| `refresh()` | Explicitly rotates the refresh token and replaces the access token |\n| `logout()` | Revokes this session family; clears local tokens after success |\n| `createLinkChallenge(externalUserId, purpose?)` | Backend only; returns a nonce-bound challenge; purpose defaults to `link` |\n| `linkAccount({challengeId, idToken, consent: true})` | Backend only; verifies provider proof, links the account and stores its session |\n| `loginLinkedAccount({challengeId, idToken})` | Backend only; stores a new session for an existing link using a `login` challenge |\n| `linkedAccount()` | Backend only; returns the current session's link metadata |\n| `unlinkAccount(linkId)` | Backend only; revokes all linked sessions and clears this SDK session after success |\n| `me()` | Returns authenticated user, client and environment |\n| `uploadPersonalPhoto(blob, options?)` | Reserves upload, sends bytes, completes asset |\n| `uploadProductImage(blob, options?)` | Same flow, with product role |\n| `getAsset(id)` | Returns metadata and fresh expiring read URL for a ready asset |\n| `createImageUpload(input)` | Reserves an asset and returns its ID, upload URL and required headers |\n| `completeImageUpload(assetId)` | Validates/finalizes an uploaded asset and returns metadata |\n| `createDressMeJob(inputs, options?)` | Returns an accepted job; supports `idempotencyKey` and `signal` |\n| `getDressMeJob(id, options?)` | Reads status and completed result |\n| `waitForDressMe(id, options?)` | Polls until success, failure, deadline or abort |\n\nUpload options: `{ fileName?, signal?, onAssetCreated? }`. The optional async `onAssetCreated(assetId)` callback is awaited after reservation and before byte transfer; persist that ID for recovery. Job inputs: `{ personalAssetId, productAssetId, notificationEndpointId? }`. Poll options: `{ timeoutMs?, intervalMs?, signal?, onStatus? }`. The optional `onStatus(job)` callback runs for every returned status, including unchanged and terminal statuses, before polling returns or throws on failure. An async callback is awaited; callback errors stop polling. The interval is a pause between checks, so network and callback time can extend it. These options apply to DressMe, AnimateMe and `waitForJob`. Constructor supports injected `fetch` and per-request `timeoutMs` (30 seconds by default).\n\nStatuses: `queued`, `running`, `succeeded`, `failed`. The sandbox transitions from queued directly to succeeded/failed when polled. `simulated: true` means no image generation occurred. Result URLs are temporary capabilities; obtain a fresh URL with `getAsset(result.id)` when expired. Do not log or publicly share tokens or signed URLs.\n\n## Sessions, retries and errors\n\nBy default, automatic refresh is off. With `autoRefresh: true`, the SDK refreshes once on expired access and retries the protected request once. Network failures are never replayed automatically. Refresh before access expiry; serialize refresh calls so parallel refreshes do not look like token replay. Keep tokens in memory for browser integrations; any persistent session strategy belongs to the host application. Do not embed a client secret in browser/mobile code. A client ID identifies the integration; it is not a secret or proof of application authenticity.\n\n`VeloxError` exposes `status`, `code`, `requestId` and `retryAfter`. Native fetch network errors and abort/timeout errors propagate unchanged. Handle 401 by refreshing once or logging in again; 404 means absent or inaccessible; 409 means conflicting state/idempotency payload; 429 includes `retryAfter` seconds. Never retry a job using a new key after an ambiguous network result.\n\nAn upload-helper error does **not** prove that reservation, byte transfer or completion failed. Persist the provisional ID with `onAssetCreated` before transfer. Keep that ID and the original environment/owner when an acknowledgement is uncertain; inspect `getAsset(savedAssetId)` and reconcile completion with `completeImageUpload(savedAssetId)` before considering any replacement. Completion can return a canonical deduplicated product ID, which must also be retained. Do not blindly call the upload helper again or replay an expired/single-use upload URL. If no reservation ID was received, or its status cannot be established, retain the failure evidence and stop for reconciliation rather than automatically reserving another asset. Only a definitively unusable reservation permits a deliberate replacement; an HTTP timeout alone does not.\n\nThe SDK generates a key when omitted, but calling `createDressMeJob` again then creates a new key. Applications that need reliable retry must supply and retain their own key. SDK polling cancellation does not cancel a backend job.\n\nLogout does not instantly invalidate already issued image URLs. They expire independently. If logout fails, the SDK retains tokens so the app can retry revocation. An app can discard its local session with `velox.session = null`, but that does not revoke the server session.\n\nThe distribution contains only the SDK and this documentation. It does not include the local sandbox or a production server. Preview version; no production compatibility guarantee until 1.0.\n\n## Upload once, submit asset IDs separately\n\nDressMe takes asset IDs, not image bytes in the generation request. Upload and complete assets separately. With application credentials, products are shared within the partner catalogue; personal images and results are restricted to their opaque subject. Legacy user-session assets retain their original user ownership. The helpers combine reservation, binary upload and completion; explicit methods support custom upload UI:\n\n```js\nconst target = await velox.createImageUpload({\n  role: 'personal', fileName: file.name, contentType: file.type, sizeBytes: file.size\n});\nconst response = await fetch(target.uploadUrl, {\n  method: 'PUT', headers: target.uploadHeaders, body: file\n});\nif (!response.ok) throw new Error('Upload failed');\nconst personal = await velox.completeImageUpload(target.assetId);\nconst job = await velox.createDressMeJob({\n  personalAssetId: personal.id, productAssetId: savedProductAssetId\n}, { idempotencyKey: crypto.randomUUID() });\n```\n\nUse only the returned upload headers when sending bytes to the upload URL; never forward API credentials. Different integrations cannot share asset IDs. Application subjects can reuse their own partner catalogue products, not each other's private photos/results. Only Velox Admin controls the route assigned to each partner/environment. The SDK and API reject new requests containing a route override, including from credentials with a historical `routes:select` scope. Accepted jobs retain their assigned route; an exact replay of a previously accepted request returns that same job, never reroutes or resubmits it.\n\n### Optional session renewal\n\nSet `autoRefresh: true` in the constructor to renew an expired access token automatically on a protected API response with `401 unauthorized`. The browser example enables this. Concurrent requests share one refresh; the original request is retried once with unchanged input and idempotency key. Network errors and uncertain generation submissions are not retried. If the refresh token has expired or been revoked, sign in again. Default remains false for explicit session management.\n\n### Optional completion webhooks\n\nFor application-key integrations, use the partner dashboard's **Webhook\nconfiguration** in the selected environment, or these backend-only methods:\n\n```js\nconst endpoint = await velox.registerNotificationEndpoint('https://your-backend.example/events');\n// Store endpoint.id, endpoint.keyId and endpoint.secret privately on your backend.\nconst configuration = await velox.notificationEndpoints(); // no signing secrets\n// Drain accepted jobs before disabling their destination.\nawait velox.setNotificationEndpointState(endpoint.id, {\n  enabled: false, expectedRevision: configuration.revision\n});\n```\n\nRegistration/state changes require `webhooks:write`; listing accepts `admin:read`\nor `webhooks:write`. Tenant/environment ownership is enforced on the API. Only\npartner-created endpoints can be toggled by the partner. A changed URL/signing key\nuses a newly registered endpoint, not a rewrite of in-flight job destinations.\nThe registration response supplies signing material (also returned when retrying\nthe same enabled partner URL); listings contain endpoint metadata and the last\n100 delivery records, not secrets or output URLs. Registration does not verify\nreachability. Delivery acknowledgments and receiver-side processing are separate\nchecks. The hosted reference demo retains its own receiver configuration.\n\nRegister your callback through your backend's `POST /notification-endpoints`, under separately approved webhook access. The public demo does not configure callbacks. Use the returned endpoint ID:\n\n```js\nconst job = await velox.createDressMeJob({\n  personalAssetId, productAssetId,\n  notificationEndpointId: 'dressme-completion'\n}, { idempotencyKey: crypto.randomUUID() });\n```\n\nOmit `notificationEndpointId` for polling only. Register a public HTTPS URL; arbitrary per-request URLs are not accepted. The receiver verifies `X-Velox-Signature` (HMAC-SHA256 over `timestamp + '.' + exact raw body`), the five-minute timestamp window and key ID, and deduplicates `eventId`. Delivery is at least once. A callback failure never repeats generation.\n\nFor partner backend result retrieval only:\n\n```js\nconst reader = new VeloxDressMe({\n  baseUrl: process.env.VELOX_API_URL,\n  clientId: process.env.VELOX_CLIENT_ID,\n  integrationKey: process.env.VELOX_INTEGRATION_KEY,\n  serverToken: process.env.VELOX_RESULT_READ_TOKEN\n});\nconst job = await reader.getDressMeJob(event.jobId);\nconst result = await reader.getAsset(event.resultAssetId);\n```\n\nVelox supplies and manages this read-only credential when needed. Never embed it in frontend or mobile code. It cannot upload images, submit jobs or read input photos. The companion example ZIP includes signature verification and durable event inbox handling.\n\n## External development pilot\n\nUse `https://velox-studio-shopify-dev.azurewebsites.net/partner/v1` on your backend with your assigned `clientId` and `integrationKey`. These are separate from the user bearer session. The integration key is required even for requesting login codes and for result-read credentials. It is scoped to one integration and can be revoked in Velox admin. Never put it in browser or mobile code; the constructor rejects it in a browser.\n\n```js\nconst velox = new VeloxDressMe({\n  baseUrl: process.env.VELOX_API_URL,\n  clientId: process.env.VELOX_CLIENT_ID,\n  integrationKey: process.env.VELOX_INTEGRATION_KEY,\n  autoRefresh: true\n});\n```\n\nUse one SDK session per authenticated user, not one globally shared instance. The portable pilot browser uses a loopback backend that injects its integration key and relays capabilities without exposing secrets. Hosted email codes arrive by email. After verification, the email matches the existing Velox identity, while assets/jobs remain user-and-integration scoped. The API does not permit partner routing overrides.\n\n## Linked-account authentication reference\n\nLinking requires Velox to configure your integration's trusted provider. All five linking methods require a backend `integrationKey`; browser calls are rejected. They use the same user-scoped assets/jobs as email authentication. Use one SDK/session per authenticated application user. The companion ZIP's **ACCOUNT_LINKING.md** contains the full walkthrough, and **TUTORIAL.md** explains the runnable isolated demo.\n\n### createLinkChallenge(externalUserId, purpose = 'link')\n\nReturns `Promise<{ challengeId: string; nonce: string; expiresIn: number }>`. `externalUserId` is the provider's stable, case-sensitive subject (1–255 characters), obtained from your authenticated application session. `purpose` is `link` to connect/reconnect, or `login` to obtain a new session for an existing link. No current Velox session is required.\n\nPass the returned nonce to your provider to obtain a fresh RS256 ID token. The challenge lasts 300 seconds, binds the integration, subject, purpose and policy, and is single-use. Requesting it does not connect an account or change `velox.session`.\n\n### linkAccount({ challengeId, idToken, consent: true })\n\nReturns `Promise<Session>` with required `link` metadata and assigns the result to `velox.session`. Use a `link` challenge and the fresh provider token bearing its nonce. Set consent only after the authenticated user's Connect action. Verified email matching follows the configured policy; neither an email string nor your integration key alone proves identity.\n\n### loginLinkedAccount({ challengeId, idToken })\n\nReturns `Promise<Session>` with `link` metadata and replaces `velox.session`. Requires a fresh `login` challenge, matching provider token and an existing active link. It uses no Velox email code. A disconnected or policy-invalidated account must reconnect instead.\n\n### linkedAccount()\n\nReturns `Promise<AccountLink>` for the current linked session. Requires unexpired user access. It does not return credentials. The fields are `id`, `externalUserId`, `email`, `veloxUserId`, `status`, `linkedAt`, `lastLoginAt` and `unlinkedAt`. The public endpoint returns an active link; `relink_required` and disconnected states are used by internal administration and cannot authorize a session.\n\n### unlinkAccount(linkId)\n\nReturns `Promise<{ unlinked: true }>` and sets `velox.session = null` only after success. `linkId` must belong to the current linked session. It revokes all access/refresh families for that link, preserving user records, assets and request history. It does not cancel generation. Subsequent linked login fails until the user reconnects.\n\nOn failure the SDK retains its session. Do not announce server-side disconnection solely because you cleared local storage. A lost response may already have revoked access; handle that uncertain outcome before retrying or reconnecting.\n\n### Session persistence and renewal\n\n```js\n// Load this authenticated user's saved session, never a shared global session.\nvelox.session = savedSession;\nconst renewed = await velox.refresh();\n// Atomically save renewed on your backend before another request uses it.\nconst link = await velox.linkedAccount();\nawait velox.unlinkAccount(link.id);\n// velox.session is null. Remove this user's persisted session after success.\n```\n\n`Session` contains `accessToken`, `refreshToken`, `tokenType: 'Bearer'`, `expiresIn` and `user: { id, email }`. Link/login responses also contain `link`; **refresh responses do not**, so persist its ID separately or call `linkedAccount()` again. Token storage belongs to your backend; the SDK keeps only memory and offers no persistence callback.\n\nAccess lasts at most 15 minutes. Linked refresh families expire after the configured 1–30 days even when renewed. Refresh is single-use, and reuse revokes its family. Serialize and save refreshes across your backend workers; the SDK only coalesces concurrent refreshes within one instance. Recover a lost refresh response or an expired family through a fresh provider assertion and linked login.\n\nAutomatic refresh does not run for `/auth/` methods, including `linkedAccount()` and `unlinkAccount()`. Refresh explicitly before them if access expired. Explicit renewal is also easiest when your backend must persist rotated tokens. `logout()` revokes the current session family but retains the account link; `unlinkAccount()` revokes all families for the connection.\n\n### Linked-account errors\n\nErrors use the existing `VeloxError` shape. `linking_disabled` means provider setup is not enabled; `invalid_identity_token` or `invalid_link_challenge` requires fresh valid proof; `consent_required` requires the user's Connect action; `account_not_linked` requires reconnecting; `link_policy_denied` and `link_conflict` require Velox review. `link_revoked` rejects expired/disconnected/policy-invalidated sessions. `invalid_token` or `refresh_reuse` requires new authentication. `identity_provider_unavailable` is retryable. Never fall back to an unverified email or fabricated token.\n# AnimateMe\n\nThe existing `VeloxDressMe` client also supports AnimateMe. Use your existing authenticated SDK instance; Velox configures routing per integration.\n\n```js\nconst source = await sdk.uploadPersonalPhoto(photoBlob);\n// Or reuse dressMeJob.result.id after DressMe succeeds.\nconst job = await sdk.createAnimateMeJob(\n  { sourceAssetId: source.id },\n  { idempotencyKey: savedRequestId }\n);\nconst done = await sdk.waitForAnimateMe(job.id, {\n  timeoutMs: 20 * 60 * 1000,\n  intervalMs: 3000\n});\n// done.result.contentType === 'video/mp4' for real cloud generation.\n// Download done.result.url without API authentication headers.\n```\n\n`savedRequestId` is generated once by your application (for example `crypto.randomUUID()`) and retained for retries. `getAnimateMeJob(jobId)` reads status once. An optional `notificationEndpointId` in `createAnimateMeJob` requests signed completion events instead of requiring polling. Use `getAsset(resultAssetId)` for a renewed video read URL. Existing DressMe methods and imports are unchanged.\n",
+        "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/sdks/javascript/README.md",
+        "sha256": "b0a92aa7e5e41707398ca27a3572183d3c33706caf6367d22af80efc300c8592"
+      }
+    },
+    {
+      "prompt": "Give me a runnable Node.js example that uses no credits.",
+      "tool": "get_integration_example",
+      "arguments": {
+        "language": "javascript"
+      },
+      "elapsedMs": 7,
+      "isError": false,
+      "output": {
+        "language": "javascript",
+        "simulated": true,
+        "repository": "https://github.com/Velox-XR/trifit-partner-api-example",
+        "setup": [
+          "git clone https://github.com/Velox-XR/trifit-partner-api-example.git",
+          "cd trifit-partner-api-example",
+          "node demo.mjs"
+        ],
+        "example": {
+          "id": "offline-example",
+          "title": "Runnable Node.js mock integration",
+          "text": "import { randomUUID } from 'node:crypto';\nimport { DressMeClient } from './src/client.mjs';\nimport { DUMMY, PLACEHOLDER, startMockApi } from './src/mock-api.mjs';\n\nconst failure = process.argv.includes('--failure');\nconst mock = await startMockApi({ failure });\ntry {\n  console.log('DressMe Partner API — LOCAL SIMULATION ONLY');\n  console.log('Dummy credentials. Placeholder images. No Velox/cloud calls or generation charges.\\n');\n  const api = new DressMeClient({ baseUrl: mock.baseUrl, ...DUMMY });\n  await api.verifyEnvironment('local-mock');\n  console.log('1. Backend connection and expected environment verified.');\n  // In this throwaway simulation, IDs live in memory. Persist them in your database in a real integration.\n  const saved = {};\n  const image = new Blob([PLACEHOLDER], { type: 'image/png' });\n  const product = await api.upload(image, { role: 'product', fileName: 'dummy-product.png', onReserved: id => { saved.productUploadId = id; } });\n  saved.productAssetId = product.id; // Completion may return a deduplicated catalogue ID.\n  console.log('2. Product uploaded and completed. Reuse its final asset ID for later shoppers.');\n  const personal = await api.upload(image, { role: 'personal', fileName: 'dummy-person.png', onReserved: id => { saved.personalUploadId = id; } });\n  saved.personalAssetId = personal.id;\n  console.log('3. Personal image uploaded under this shopper’s opaque subject.');\n  saved.idempotencyKey = randomUUID();\n  saved.payload = { personalAssetId: saved.personalAssetId, productAssetId: saved.productAssetId };\n  const job = await api.createJob(saved.payload, saved.idempotencyKey);\n  saved.jobId = job.id;\n  console.log(`4. Job accepted: ${job.status}. Poll this job; do not submit another.`);\n  const done = await api.waitForJob(saved.jobId, { intervalMs: 50, onStatus: status => console.log(`   Status: ${status}`) });\n  const result = await fetch(done.result.url, { redirect: 'error', signal: AbortSignal.timeout(5000) }); // No API headers.\n  if (!result.ok) throw new Error('Could not read simulated result.');\n  const imageBytes = new Uint8Array(await result.arrayBuffer());\n  console.log(`5. Result retrieved (${imageBytes.length} bytes). simulated=${done.simulated}.`);\n  console.log('   This is a one-pixel placeholder, NOT an AI try-on or evidence of quality/latency.');\n} catch (error) {\n  if (failure && error.code === 'generation_failed') console.log(`Handled expected failure: ${error.message}`);\n  else { console.error(`Example stopped: ${error.name}${error.code ? ` (${error.code})` : ''}. No automatic retry.`); process.exitCode = 1; }\n} finally {\n  await mock.close();\n  console.log('\\nRegister Partner API interest: https://studio.v3lox.com/#contact (mention Partner API / DressMe)');\n}\n",
+          "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/demo.mjs",
+          "sha256": "362afc1447a543e87f87ae36c81228a41a8c76bcd3952bcc22deda61894a6fec"
+        },
+        "productionGuidance": {
+          "id": "getting-started",
+          "title": "Partner access and getting started",
+          "text": "# From trying DressMe to building with it\n\n## 1. Try the hosted integration\n\n[Demo](https://studio.v3lox.com/partners/demo/demo) ·\n[Demo dashboard & SDK download](https://studio.v3lox.com/partners/demo/admin)\n\nThese are the intended public URLs; the hosting release is pending. Check the\nroot README for launch status. No visitor API key will be required for the hosted\ndemo. Use only photos and garment images you have permission to process.\n\n## 2. Inspect the exact implementation\n\nThe public pages use `web/`, `src/demo-server.mjs`, `src/queue.mjs` and\n`sdks/javascript/`. The ZIP is assembled by `src/downloads.mjs` from fixed public\npaths. There is no hidden credential inside the download. ZIP file contents match\nthe corresponding GitHub files from that deployed source version.\n\nWith Node.js 22+, run `npm run preview`, open the printed URL, and follow\n**Dashboard & SDKs**. It works offline apart from external documentation links.\nThe preview explicitly disables generation; `npm run demo:mock` is a separate\ncommand demonstrating the API flow with artificial local responses.\n\n## 3. Get your own real access\n\n[Apply to Velox](https://studio.v3lox.com/#contact), mentioning Partner API / DressMe.\nAfter review, Velox supplies private configuration for your own integration.\nSave it as `partner.config.json`, which is ignored by Git, then run `npm start`.\nDo not use `demo` as your own identity unless Velox explicitly assigned it to you.\nThe public template's invalid key cannot call the real API.\n\n## 4. Put the SDK on your backend\n\n```js\nimport { VeloxDressMe } from './sdks/javascript/index.mjs';\n\nconst api = new VeloxDressMe({\n  baseUrl: process.env.VELOX_API_BASE_URL,\n  clientId: process.env.VELOX_CLIENT_ID,\n  integrationKey: process.env.VELOX_APPLICATION_KEY,\n  subject: authenticatedShopper.opaqueId,\n  autoRefresh: false\n});\nconst identity = await api.applicationInfo();\n// Check the assigned clientId and environment before uploading or generating.\n```\n\n`authenticatedShopper` comes from your server's verified session, not a browser\nparameter. Never expose `VELOX_APPLICATION_KEY` in frontend code. Read the\n[walkthrough](../WALKTHROUGH.md) before uploads: save provisional and completed\nasset IDs, persist the exact payload and idempotency key, then save the accepted\njob ID. On uncertain submission, reconcile rather than automatically retry.\n\n## 5. Adapt, test, then launch\n\nThe SDK is MIT licensed. Your application controls identity, consent, retention,\nspending and operational recovery. The demo's single queue is an example, not a\nrule imposed on every partner. Keep Development and Production separate. Arrange\nproduction access and acceptance with Velox before exposing your own paid workflow.\n",
+          "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GETTING_STARTED.md",
+          "sha256": "a72418b25d8f1de62904b3945e6b844655525bc69f6d3ed8c6e1c813ce3316f8"
+        }
+      }
+    },
+    {
+      "prompt": "Show the accompanying TypeScript declarations.",
+      "tool": "get_integration_example",
+      "arguments": {
+        "language": "typescript"
+      },
+      "elapsedMs": 7,
+      "isError": false,
+      "output": {
+        "language": "typescript",
+        "simulated": true,
+        "repository": "https://github.com/Velox-XR/trifit-partner-api-example",
+        "setup": [
+          "git clone https://github.com/Velox-XR/trifit-partner-api-example.git",
+          "cd trifit-partner-api-example",
+          "node demo.mjs"
+        ],
+        "example": {
+          "id": "offline-example",
+          "title": "Runnable Node.js mock integration",
+          "text": "import { randomUUID } from 'node:crypto';\nimport { DressMeClient } from './src/client.mjs';\nimport { DUMMY, PLACEHOLDER, startMockApi } from './src/mock-api.mjs';\n\nconst failure = process.argv.includes('--failure');\nconst mock = await startMockApi({ failure });\ntry {\n  console.log('DressMe Partner API — LOCAL SIMULATION ONLY');\n  console.log('Dummy credentials. Placeholder images. No Velox/cloud calls or generation charges.\\n');\n  const api = new DressMeClient({ baseUrl: mock.baseUrl, ...DUMMY });\n  await api.verifyEnvironment('local-mock');\n  console.log('1. Backend connection and expected environment verified.');\n  // In this throwaway simulation, IDs live in memory. Persist them in your database in a real integration.\n  const saved = {};\n  const image = new Blob([PLACEHOLDER], { type: 'image/png' });\n  const product = await api.upload(image, { role: 'product', fileName: 'dummy-product.png', onReserved: id => { saved.productUploadId = id; } });\n  saved.productAssetId = product.id; // Completion may return a deduplicated catalogue ID.\n  console.log('2. Product uploaded and completed. Reuse its final asset ID for later shoppers.');\n  const personal = await api.upload(image, { role: 'personal', fileName: 'dummy-person.png', onReserved: id => { saved.personalUploadId = id; } });\n  saved.personalAssetId = personal.id;\n  console.log('3. Personal image uploaded under this shopper’s opaque subject.');\n  saved.idempotencyKey = randomUUID();\n  saved.payload = { personalAssetId: saved.personalAssetId, productAssetId: saved.productAssetId };\n  const job = await api.createJob(saved.payload, saved.idempotencyKey);\n  saved.jobId = job.id;\n  console.log(`4. Job accepted: ${job.status}. Poll this job; do not submit another.`);\n  const done = await api.waitForJob(saved.jobId, { intervalMs: 50, onStatus: status => console.log(`   Status: ${status}`) });\n  const result = await fetch(done.result.url, { redirect: 'error', signal: AbortSignal.timeout(5000) }); // No API headers.\n  if (!result.ok) throw new Error('Could not read simulated result.');\n  const imageBytes = new Uint8Array(await result.arrayBuffer());\n  console.log(`5. Result retrieved (${imageBytes.length} bytes). simulated=${done.simulated}.`);\n  console.log('   This is a one-pixel placeholder, NOT an AI try-on or evidence of quality/latency.');\n} catch (error) {\n  if (failure && error.code === 'generation_failed') console.log(`Handled expected failure: ${error.message}`);\n  else { console.error(`Example stopped: ${error.name}${error.code ? ` (${error.code})` : ''}. No automatic retry.`); process.exitCode = 1; }\n} finally {\n  await mock.close();\n  console.log('\\nRegister Partner API interest: https://studio.v3lox.com/#contact (mention Partner API / DressMe)');\n}\n",
+          "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/demo.mjs",
+          "sha256": "362afc1447a543e87f87ae36c81228a41a8c76bcd3952bcc22deda61894a6fec"
+        },
+        "declarations": {
+          "id": "typescript-types",
+          "title": "TypeScript API declarations",
+          "text": "export type AssetRole = 'personal' | 'product' | 'result';\nexport interface ProductPreparation {status:'not_scheduled'|'queued'|'preparing'|'ready'|'unavailable'|'failed'|'simulated'|'not_required'; updatedAt?:string; operationId?:string; error?:{code:string;message:string}; evidence?:{provider:string|null;model:string|null;cacheHit:boolean;cacheScope:'shared'|'worker-local'}}\nexport interface Asset { id: string; role: AssetRole; status: 'pending' | 'ready' | 'deleted'; contentType: string; sizeBytes: number; url?: string; expiresAt?: string; retentionExpiresAt?:string; deletedAt?:string; purgeState?:string; fileName?:string; contentHash?:string; preparation?:ProductPreparation }\nexport interface ImageUploadOptions {fileName?:string;signal?:AbortSignal;onAssetCreated?:(assetId:string)=>void|Promise<void>}\nexport interface AccountLink { id: string; externalUserId: string; email: string; veloxUserId: string; status: \"linked\" | \"unlinked\" | \"relink_required\"; linkedAt: string; lastLoginAt?: string; unlinkedAt?: string | null }\nexport interface Session { link?: AccountLink; accessToken: string; refreshToken: string; tokenType: 'Bearer'; expiresIn: number; user: { id: string; email: string } }\nexport interface UploadTarget { assetId: string; uploadUrl: string; uploadHeaders: Record<string,string>; expiresAt: string }\nexport interface RequestContext {runId?:string;scenarioId?:string;requestId?:string}\n/** Generation routes are assigned by Velox Admin, never selected by a caller. */\nexport interface GenerationOptions {context?:RequestContext;notificationEndpointId?:string}\nexport interface GenerationJob { id: string; kind: 'dressme' | 'animateme'; status: 'queued' | 'running' | 'succeeded' | 'failed'; createdAt: string; environment?:string; context?:RequestContext; timings?:Record<string,string>; simulated: boolean; result?: Asset; error?: { code: string; message: string } }\nexport interface DressMeJob extends GenerationJob { kind: 'dressme' }\nexport interface AnimateMeJob extends GenerationJob { kind: 'animateme' }\nexport interface PollOptions<T extends GenerationJob = GenerationJob> { timeoutMs?: number; intervalMs?: number; signal?: AbortSignal; onStatus?: (job: T) => void | Promise<void> }\nexport class VeloxError extends Error { status: number; code: string; requestId?: string; retryAfter?: string }\nexport class VeloxDressMe {\n  constructor(options: { baseUrl: string; clientId: string; fetch?: typeof fetch; timeoutMs?: number; autoRefresh?: boolean; serverToken?: string; integrationKey?: string; subject?: string });\n  applicationInfo(): Promise<{kind:'application'; id:string; scopes:string[]; clientId:string; environment:string}>;\n  notificationEndpoints():Promise<{environment:string;revision:number;endpoints:Array<{id:string;url:string;keyId:string;enabled:boolean;revision:number;managedBy:'partner'|'velox'}>;deliveries:Array<{eventId:string;jobId:string;endpointId:string;status:string;attempts:number;lastAttempt:{at:string;outcome:string;httpStatus?:number;error?:string}|null;deliveredAt:string|null}>}>;\n  registerNotificationEndpoint(url:string):Promise<{id:string;url:string;keyId:string;secret:string}>;\n  setNotificationEndpointState(id:string,input:{enabled:boolean;expectedRevision:number}):Promise<{updated:true}>;\n  importProductImage(url:string, options?:{signal?:AbortSignal}):Promise<Asset>;\n  deleteAsset(id:string):Promise<{id:string;status:'deleted';purgeState:string}>;\n  deleteSubject():Promise<{status:'deleted';assets:number;physicalPurge:'pending'}>;\n  profiles():Promise<{environment:string;configurationRevision:number;routingRevision:number;dressme:Array<{id:string;label:string;default:boolean;selectable:boolean}>;animateme:Array<{id:string;label:string;default:boolean;selectable:boolean}>;note:string}>;\n  overview(options?:{runId?:string}):Promise<Record<string,unknown>>;\n  session: Session | null;\n  createLinkChallenge(externalUserId: string, purpose?: 'link' | 'login'): Promise<{challengeId: string; nonce: string; expiresIn: number}>;\n  linkAccount(input: {challengeId: string; idToken: string; consent: true}): Promise<Session>;\n  loginLinkedAccount(input: {challengeId: string; idToken: string}): Promise<Session>;\n  linkedAccount(): Promise<AccountLink>;\n  unlinkAccount(linkId: string): Promise<{unlinked: true}>;\n  requestCode(email: string): Promise<{ challengeId: string; expiresIn: number }>;\n  verifyCode(challengeId: string, code: string): Promise<Session>;\n  refresh(): Promise<Session>;\n  logout(): Promise<void>;\n  me(): Promise<{ id: string; email: string; clientId: string; environment: string }>;\n  createImageUpload(input: { role: 'personal' | 'product'; fileName: string; contentType: string; sizeBytes: number }, options?: { signal?: AbortSignal }): Promise<UploadTarget>;\n  completeImageUpload(assetId: string, options?: { signal?: AbortSignal }): Promise<Asset>;\n  uploadImage(file: Blob, options: ImageUploadOptions & {role:'personal'|'product'}): Promise<Asset>;\n  uploadPersonalPhoto(file: Blob, options?: ImageUploadOptions): Promise<Asset>;\n  uploadProductImage(file: Blob, options?: ImageUploadOptions): Promise<Asset>;\n  getAsset(id: string): Promise<Asset>;\n  createDressMeJob(input: { personalAssetId: string; productAssetId: string } & GenerationOptions, options?: { idempotencyKey?: string; signal?: AbortSignal }): Promise<DressMeJob>;\n  getDressMeJob(id: string, options?: { signal?: AbortSignal }): Promise<DressMeJob>;\n  waitForDressMe(id: string, options?: PollOptions<DressMeJob>): Promise<DressMeJob>;\n  createAnimateMeJob(input: { sourceAssetId: string } & GenerationOptions, options?: { idempotencyKey?: string; signal?: AbortSignal }): Promise<AnimateMeJob>;\n  getAnimateMeJob(id: string, options?: { signal?: AbortSignal }): Promise<AnimateMeJob>;\n  waitForAnimateMe(id: string, options?: PollOptions<AnimateMeJob>): Promise<AnimateMeJob>;\n  waitForJob(kind: 'dressme' | 'animateme', id: string, options?: PollOptions): Promise<GenerationJob>;\n}\n",
+          "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/sdks/javascript/index.d.ts",
+          "sha256": "f85a842f069050bda170a83e16d8668cbd875be502471a3789ac295fbf9ed8cb"
+        },
+        "productionGuidance": {
+          "id": "getting-started",
+          "title": "Partner access and getting started",
+          "text": "# From trying DressMe to building with it\n\n## 1. Try the hosted integration\n\n[Demo](https://studio.v3lox.com/partners/demo/demo) ·\n[Demo dashboard & SDK download](https://studio.v3lox.com/partners/demo/admin)\n\nThese are the intended public URLs; the hosting release is pending. Check the\nroot README for launch status. No visitor API key will be required for the hosted\ndemo. Use only photos and garment images you have permission to process.\n\n## 2. Inspect the exact implementation\n\nThe public pages use `web/`, `src/demo-server.mjs`, `src/queue.mjs` and\n`sdks/javascript/`. The ZIP is assembled by `src/downloads.mjs` from fixed public\npaths. There is no hidden credential inside the download. ZIP file contents match\nthe corresponding GitHub files from that deployed source version.\n\nWith Node.js 22+, run `npm run preview`, open the printed URL, and follow\n**Dashboard & SDKs**. It works offline apart from external documentation links.\nThe preview explicitly disables generation; `npm run demo:mock` is a separate\ncommand demonstrating the API flow with artificial local responses.\n\n## 3. Get your own real access\n\n[Apply to Velox](https://studio.v3lox.com/#contact), mentioning Partner API / DressMe.\nAfter review, Velox supplies private configuration for your own integration.\nSave it as `partner.config.json`, which is ignored by Git, then run `npm start`.\nDo not use `demo` as your own identity unless Velox explicitly assigned it to you.\nThe public template's invalid key cannot call the real API.\n\n## 4. Put the SDK on your backend\n\n```js\nimport { VeloxDressMe } from './sdks/javascript/index.mjs';\n\nconst api = new VeloxDressMe({\n  baseUrl: process.env.VELOX_API_BASE_URL,\n  clientId: process.env.VELOX_CLIENT_ID,\n  integrationKey: process.env.VELOX_APPLICATION_KEY,\n  subject: authenticatedShopper.opaqueId,\n  autoRefresh: false\n});\nconst identity = await api.applicationInfo();\n// Check the assigned clientId and environment before uploading or generating.\n```\n\n`authenticatedShopper` comes from your server's verified session, not a browser\nparameter. Never expose `VELOX_APPLICATION_KEY` in frontend code. Read the\n[walkthrough](../WALKTHROUGH.md) before uploads: save provisional and completed\nasset IDs, persist the exact payload and idempotency key, then save the accepted\njob ID. On uncertain submission, reconcile rather than automatically retry.\n\n## 5. Adapt, test, then launch\n\nThe SDK is MIT licensed. Your application controls identity, consent, retention,\nspending and operational recovery. The demo's single queue is an example, not a\nrule imposed on every partner. Keep Development and Production separate. Arrange\nproduction access and acceptance with Velox before exposing your own paid workflow.\n",
+          "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GETTING_STARTED.md",
+          "sha256": "a72418b25d8f1de62904b3945e6b844655525bc69f6d3ed8c6e1c813ce3316f8"
+        }
+      }
+    },
+    {
+      "prompt": "How can my company apply for Velox Partner API access?",
+      "tool": "get_partner_access_requirements",
+      "arguments": {},
+      "elapsedMs": 10,
+      "isError": false,
+      "output": {
+        "applicationUrl": "https://studio.v3lox.com/#contact",
+        "applicationTopic": "Partner API / DressMe",
+        "provisioning": "Manual Velox approval and a separately assigned client, environment and scoped application key are required for real generation.",
+        "shopperAuthentication": "Backend application access can use your verified server session and opaque shopper subject without a Velox email challenge. Legacy session credentials have different permissions.",
+        "allowance": "Confirm the allowance and commercial terms assigned to your integration with Velox; no universal numeric allowance is published here.",
+        "credentials": "Keep the application key on your backend. Never submit keys or personal photos to this documentation MCP.",
+        "source": {
+          "id": "getting-started",
+          "title": "Partner access and getting started",
+          "text": "# From trying DressMe to building with it\n\n## 1. Try the hosted integration\n\n[Demo](https://studio.v3lox.com/partners/demo/demo) ·\n[Demo dashboard & SDK download](https://studio.v3lox.com/partners/demo/admin)\n\nThese are the intended public URLs; the hosting release is pending. Check the\nroot README for launch status. No visitor API key will be required for the hosted\ndemo. Use only photos and garment images you have permission to process.\n\n## 2. Inspect the exact implementation\n\nThe public pages use `web/`, `src/demo-server.mjs`, `src/queue.mjs` and\n`sdks/javascript/`. The ZIP is assembled by `src/downloads.mjs` from fixed public\npaths. There is no hidden credential inside the download. ZIP file contents match\nthe corresponding GitHub files from that deployed source version.\n\nWith Node.js 22+, run `npm run preview`, open the printed URL, and follow\n**Dashboard & SDKs**. It works offline apart from external documentation links.\nThe preview explicitly disables generation; `npm run demo:mock` is a separate\ncommand demonstrating the API flow with artificial local responses.\n\n## 3. Get your own real access\n\n[Apply to Velox](https://studio.v3lox.com/#contact), mentioning Partner API / DressMe.\nAfter review, Velox supplies private configuration for your own integration.\nSave it as `partner.config.json`, which is ignored by Git, then run `npm start`.\nDo not use `demo` as your own identity unless Velox explicitly assigned it to you.\nThe public template's invalid key cannot call the real API.\n\n## 4. Put the SDK on your backend\n\n```js\nimport { VeloxDressMe } from './sdks/javascript/index.mjs';\n\nconst api = new VeloxDressMe({\n  baseUrl: process.env.VELOX_API_BASE_URL,\n  clientId: process.env.VELOX_CLIENT_ID,\n  integrationKey: process.env.VELOX_APPLICATION_KEY,\n  subject: authenticatedShopper.opaqueId,\n  autoRefresh: false\n});\nconst identity = await api.applicationInfo();\n// Check the assigned clientId and environment before uploading or generating.\n```\n\n`authenticatedShopper` comes from your server's verified session, not a browser\nparameter. Never expose `VELOX_APPLICATION_KEY` in frontend code. Read the\n[walkthrough](../WALKTHROUGH.md) before uploads: save provisional and completed\nasset IDs, persist the exact payload and idempotency key, then save the accepted\njob ID. On uncertain submission, reconcile rather than automatically retry.\n\n## 5. Adapt, test, then launch\n\nThe SDK is MIT licensed. Your application controls identity, consent, retention,\nspending and operational recovery. The demo's single queue is an example, not a\nrule imposed on every partner. Keep Development and Production separate. Arrange\nproduction access and acceptance with Velox before exposing your own paid workflow.\n",
+          "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GETTING_STARTED.md",
+          "sha256": "a72418b25d8f1de62904b3945e6b844655525bc69f6d3ed8c6e1c813ce3316f8"
+        },
+        "sdkReference": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/sdks/javascript/README.md"
+      }
+    },
+    {
+      "prompt": "My job submission timed out. How do I recover without duplicating it?",
+      "tool": "search",
+      "arguments": {
+        "query": "timeout idempotency recovery"
+      },
+      "elapsedMs": 9,
+      "isError": false,
+      "output": {
+        "results": [
+          {
+            "id": "walkthrough",
+            "title": "Backend integration walkthrough and recovery",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/WALKTHROUGH.md"
+          },
+          {
+            "id": "sdk-reference",
+            "title": "JavaScript SDK, authentication, uploads, jobs and polling",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/sdks/javascript/README.md"
+          },
+          {
+            "id": "getting-started",
+            "title": "Partner access and getting started",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GETTING_STARTED.md"
+          },
+          {
+            "id": "offline-example",
+            "title": "Runnable Node.js mock integration",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/demo.mjs"
+          },
+          {
+            "id": "typescript-types",
+            "title": "TypeScript API declarations",
+            "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/sdks/javascript/index.d.ts"
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Read the recovery walkthrough.",
+      "tool": "fetch",
+      "arguments": {
+        "id": "walkthrough"
+      },
+      "elapsedMs": 6,
+      "isError": false,
+      "output": {
+        "id": "walkthrough",
+        "title": "Backend integration walkthrough and recovery",
+        "text": "# From partner application to a real DressMe demo integration\n\nThe browser demo and public dashboard use the included\n[JavaScript SDK with TypeScript declarations](sdks/javascript/README.md), under\nMIT. Download the complete public source from the dashboard, or inspect it here.\nSee [Getting started](docs/GETTING_STARTED.md) for the quickest path.\n\n[Register interest](https://studio.v3lox.com/#contact) · [Quick start](README.md)\n\nMention **Partner API / DressMe** in the existing contact form. The dedicated\napplication page is awaiting its website release; see the [README](README.md).\n\n## Before running real requests\n\nThe public configuration has an invalid key. Apply first. After review and approval,\nVelox creates a unique integration and emails private, environment-specific\nconfiguration files. Save the supplied `partner.config.json` locally, outside Git.\n`npm start` starts the real evaluator only after valid configuration and an exact\n`/me` identity/environment check. `npm run preview` and `npm run demo:mock` are\nseparate, explicit no-generation modes.\n\nThe intended public Velox demo uses its own dedicated partner integration. Visitors\ndo not apply individually just to try that hosted demo and never see its key.\nClients integrating into their own products apply for separate access. The hosted\ndemo has not been launched by publishing this repository.\n\n## 1. Understand the boundary\n\n```text\nShopper's browser → your authenticated backend → Velox Partner API\n                          ↓\n                 your integration records\n```\n\nYour backend authenticates your shopper, binds an opaque subject from that session,\nkeeps the application key secret and enforces your own usage limits. The browser\nmust not supply another user's subject, asset ID or job ID without your backend\nchecking ownership. The real evaluator assigns an opaque, server-derived subject\nto each HttpOnly visitor cookie; it never accepts a browser-supplied subject. Cookie\nidentity is not production authentication or bot protection. Only the optional\noffline mock hardcodes a fictional shopper.\n\nApproved partners are assigned a client ID, environment-specific API base URL and\nscoped `va_` application credential. This is the **application** credential flow,\nnot the older email-code/user-token flow. A client ID alone is not authentication.\nNo Velox consumer account is created by the application flow.\n\nRequests from your backend use:\n\n```http\nX-Velox-Client-Id: YOUR_ASSIGNED_CLIENT_ID\nX-Velox-Integration-Key: va_YOUR_BACKEND_ONLY_APPLICATION_KEY\nX-Velox-Subject: YOUR_SERVER_ASSIGNED_OPAQUE_SHOPPER_ID\n```\n\nThose are placeholders, not credentials. Subjects contain 1–128 letters, digits,\nunderscores or hyphens. Use opaque references, not email addresses. Product assets\nbelong to your application's catalogue; personal images, jobs and results are\nscoped to the shopper subject. Keep Development and Production records separate.\n\n## 2. Confirm the environment before any upload or job\n\n`GET /me` returns application metadata, including `kind` and `environment`.\nThe example checks `kind === 'application'` and the exact expected environment.\nIt stops on a mismatch and never falls back to another environment.\n\nThe mock uses `local-mock`. For real access, use **only** the base URL and expected\nenvironment supplied by Velox. Request paths below are relative to that base URL;\ndo not append an extra `/v1`. Real Development generation may also incur costs.\n\n## 3. Upload and complete the two inputs\n\nReserve an asset with `POST /assets/upload-url`:\n\n```json\n{\n  \"role\": \"product\",\n  \"fileName\": \"blue-shirt.png\",\n  \"contentType\": \"image/png\",\n  \"sizeBytes\": 12345\n}\n```\n\nUse `personal` for the shopper photo. Production inputs must meet the current\nonboarding image limits; the current contract accepts single-frame PNG/JPEG/WebP,\nup to 5 MiB, 8192 pixels per dimension and 16 megapixels. The mock does not validate\nimage dimensions, permissions, content moderation or generation suitability.\n\n1. Save the returned `assetId` before transferring bytes (`onReserved` in the client).\n2. `PUT` the binary file to the returned `uploadUrl` using **only** `uploadHeaders`.\n   Do not forward any API key, subject or bearer token. Do not follow redirects.\n3. `POST /assets/{assetId}/complete` with `{}`.\n4. Save the **completed response's** asset ID. For catalogue deduplication it may\n   differ from the provisional ID. Reuse the final product ID across shoppers.\n\nSave IDs, not expiring upload/read URLs. After an ambiguous upload or completion\nresponse, reconcile the reserved asset with `GET /assets/{assetId}` or completion\nbefore reserving again. The small mock implements only the successful upload path.\nReal `status: ready` proves upload completion, not prepared cache, output quality\nor latency. Product preparation is separate (`preparation.status`); simulation\ndoes not prove it.\n\n## 4. Submit exactly one job for the intended action\n\nPersist a UUID idempotency key **and the exact payload** before making the request:\n\n```http\nPOST /dressme/jobs\nIdempotency-Key: YOUR_SAVED_UUID\nContent-Type: application/json\n```\n\n```json\n{\n  \"personalAssetId\": \"COMPLETED_PERSONAL_ASSET_ID\",\n  \"productAssetId\": \"COMPLETED_PRODUCT_ASSET_ID\"\n}\n```\n\nPersist the accepted `job.id`. No image bytes, provider credentials or route/model\nselection belong in this request. An uncertain network response does not mean the\njob failed. Reconcile using the **same key and payload** within the API's agreed\nidempotency window. Never generate a new key automatically to repeat an uncertain\nrequest; escalate if reconciliation remains uncertain.\n\nThe real evaluator's `src/queue.mjs` persists receipts before dispatch. Its shared\nqueue starts no more than one job every **10 seconds**, with one job active until a\ndefinitive terminal status is read. A queued Partner API job still occupies this\nslot. Waiting requests are not submitted to DressMe until admitted. The browser\ncannot override timing. `queueGapSeconds` is private operator configuration.\n\nUploads precede queue admission to generation; their temporary IDs and final asset\nIDs are recorded separately. One pending request per visitor and a bounded backlog\nprotect the local evaluator. There is no fixed total request allowance, but no\nupstream quota or commercial permission is changed by this code.\n\nThe journal and exclusive owner lock are single-process safeguards. An interrupted\npaid POST enters `needs_review`; the whole queue stops rather than replaying it or\nreleasing an uncertain active slot. An upstream `submission_unconfirmed` failure\nalso holds the queue. Polling errors hold it for review, not a second paid POST.\nAn accepted job survives a graceful restart and is polled by saved job ID. A crash\nleaves a lock requiring operator reconciliation; never discard it or the journal\nto resume blindly. See the README's recovery and public-hosting limitations.\n\n`demo.mjs` uses memory only because it is an explicitly selected disposable mock.\nYour production hosted service needs durable storage, exclusive dispatch ownership\nand agreed operator recovery. Velox's Studio host adapter uses its existing\ndatabase single-writer ownership proof and durable journal with this same queue\nstate machine; that private deployment adapter is not required to run this public\nlocal example. A UI timeout must never create another job.\n\n## 5. Read the result\n\nPoll `GET /dressme/jobs/{jobId}` with a bounded deadline. States are `queued`,\n`running`, `succeeded` or `failed`. A succeeded response contains:\n\n```json\n{\n  \"id\": \"JOB_ID\",\n  \"status\": \"succeeded\",\n  \"simulated\": true,\n  \"result\": {\n    \"id\": \"RESULT_ASSET_ID\",\n    \"contentType\": \"image/png\",\n    \"url\": \"TEMPORARY_READ_URL\",\n    \"expiresAt\": \"EXPIRY_TIMESTAMP\"\n  }\n}\n```\n\n`simulated: true` explicitly means no real AI generation. The local fixture returns\na one-pixel PNG. Its timings are deliberately artificial and prove no latency SLA.\n\nRetrieve `result.url` without API headers. Only show it to the authorized shopper;\nsigned URLs grant temporary access and must not go into public logs, analytics or\nshared repositories. Store `result.id`; use `GET /assets/{result.id}` for a renewed\nURL when needed. This renewal endpoint is not implemented by the small mock.\n\nPolling is sufficient for this example. The full API can support signed webhooks\nunder separately configured access. Do not invent a callback URL or signing key.\n\n## 6. Handle errors deliberately\n\n| Outcome | What your integration should do |\n| --- | --- |\n| 401 / 403 | Check assigned credential and scopes; do not loop or switch environments. |\n| 404 | Treat as missing or inaccessible; never try another shopper's identity. |\n| 409 | Reconcile state or idempotency conflict; do not change payload under a saved key. |\n| 429 | Respect `Retry-After`, queue/bound traffic and keep the same submission identity. |\n| Network error / timeout / 5xx | Outcome may be uncertain. Keep receipts and reconcile; no automatic paid replay. |\n| Terminal job `failed` | Show a useful failure; a deliberate new generation is a separate action, not an automatic retry. |\n\nThe client surfaces status, safe error code, request ID and retry-after metadata.\nDo not log full headers, keys, signed URLs or shopper data. The demo uses no\nautomatic retries; `npm run demo:failure` shows the failed-job path.\n\nThe real browser evaluator gives generic error messages rather than exposing raw\nupstream responses. After an uncertain browser submission, retain its request\nreference and reload to read it; do not send a new request. Result URLs are returned\nonly to the owning visitor session. The real queue refuses simulated API responses\nrather than presenting placeholders as generated results.\n\n## Production checklist — not implemented by this teaching example\n\n- Receive explicit access and commercial approval; verify exact environment and scopes.\n- Protect backend endpoints with your own session authentication, authorization,\n  CSRF protection, rate limits and spending controls. Never accept a browser-chosen subject.\n- Store keys in your secret manager and plan rotation/revocation.\n- Store upload receipts, final catalogue IDs, job IDs and idempotency receipts durably.\n- Obtain image rights/consent and agree retention, deletion and privacy responsibilities.\n- Handle expiring links, 429s, uncertain responses and restarts without duplicate paid jobs.\n- Review real output quality and operational acceptance with Velox before launch.\n- Obtain separately approved production credentials; do not copy Development data.\n\nThe example contains no private client names, commercial arrangements, credentials,\ninfrastructure inventory, admin access or customer media.\n",
+        "url": "https://github.com/Velox-XR/trifit-partner-api-example/blob/main/WALKTHROUGH.md",
+        "sha256": "3480ca8fdc6fd3d8fc89558fb7346ddc93ca13ac714ec15b66217935f96dc01a"
+      }
+    },
+    {
+      "tool": "fetch",
+      "arguments": {
+        "id": "../../.env"
+      },
+      "isError": true,
+      "output": [
+        {
+          "type": "text",
+          "text": "MCP error -32602: Input validation error: Invalid arguments for tool fetch: Invalid option: expected one of \"getting-started\"|\"sdk-catalog\"|\"sdk-reference\"|\"walkthrough\"|\"hosting\"|\"offline-example\"|\"typescript-types\"|\"security\" at id"
+        }
+      ]
+    },
+    {
+      "tool": "get_integration_example",
+      "arguments": {
+        "language": "java"
+      },
+      "isError": true,
+      "output": [
+        {
+          "type": "text",
+          "text": "MCP error -32602: Input validation error: Invalid arguments for tool get_integration_example: Invalid option: expected one of \"javascript\"|\"typescript\" at language"
+        }
+      ]
+    },
+    {
+      "tool": "search",
+      "arguments": {
+        "query": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "isError": true,
+      "output": [
+        {
+          "type": "text",
+          "text": "MCP error -32602: Input validation error: Invalid arguments for tool search: Too big: expected string to have <=200 characters at query"
+        }
+      ]
+    }
+  ],
+  "buildCommitSha": "d6ba1a2c3e72cb414daccbf2b59a9698e75c9910",
+  "testMode": "Local official MCP client against the published plugin server",
+  "tools": [
+    {
+      "name": "search",
+      "title": "Search Velox developer documentation",
+      "description": "Find official Velox DressMe virtual try-on integration documentation, authentication, SDK languages, upload, polling and recovery guidance. Searches only the deployed public documentation corpus.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "url"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ]
+      }
+    },
+    {
+      "name": "fetch",
+      "title": "Read a Velox developer document",
+      "description": "Read the full public document for an ID returned by search, with an official source URL and deployed content checksum. Does not fetch arbitrary URLs or private files.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "getting-started",
+              "sdk-catalog",
+              "sdk-reference",
+              "walkthrough",
+              "hosting",
+              "offline-example",
+              "typescript-types",
+              "security"
+            ]
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "text",
+          "url",
+          "sha256"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_integration_example",
+      "title": "Get a Velox SDK integration example",
+      "description": "Retrieve the runnable offline JavaScript/Node.js integration example or accompanying TypeScript declarations. Other language SDKs are not released. The example uses dummy local responses, with no cloud calls or generation charges.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "javascript",
+              "typescript"
+            ]
+          }
+        },
+        "required": [
+          "language"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "simulated": {
+            "type": "boolean"
+          },
+          "repository": {
+            "type": "string",
+            "format": "uri"
+          },
+          "setup": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "example": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "text",
+              "url",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "declarations": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "text",
+              "url",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "productionGuidance": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "text",
+              "url",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "language",
+          "simulated",
+          "repository",
+          "setup",
+          "example",
+          "productionGuidance"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_partner_access_requirements",
+      "title": "Get Velox partner access requirements",
+      "description": "Explain how to apply for manually provisioned Velox Partner API access and keep the scoped application key on a backend. Does not create accounts, issue keys, send an application or promise a universal free allowance.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "applicationTopic": {
+            "type": "string"
+          },
+          "provisioning": {
+            "type": "string"
+          },
+          "shopperAuthentication": {
+            "type": "string"
+          },
+          "allowance": {
+            "type": "string"
+          },
+          "credentials": {
+            "type": "string"
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "text",
+              "url",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "sdkReference": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "applicationUrl",
+          "applicationTopic",
+          "provisioning",
+          "shopperAuthentication",
+          "allowance",
+          "credentials",
+          "source",
+          "sdkReference"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "noauth"
+          }
+        ]
+      }
+    }
+  ],
+  "negativeCapabilities": {
+    "canIssueKeys": false,
+    "canCompareProviders": false
+  },
+  "challengeVerified": false,
+  "passed": true
+}
