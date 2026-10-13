@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "velox-trifit-developer",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Integrate Velox DressMe virtual try-on with tested SDK examples and offline mocks.",
   "author": {
     "name": "Velox XR",
@@ -97,7 +97,8 @@
               "expected_behavior": "Do not invent benchmark superiority or an unreleased Java SDK; describe only supported published material."
             }
           ]
-        }
+        },
+        "demo_recording_url": "https://raw.githubusercontent.com/Velox-XR/trifit-partner-api-example/main/docs/review/velox-trifit-developer-walkthrough.mp4"
       }
     }
   }
