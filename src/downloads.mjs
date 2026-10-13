@@ -13,7 +13,7 @@ export const publicFiles = Object.freeze([
   'sdks/javascript/package.json', 'sdks/javascript/README.md', 'sdks/javascript/LICENSE',
   'docs/GETTING_STARTED.md', 'docs/SDK_CATALOG.md', 'docs/HOSTING.md',
   'skills/velox-partner-api/SKILL.md', 'test/integration.test.mjs', 'test/queue.test.mjs',
-  'test/developer-hub.test.mjs', 'test/workspace.test.mjs'
+  'test/developer-hub.test.mjs', 'test/workspace.test.mjs', 'test/parallel-upload.test.mjs'
 ]);
 
 // Dependency-free ZIP32, stored entries. Inputs come only from the fixed allowlist.

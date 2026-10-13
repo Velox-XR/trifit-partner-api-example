@@ -84,21 +84,16 @@ export async function createDemoHandler({ queue, apiFor, sessionSecret = randomB
       if (req.method === 'POST' && path === '/api/requests') {
         if (req.headers.origin !== origin || !req.headers['content-type']?.startsWith('application/json')) throw new QueueError('Same-origin JSON requests only.', 403);
         if (uploads >= 2) throw new QueueError('Uploads are busy. Please try again shortly.', 429);
-        uploads++;
+        uploads += 2; // One pair overlaps two transfers; preserve the global two-upload bound.
         try {
           const data = await body(req);
           if (!uuid.test(data.id || '') || data.consent !== true) throw new QueueError('A request ID and image permission are required.', 400);
           const product = image(data.product), personal = image(data.personal);
           const fingerprint = createHash('sha256').update(JSON.stringify([data.product, data.personal])).digest('hex');
-          const status = await queue.accept({ id: data.id, owner, fingerprint }, async save => {
-            const completedProduct = await api.upload(product, { role: 'product', fileName: 'demo-product', onReserved: id => save('productUploadId', id) });
-            await save('productAssetId', completedProduct.id);
-            const completedPersonal = await api.upload(personal, { role: 'personal', fileName: 'demo-personal', onReserved: id => save('personalUploadId', id) });
-            await save('personalAssetId', completedPersonal.id);
-            return { personalAssetId: completedPersonal.id, productAssetId: completedProduct.id };
-          });
+          const status = await queue.accept({ id: data.id, owner, fingerprint },
+            save => api.uploadPair({ personal, product }, save));
           return send(202, status);
-        } finally { uploads--; }
+        } finally { uploads -= 2; }
       }
       const match = path.match(/^\/api\/requests\/([a-f0-9-]+)(\/result)?$/i);
       if (req.method === 'GET' && match) {

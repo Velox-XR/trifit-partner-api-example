@@ -24,7 +24,11 @@ request history and developer downloads only.
 The handler signs 48-hour visitor cookies, scopes them to the demo path, uses
 HttpOnly/SameSite=Strict/Secure on HTTPS, rejects wrong Host/Origin, bounds bodies
 to 14 MiB and permits at most two simultaneous input uploads. New session issuance
-is capped at 500/hour per single host process. The queue limits one pending request
+is capped at 500/hour per single host process. The personal and product transfers
+run concurrently within that two-upload bound. Both provisional and completed
+asset IDs are persisted; a failed transfer waits for its peer to settle before
+the request is marked failed. Neither upload nor generation is automatically
+replayed. The queue limits one pending request
 per visitor and 25 pending globally. These controls reduce accidental abuse; they
 are not strong bot authentication or a spend budget. Add approved ingress bot/rate
 controls and operational alerts before widening public use.
