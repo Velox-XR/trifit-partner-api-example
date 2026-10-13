@@ -1,11 +1,12 @@
-import { finalStates, reviewStates, blocksSubmission, statusLabel, statusMessage, progressStage, validateImage, safeResultUrl } from './workspace.mjs';
+import { finalStates, reviewStates, blocksSubmission, statusLabel, statusMessage, progressStage, prepareImage, safeResultUrl } from './workspace.mjs';
 
 const $ = selector => document.querySelector(selector);
 const form = $('#try-on'), submit = $('#submit'), status = $('#status');
 const base = new URL('./', location.href), storageKey = 'velox-demo-pending-request';
 const trays = { personal: [], product: [] }, selected = { personal: null, product: null };
 const previews = new Map(), records = new Map();
-let pending, configured = false, historyVerified = false, posting = false, pollTimer, polling = false;
+let pending, configured = false, historyVerified = false, posting = false, preparing = false, pollTimer, polling = false;
+const inputErrors = { personal: [], product: [] };
 let reviewId = null, reviewTab = 'result', resultUrl = null, resultError = '', reviewSequence = 0;
 try { pending = sessionStorage.getItem(storageKey); } catch { /* History remains the recovery source. */ }
 
@@ -27,10 +28,11 @@ function remember(id) {
   try { if (id) sessionStorage.setItem(storageKey, id); else sessionStorage.removeItem(storageKey); } catch { /* Read-only history recovers it after reload. */ }
 }
 function controls() {
-  submit.disabled = !configured || !historyVerified || posting || Boolean(pending) || !selected.personal || !selected.product;
-  submit.textContent = pending || posting ? 'Request in progress' : 'Create my DressMe look ↗';
-  $('#selection-hint').textContent = pending ? 'Finish or resolve the existing request before starting another.' : !configured ? 'You can explore the trays. Generation is not enabled.' : !historyVerified ? 'Confirming your existing requests before allowing a new one.' : !selected.personal || !selected.product ? 'Select one photo and one product to get started.' : 'One pair selected. A new generation starts only when you submit.';
+  submit.disabled = preparing || !configured || !historyVerified || posting || Boolean(pending) || !selected.personal || !selected.product;
+  submit.textContent = preparing ? 'Preparing your images…' : pending || posting ? 'Request in progress' : 'Create my DressMe look ↗';
+  $('#selection-hint').textContent = preparing ? 'Resizing locally in your browser. Your original files are unchanged.' : pending ? 'Finish or resolve the existing request before starting another.' : !configured ? 'You can explore the trays. Generation is not enabled.' : !historyVerified ? 'Confirming your existing requests before allowing a new one.' : !selected.personal || !selected.product ? 'Select one photo and one product to get started.' : 'One pair selected. A new generation starts only when you submit.';
   for (const role of ['personal', 'product']) {
+    $('#' + role + '-files').disabled = preparing || posting;
     const holder = $('#selected-' + role); holder.replaceChildren();
     if (selected[role]) {
       const img = node('img'); img.src = selected[role].url; img.alt = selected[role].file.name;
@@ -38,9 +40,23 @@ function controls() {
     } else holder.textContent = role === 'personal' ? 'Choose a photo above' : 'Choose a product above';
   }
 }
+function feedback(element, message, kind = 'info') {
+  element.dataset.state = kind;
+  element.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  element.textContent = message;
+}
+function showInputErrors(focus = false) {
+  const panel = $('#input-errors'), messages = Object.values(inputErrors).flat();
+  panel.replaceChildren(); panel.hidden = !messages.length;
+  if (!messages.length) return;
+  panel.append(node('strong', '', 'Some images could not be added.'));
+  const list = node('ul'); for (const message of messages) list.append(node('li', '', message)); panel.append(list);
+  panel.append(node('p', '', 'Nothing has been uploaded. Any images already in your trays are still available.'));
+  if (focus) { panel.focus(); panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+}
 function display(state) {
   records.set(state.id, { ...records.get(state.id), ...state });
-  status.textContent = statusMessage(state);
+  feedback(status, statusMessage(state), state.status === 'failed' || reviewStates.has(state.status) ? 'error' : 'info');
   $('#receipt').textContent = 'Your request reference: ' + state.id;
   $('#check-request').hidden = !pending;
   for (const step of document.querySelectorAll('[data-stage]')) {
@@ -79,23 +95,31 @@ function gallery(role) {
 for (const role of ['personal', 'product']) {
   const input = $('#' + role + '-files');
   input.addEventListener('change', async () => {
-    const files = [...input.files]; input.value = ''; input.disabled = true;
-    const messages = []; let added = 0;
-    for (const file of files) {
-      let url;
-      try {
-        if (trays[role].length >= 8) throw new Error('The tray holds 8 images. Remove a local preview before adding more.');
-        validateImage(file);
-        url = URL.createObjectURL(file);
-        const decoded = new Image(); decoded.src = url;
-        await decoded.decode();
-        if (!decoded.naturalWidth || decoded.naturalWidth * decoded.naturalHeight > 16800000) throw new Error('Choose an image of at most 16.8 megapixels.');
-        const item = { file, url }; trays[role].push(item); selected[role] = item; added++;
-      } catch (error) { if (url) URL.revokeObjectURL(url); messages.push(file.name + ': ' + error.message); }
+    if (preparing || posting) return;
+    const files = [...input.files]; input.value = '';
+    if (!files.length) return;
+    preparing = true; controls();
+    const messages = [], prepared = []; let added = 0;
+    inputErrors[role] = []; showInputErrors();
+    input.setAttribute('aria-busy', 'true');
+    try {
+      for (const file of files) {
+        let url;
+        try {
+          if (trays[role].length >= 8) throw new Error('The tray holds 8 images. Remove a local preview before adding more.');
+          feedback($('#' + role + '-status'), 'Preparing ' + file.name + '… Resizing locally; nothing is uploaded.', 'busy');
+          const result = await prepareImage(file);
+          url = URL.createObjectURL(result.file);
+          const item = { file: result.file, url }; trays[role].push(item); selected[role] = item; added++;
+          prepared.push(file.name + ': ' + (result.resized ? 'automatically resized to ' : 'ready at ') + result.width + ' × ' + result.height + '.');
+        } catch (error) { if (url) URL.revokeObjectURL(url); messages.push(file.name + ': ' + error.message); }
+      }
+    } finally {
+      preparing = false; input.removeAttribute('aria-busy'); form.elements.consent.checked = false;
+      inputErrors[role] = messages;
+      feedback($('#' + role + '-status'), [added ? added + ' image(s) ready. Your originals are unchanged. Nothing uploaded.' : '', ...prepared, ...messages].filter(Boolean).join(' '), messages.length ? 'error' : 'success');
+      gallery(role); controls(); if (!reviewId) renderReview(); showInputErrors(messages.length > 0);
     }
-    input.disabled = false; form.elements.consent.checked = false;
-    $('#' + role + '-status').textContent = [added ? added + ' local preview(s) added. Nothing uploaded.' : '', ...messages].filter(Boolean).join(' ');
-    gallery(role); controls(); if (!reviewId) renderReview();
   });
 }
 function media(url, label) {
@@ -188,7 +212,7 @@ async function poll() {
       await history({ reconcile: false });
     } else if (!reviewStates.has(state.status)) pollTimer = setTimeout(poll, 3000);
   } catch {
-    status.textContent = 'The request status could not be confirmed. Keep your reference and use “Check this request”. Do not submit again.';
+    feedback(status, 'The request status could not be confirmed. Keep your reference and use “Check this request”. Do not submit again.', 'error');
     $('#receipt').textContent = 'Your request reference: ' + id;
     $('#check-request').hidden = false;
   } finally { polling = false; $('#check-request').disabled = false; controls(); }
@@ -204,7 +228,7 @@ function encoded(file) {
 }
 form.addEventListener('submit', async event => {
   event.preventDefault();
-  if (pending || posting || !configured || !historyVerified || !selected.personal || !selected.product || !form.reportValidity()) return;
+  if (preparing || pending || posting || !configured || !historyVerified || !selected.personal || !selected.product || !form.reportValidity()) return;
   posting = true; controls();
   const pair = { personal: selected.personal, product: selected.product };
   let id;
@@ -229,7 +253,7 @@ form.addEventListener('submit', async event => {
       reviewSequence++; reviewId = null; resultUrl = null; renderReview(); renderHistory();
       $('#receipt').textContent = ''; $('#check-request').hidden = true;
     }
-    status.textContent = pending ? 'Submission could not be confirmed. Keep your reference and check this request before doing anything else. It will not be sent again.' : error.message;
+    feedback(status, pending ? 'Submission could not be confirmed. Keep your reference and check this request before doing anything else. It will not be sent again.' : error.message, 'error');
     if (pending) $('#check-request').hidden = false;
   } finally {
     posting = false; controls();

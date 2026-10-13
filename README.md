@@ -69,7 +69,13 @@ sidebar linking to the public code, SDK ZIP, walkthrough and access application.
 - Add up to eight shopper photos and eight product images to **local trays**.
   Select a pair and inspect it before sending a request. Adding, selecting or
   removing a preview performs no upload or generation.
-- PNG, JPEG and WebP inputs are limited to 5 MiB and 16.8 megapixels each.
+- JPEG, PNG and WebP photos are prepared locally in the browser: automatically
+  resized to at most 2048 pixels on the longest side (never enlarged), with
+  aspect ratio and browser-decoded orientation preserved. Your original files
+  are untouched; only the prepared copies are submitted. No upload occurs while
+  selecting or preparing images. Output stays within the API's 5 MiB cap.
+  For browser safety, source files above 32 MiB or 100 megapixels are rejected
+  with a prominent error. Unsupported or corrupt files also show clear errors.
 - Only an explicit consented submission sends the selected pair. The example
   uploads the pair for each new request; trays are not a persistent asset-ID
   catalogue or a shared partner library.

@@ -70,6 +70,18 @@ do not append an extra `/v1`. Real Development generation may also incur costs.
 
 ## 3. Upload and complete the two inputs
 
+The included browser workspace calls `prepareImage` in `web/workspace.mjs` before
+adding a photo to either local tray. It checks the file header before decoding,
+preserves aspect ratio and browser-decoded orientation, and creates a copy no
+larger than 2048 pixels on its longest side and 5 MiB. JPEG, PNG and WebP are
+supported; PNG transparency is retained unless JPEG compression is required to
+meet the byte limit (then the background is white). Originals are not modified.
+Safety bounds are 32 MiB and 100 megapixels for source images. Corrupt or unsupported
+inputs show an accessible, prominent error; preparation has bounded timeouts.
+Selection and resizing do not upload anything. Only the explicit consented
+submission sends the prepared pair. Direct SDK callers must prepare their own
+input files; server-side validation remains authoritative and unchanged.
+
 Reserve an asset with `POST /assets/upload-url`:
 
 ```json

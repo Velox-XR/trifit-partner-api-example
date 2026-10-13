@@ -23,17 +23,18 @@
     <p class="notice" id="mode" role="status">Checking demo availability…</p>
     <div class="workspace-layout">
       <div class="workspace-main">
+        <section id="input-errors" class="input-errors" role="alert" aria-live="assertive" tabindex="-1" hidden></section>
         <section class="card library-section" aria-labelledby="product-heading">
           <div class="section-heading"><div><p class="eyebrow">01 / CHOOSE YOUR COLLECTION</p><h2 id="product-heading">Your product tray.</h2></div><label class="file-button">Add products<input id="product-files" type="file" name="product" multiple accept="image/png,image/jpeg,image/webp" aria-label="Add product images" aria-describedby="product-status"></label></div>
           <p class="small">Add garment images and select the one you want to try. These local previews are not a shared or saved partner catalogue.</p>
           <div id="product-library" class="image-library"><p class="empty-library">Your collection starts here.<br><span>Add a product image to see it in the tray.</span></p></div>
-          <p id="product-status" class="small" role="status">PNG, JPEG or WebP · up to 5 MiB and 16.8 megapixels each · 8 images per tray.</p>
+          <p id="product-status" class="image-feedback" role="status" aria-live="polite">JPEG, PNG or WebP · automatically resized in your browser · originals unchanged · 8 images per tray.</p>
         </section>
         <section class="card library-section" aria-labelledby="personal-heading">
           <div class="section-heading"><div><p class="eyebrow">02 / MAKE IT PERSONAL</p><h2 id="personal-heading">Your photo tray.</h2></div><label class="file-button">Add photos<input id="personal-files" type="file" name="personal" multiple accept="image/png,image/jpeg,image/webp" aria-label="Add shopper photos" aria-describedby="personal-status"></label></div>
           <p class="small">Choose a clear, front-facing photo you have permission to use. Select a photo below to pair with your product.</p>
           <div id="personal-library" class="image-library"><p class="empty-library">Put yourself in the picture.<br><span>Add a shopper photo to preview it here.</span></p></div>
-          <p id="personal-status" class="small" role="status">Previewing and selecting images does not upload them or start a generation.</p>
+          <p id="personal-status" class="image-feedback" role="status" aria-live="polite">Photos are automatically resized in your browser. Your originals are unchanged. Nothing is uploaded until you submit.</p>
         </section>
         <div class="journey" aria-label="Integration architecture"><span>Your browser</span><b>→</b><span>Demo backend</span><b>→</b><span>Velox Partner API</span><b>→</b><span>Your result</span></div>
         <div class="experience-columns">
