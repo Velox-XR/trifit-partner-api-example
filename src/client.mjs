@@ -68,9 +68,9 @@ export class DressMeClient {
     return { personalAssetId: results[0].value, productAssetId: results[1].value };
   }
 
-  createJob({ personalAssetId, productAssetId }, idempotencyKey) {
+  createJob({ personalAssetId, productAssetId, notificationEndpointId, context }, idempotencyKey) {
     if (!idempotencyKey) throw new Error('Save an idempotency key before submitting.');
-    return this.request('/dressme/jobs', { method: 'POST', headers: { 'Idempotency-Key': idempotencyKey }, body: { personalAssetId, productAssetId } });
+    return this.request('/dressme/jobs', { method: 'POST', headers: { 'Idempotency-Key': idempotencyKey }, body: { personalAssetId, productAssetId, ...(notificationEndpointId ? { notificationEndpointId } : {}), ...(context ? { context } : {}) } });
   }
 
   async waitForJob(id, { timeoutMs = 120000, intervalMs = 1500, onStatus = () => {} } = {}) {

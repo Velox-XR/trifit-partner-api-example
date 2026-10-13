@@ -39,6 +39,9 @@ partner-specific application or a mock presented as real generation.
 
 - Dedicated hosted partner identity: `demo`.
 - Real DressMe requests; AnimateMe is not enabled for the public demo.
+- Signed, durable webhook completion with delayed GET-only recovery if a callback is missing. The UI labels the actual completion source.
+- Total elapsed duration, uploads, demo queue and submission-to-observed-completion timings. These are not GPU-only timings.
+- Download one look, or all your latest 25 completed requests, as an asset ZIP containing uploaded inputs, results and a timing/checksum manifest. This is separate from the SDK source ZIP.
 - One active generation, and at least **10 seconds between starts**.
 - Personal and product uploads overlap, with durable receipts for both assets.
   This removes sequential upload waiting without changing generation quality or
@@ -100,6 +103,20 @@ For real access:
    private, environment-specific configuration.
 3. Save the supplied `partner.config.json` beside `package.json`.
 4. Run `npm start`. Startup verifies the assigned API identity and environment.
+
+For webhook-first completion, ask Velox to grant `webhooks:write` on your own backend
+key, then register your public HTTPS receiver:
+
+```sh
+node setup-webhook.mjs https://YOUR_HTTPS_HOST/webhooks/dressme
+npm start
+```
+
+The setup command saves the endpoint ID and signing secret privately in
+`partner.config.json`. Hosted mounting prefixes must be included in the callback
+URL. See [hosting](docs/HOSTING.md) for the exact origin/proxy contract. With no
+webhook configured, the local example remains explicitly polling-only; it does not
+claim webhook delivery. The standalone mock remains an unpaid API-flow fixture.
 
 A free TriFit account is not a partner credential. Real API use can incur charges,
 including in Development. Never commit the private configuration or reuse the

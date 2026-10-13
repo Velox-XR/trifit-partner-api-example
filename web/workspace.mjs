@@ -20,6 +20,19 @@ export function statusMessage(state) {
 export function progressStage(status) {
   return ({ uploading: 0, queued: 1, submitting: 2, running: 2, succeeded: 3 })[status] ?? -1;
 }
+export function durationText(state, now = Date.now()) {
+  const seconds = ms => ms < 1000 ? (ms / 1000).toFixed(2) + 's' : (ms / 1000).toFixed(1) + 's';
+  const timing = state?.timing;
+  if (!state) return 'Duration appears here after you submit.';
+  const parts = [];
+  if (Number.isFinite(timing?.totalMs)) parts.push('Total: ' + seconds(timing.totalMs));
+  else if (['uploading', 'queued', 'submitting', 'running'].includes(state.status) && Number.isFinite(state.createdAt)) parts.push('Elapsed: ' + seconds(Math.max(0, now - state.createdAt)));
+  else parts.push('Duration unavailable for this older request');
+  for (const [key, label] of [['uploadMs', 'Upload'], ['queueMs', 'Demo queue'], ['generationMs', 'Submission to completion observed'], ['apiTotalMs', 'API recorded duration']]) if (Number.isFinite(timing?.[key])) parts.push(label + ': ' + seconds(timing[key]));
+  if (state.completionSource) parts.push(({ webhook: 'Completion: verified webhook', 'polling-recovery': 'Completion: polling recovery', 'polling-only': 'Completion: polling' })[state.completionSource]);
+  else if (state.completionMode === 'webhook-first') parts.push('Waiting for signed webhook');
+  return parts.join(' · ');
+}
 export function validateImage(file) {
   if (!file || !['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || !file.size || file.size > 5 * 1024 * 1024) throw new Error('Choose a PNG, JPEG or WebP image of at most 5 MiB.');
 }

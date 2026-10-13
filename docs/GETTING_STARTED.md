@@ -5,8 +5,8 @@
 [Demo](https://studio.v3lox.com/partners/demo/demo) ·
 [Demo dashboard & SDK download](https://studio.v3lox.com/partners/demo/admin)
 
-These are the intended public URLs; the hosting release is pending. Check the
-root README for launch status. No visitor API key will be required for the hosted
+These public pages are hosted by Velox. Check the
+root README for source/release guidance. No visitor API key is required for the hosted
 demo. Use only photos and garment images you have permission to process.
 
 ## 2. Inspect the exact implementation
@@ -52,6 +52,11 @@ asset IDs, persist the exact payload and idempotency key, then save the accepted
 job ID. On uncertain submission, reconcile rather than automatically retry.
 
 ## 5. Adapt, test, then launch
+
+Use the [webhook-first walkthrough](../WALKTHROUGH.md#webhook-first-completion) to
+register your own signed callback before enabling webhook mode. The example also
+demonstrates truthful request timing and session-authorized input/result ZIPs;
+the public SDK ZIP contains source only, never private configuration or media.
 
 The SDK is MIT licensed. Your application controls identity, consent, retention,
 spending and operational recovery. The demo's single queue is an example, not a

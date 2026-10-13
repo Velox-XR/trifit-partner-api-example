@@ -11,6 +11,13 @@ request history and developer downloads only.
 ## Required host bindings
 
 - Exact HTTPS origin and fixed mount prefix, no wildcard CORS.
+- Register `<origin><prefix>/webhooks/dressme` for the assigned integration.
+  Keep its signing secret on the backend. The callback route does not require a
+  browser cookie; raw-body signature and environment verification are mandatory.
+  A reverse proxy must preserve raw bytes and use the backend's configured Host.
+  The loopback evaluator still requires its loopback Host; expose only its
+  callback route through a development-only HTTPS forwarding proxy, never the
+  whole evaluator. Production hosts use the exact HTTPS origin binding.
 - Environment-specific backend credential and session-signing secret in private
   host configuration. The public template is invalid and cannot enable real mode.
 - A dedicated integration: Production `demo`; a separate Development identity.
@@ -18,6 +25,9 @@ request history and developer downloads only.
   queues sharing the same application key. Losing ownership must stop admissions
   and dispatch. Persist submission intent before the single API call.
 - Persistent receipt storage; accepted jobs resume by GET, never by another POST.
+- Webhook-first mode waits ten minutes before GET-only recovery, then checks at
+  most every 30 seconds. Preserve webhook receipts across restart and do not
+  change an uncertain request's endpoint, payload or idempotency key.
 - Separate page publication and paid-generation activation switches. Unconfigured
   pages show preview mode; a missing key must not fall back to another partner or a mock.
 

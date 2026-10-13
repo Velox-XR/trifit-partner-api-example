@@ -149,8 +149,9 @@ upstream quota or commercial permission is changed by this code.
 The journal and exclusive owner lock are single-process safeguards. An interrupted
 paid POST enters `needs_review`; the whole queue stops rather than replaying it or
 releasing an uncertain active slot. An upstream `submission_unconfirmed` failure
-also holds the queue. Polling errors hold it for review, not a second paid POST.
-An accepted job survives a graceful restart and is polled by saved job ID. A crash
+also holds the queue. Webhook-mode read failures use delayed GET-only recovery;
+polling-only errors hold it for review, not a second paid POST.
+An accepted job survives a graceful restart using its saved job ID and webhook receipt. A crash
 leaves a lock requiring operator reconciliation; never discard it or the journal
 to resume blindly. See the README's recovery and public-hosting limitations.
 
@@ -188,8 +189,51 @@ signed URLs grant temporary access and must not go into public logs, analytics o
 shared repositories. Store `result.id`; use `GET /assets/{result.id}` for a renewed
 URL when needed. This renewal endpoint is not implemented by the small mock.
 
-Polling is sufficient for this example. The full API can support signed webhooks
-under separately configured access. Do not invent a callback URL or signing key.
+### Webhook-first completion
+
+`setup-webhook.mjs` registers your HTTPS `/webhooks/dressme` endpoint using the
+assigned backend key with `webhooks:write`. It saves the returned endpoint ID,
+key ID and secret in ignored private configuration. Never invent these values.
+`src/client.mjs` sends `notificationEndpointId` and `context.requestId` with the
+single generation POST. The browser cannot supply either field.
+
+The receiver in `src/demo-server.mjs` reads at most 64 KiB of raw bytes.
+`src/webhooks.mjs` checks `X-Velox-Key-Id`, the event ID, environment, DressMe
+terminal event type and timestamp (five-minute tolerance), then verifies
+`X-Velox-Signature: v1=<HMAC-SHA256(secret, timestamp + '.' + rawBody)>` in constant
+time. The queue durably saves the receipt before HTTP 204. Identical duplicates
+are acknowledged; conflicting payloads fail. A callback arriving before the
+submission response is retained by request ID, then checked against the job ID.
+
+A verified callback triggers a subject-authorized GET of the saved job. The
+callback itself never grants media access or provides the URL used for display.
+If no callback arrives within ten minutes, GET-only recovery starts, at most once
+per 30 seconds. Transient reads never create another generation. Completion is
+labelled `webhook`, `polling-recovery` or `polling-only`; a late callback does not
+rewrite an earlier polling completion as webhook success.
+
+The browser still refreshes the demo backend's saved receipt every three seconds.
+This is not repeated polling of the generation provider. Callback retries and
+browser refreshes never repeat the paid POST.
+
+### Durations and asset ZIPs
+
+Total elapsed is demo acceptance to observed completion. Upload and local demo
+queue durations are recorded separately. Submission-to-observed-completion
+includes the upstream queue, processing and completion detection; it is not
+GPU-only time. API recorded duration uses `acceptedAt` to `terminalObservedAt`
+when supplied. Downloads/rendering are excluded. Legacy records without retained
+timestamps show unavailable rather than fabricating a duration.
+
+`GET /api/requests/{requestId}/download.zip` exports one completed look;
+`GET /api/requests/download.zip` exports this signed visitor's latest 25 completed
+requests. Every input and result is freshly authorized by asset ID through the
+same visitor subject. Only HTTPS capability URLs under the assigned API's
+`/local/read/` path are fetched, without credentials or redirects. Files are named
+shopper/product/result, accompanied by a timing and SHA-256 manifest. No signed
+URLs, keys or other visitors' assets enter the ZIP. Per-asset (20 MiB), archive
+(100 MiB), 90-second media deadline, one active archive and ten-second start-gap limits bound downloads. Errors are visible; exports do
+not resubmit jobs. Input files are the uploaded resized copies, not device originals.
 
 ## 6. Handle errors deliberately
 

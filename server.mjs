@@ -21,8 +21,8 @@ try {
     const info = await apiFor('demo-connection-check').verifyEnvironment(config.environment);
     if (info.clientId !== config.clientId) throw new Error('Assigned integration does not match. Stop and contact Velox.');
     const binding = createHash('sha256').update(JSON.stringify([config.baseUrl, config.clientId, config.environment, config.sessionSecret])).digest('hex');
-    queue = await DemoQueue.open({ directory: resolve('.demo-state'), binding, apiFor, gapMs: config.queueGapSeconds * 1000, maxPending: config.maxPending });
-    server = await startDemoServer({ queue, apiFor, sessionSecret: config.sessionSecret, port: config.port, gapSeconds: config.queueGapSeconds });
+    queue = await DemoQueue.open({ directory: resolve('.demo-state'), binding, apiFor, webhook: config.webhook, gapMs: config.queueGapSeconds * 1000, maxPending: config.maxPending });
+    server = await startDemoServer({ queue, apiFor, webhook: config.webhook, sessionSecret: config.sessionSecret, port: config.port, gapSeconds: config.queueGapSeconds });
     timer = setInterval(() => { ticking = ticking.then(() => queue.tick()).catch(() => { clearInterval(timer); console.error('Queue stopped for review. No automatic resubmission.'); }); }, 2000);
     console.log(`Real DressMe demo: ${server.origin}`);
     console.log(`Shared queue: minimum ${config.queueGapSeconds}s between starts; one active generation. Real generation can incur charges.`);
