@@ -29,6 +29,13 @@ header nav{display:flex;gap:20px;flex-wrap:wrap}header nav a{font-size:13px;lett
 .demo-workspace .workspace-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:26px}
 .demo-workspace .workspace-main{min-width:0}
 .demo-workspace .library-section{margin-bottom:22px}
+.demo-workspace .image-feedback{font-size:14px;line-height:1.65;color:var(--sage);overflow-wrap:anywhere;padding:12px 14px;border:1px solid var(--line);border-radius:10px}
+.demo-workspace .image-feedback[data-state=busy]{border-color:var(--gold);color:var(--gold)}
+.demo-workspace .image-feedback[data-state=success]{border-color:var(--sage)}
+.demo-workspace .input-errors,.demo-workspace .image-feedback[data-state=error],.demo-workspace #status[data-state=error]{background:#482520;color:#ffe4dc;border:2px solid #e69b87;border-radius:12px;padding:18px;font-size:14px;line-height:1.65;overflow-wrap:anywhere}
+.demo-workspace .input-errors{margin-bottom:22px}
+.demo-workspace .input-errors strong{font-size:18px}
+.demo-workspace .input-errors p{margin-bottom:0}
 .demo-workspace .section-heading{gap:16px;align-items:center}
 .demo-workspace .section-heading h2{margin-bottom:0}
 .demo-workspace .section-heading .eyebrow{margin-bottom:10px}
