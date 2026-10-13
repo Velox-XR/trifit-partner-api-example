@@ -1,6 +1,6 @@
 {
-  "name": "velox-trifit",
-  "version": "1.0.1",
+  "name": "velox-trifit-developer",
+  "version": "1.1.1",
   "description": "Integrate Velox DressMe virtual try-on with tested SDK examples and offline mocks.",
   "author": {
     "name": "Velox XR",
@@ -20,9 +20,9 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Velox TriFit API",
+    "displayName": "Velox TriFit Developer",
     "shortDescription": "Build virtual try-on apps",
-    "longDescription": "Integrate Velox DressMe virtual clothing try-on into an app, website or retail backend. Includes the public Node.js SDK, TypeScript declarations, runnable offline mocks and safe upload/job/polling guidance. Live API use requires a manually approved partner configuration; pricing and allowances are agreed with Velox. No API key is required for installation or offline tests.",
+    "longDescription": "Build a Velox DressMe virtual clothing try-on integration using official documentation, Node.js examples and TypeScript declarations. Search API guidance, inspect the upload and job lifecycle, and run local mock tests. Live generation requires separately approved partner access and a backend application credential. The documentation tools do not generate images or issue API keys.",
     "developerName": "Velox XR",
     "category": "Developer Tools",
     "capabilities": [
@@ -42,5 +42,6 @@
     "logo": "./assets/trifit-icon.png",
     "privacyPolicyURL": "https://studio.v3lox.com/legal/privacy",
     "termsOfServiceURL": "https://studio.v3lox.com/legal/terms"
-  }
+  },
+  "mcpServers": "./.mcp.json"
 }

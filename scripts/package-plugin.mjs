@@ -22,7 +22,7 @@ function zip(files) {
 
 
 const root = new URL('../',import.meta.url);
-const extras=['plugin.json','.codex-plugin/plugin.json','.agents/plugins/marketplace.json','assets/trifit-icon.png','skills/velox-partner-api/agents/openai.yaml','docs/CODEX_PLUGIN.md','scripts/package-plugin.mjs','test/plugin.test.mjs'];
+const extras=['mcp.json','.mcp.json','mcp-server.mjs','test/docs-mcp.test.mjs','package-lock.json','src/docs-mcp.mjs','plugin.json','.codex-plugin/plugin.json','.agents/plugins/marketplace.json','assets/trifit-icon.png','skills/velox-partner-api/agents/openai.yaml','docs/CODEX_PLUGIN.md','scripts/package-plugin.mjs','test/plugin.test.mjs'];
 export const pluginFiles=[...new Set([...publicFiles,...extras])].sort();
 export async function buildPlugin(){
  const entries=await Promise.all(pluginFiles.map(async name=>[name,name.endsWith('.png') ? await readFile(new URL(name,root)) : Buffer.from((await readFile(new URL(name,root),'utf8')).replace(/\r\n/g,'\n'))]));

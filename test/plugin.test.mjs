@@ -17,6 +17,6 @@ test('plugin is self-contained and excludes private runtime material',async()=>{
 });
 test('marketplace source resolves packaged root',async()=>{
  const m=JSON.parse(await readFile(new URL('.agents/plugins/marketplace.json',root),'utf8'));
- assert.equal(m.plugins[0].name,'velox-trifit');assert.equal(m.plugins[0].source.path,'./');
+ assert.equal(m.plugins[0].name,'velox-trifit-developer');assert.equal(m.plugins[0].source.path,'./');
 });
 
