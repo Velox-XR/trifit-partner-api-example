@@ -46,3 +46,10 @@ Code is MIT licensed; service use requires a manually approved partner integrati
 No universal numeric free allowance or public commercial price is promised here.
 The mock is not an AI quality or latency demonstration. Private benchmark photos
 and outputs are not included in this plugin.
+
+## Public directory status — 13 October 2026
+
+The live OpenAI upload validator currently rejects new skills-only submissions.
+The GitHub marketplace remains installable. A draft upload is not directory
+approval. A genuinely useful MCP-backed release requires separate implementation
+and review; adding a placeholder MCP is not a workaround.
