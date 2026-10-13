@@ -33,6 +33,7 @@ export async function createDemoHandler({ queue, apiFor, sessionSecret = randomB
     '/': ['index.html', 'text/html; charset=utf-8'], '/demo': ['index.html', 'text/html; charset=utf-8'],
     '/admin': ['admin.html', 'text/html; charset=utf-8'],
     '/app.mjs': ['app.mjs', 'text/javascript; charset=utf-8'], '/admin.mjs': ['admin.mjs', 'text/javascript; charset=utf-8'],
+    '/workspace.mjs': ['workspace.mjs', 'text/javascript; charset=utf-8'],
     '/style.css': ['style.css', 'text/css; charset=utf-8']
   };
   return async (req, res) => {
