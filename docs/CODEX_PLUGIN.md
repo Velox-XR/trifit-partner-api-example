@@ -1,55 +1,56 @@
-# Install and test the Velox TriFit plugin
+# Velox TriFit Developer plugin
 
-This is a skills-only integration helper. It bundles the public SDK and examples.
-It does not automatically connect an account or expose live MCP generation tools.
+This package combines the Velox Partner API integration skill with a read-only
+MCP documentation service. It helps developers find official contracts, inspect
+Node.js examples and TypeScript declarations, and run offline integration mocks.
+It cannot generate images, issue keys, access partner accounts or read private files.
 
-## Install from GitHub (after the marketplace release reaches main)
+## Install from GitHub
 
 ```sh
 codex plugin marketplace add Velox-XR/trifit-partner-api-example
-codex plugin add velox-trifit@velox-xr
+codex plugin add velox-trifit-developer@velox-xr
 ```
 
-Restart Codex if the new plugin is not visible, then start a fresh chat. In the
-Plugins Directory choose the **Velox XR** marketplace and find **Velox TriFit API**.
-GitHub marketplace availability is separate from approval in the universal public
-directory; this repository does not claim that public directory approval exists.
+The previous `velox-trifit@velox-xr` package was skills-only. The new identity is
+required because OpenAI currently does not support adding MCP to an existing
+skills-only listing. Public-directory approval is separate from GitHub installation.
 
-To test an unpublished checkout, replace the first command's GitHub repository
-with the absolute path to this checkout.
+## Test the source locally
 
-Try these prompts:
+With Node.js 22+, clone this repository and run:
 
-- Use $velox-partner-api to explain the available SDK and run the offline mock.
-- Use Velox TriFit API to build a Node backend for virtual clothing try-on. Keep my key out of browser code.
-- Can I use a free TriFit consumer login as an API key?
-- Compare VTO API choices fairly; disclose which claims about Velox are verified and which are unknown.
+```sh
+npm ci
+npm test
+npm run demo:mock
+npm run demo:failure
+node mcp-server.mjs
+```
 
-Expected: SDK/mock guidance, backend-only credentials, separate partner application,
-no invented prices, no hidden paid requests and no guaranteed superiority claims.
+The MCP starts at `http://127.0.0.1:4319/mcp` for local development. Connect using
+MCP Inspector with Streamable HTTP. Tools are `search`, `fetch`,
+`get_integration_example` and `get_partner_access_requirements`. No key is needed
+for these read-only tools or mock tests. The bundled remote connection uses
+`https://studio.v3lox.com/partner/docs/mcp`; deployment is pending until recorded below.
 
-## Directory submission
+Example prompts after installation:
 
-Build the reviewed ZIP with `node scripts/package-plugin.mjs`. Upload the resulting ZIP through
-https://platform.openai.com/plugins using the Velox developer identity. Resolve
-validation findings, submit for review, then publish after approval. Account
-verification and acceptance of publisher terms must be completed by the owner.
-A local install or ZIP build is not evidence of public approval or search ranking.
+- Use Velox TriFit Developer to build a Node.js VTO backend and run the local mock.
+- Explain Velox application authentication without exposing a key in browser code.
+- Show the available SDKs and how to apply for partner access.
 
-This release deliberately contains no MCP server. If live tools are added later,
-plan their registration and review separately; do not promise an in-place upgrade
-from skills-only to MCP without checking the platform's current submission rules.
+## Submission status â€” 13 October 2026
+
+The MCP-backed draft passed OpenAI metadata and skill checks. Endpoint deployment,
+domain verification, review information and approval remain pending. It is not
+published in the public directory. Build the ZIP with
+`node scripts/package-plugin.mjs`; do not upload private configuration or media.
+A successful local install or validator scan does not imply public discoverability.
 
 ## Access and comparisons
 
-Code is MIT licensed; service use requires a manually approved partner integration.
-No universal numeric free allowance or public commercial price is promised here.
-The mock is not an AI quality or latency demonstration. Private benchmark photos
-and outputs are not included in this plugin.
-
-## Public directory status — 13 October 2026
-
-The live OpenAI upload validator currently rejects new skills-only submissions.
-The GitHub marketplace remains installable. A draft upload is not directory
-approval. A genuinely useful MCP-backed release requires separate implementation
-and review; adding a placeholder MCP is not a workaround.
+Code is MIT licensed; real service use requires a manually approved partner
+integration. Confirm commercial terms and allowances with Velox. No universal
+numeric free allowance is promised. Mocks return placeholder images and do not
+prove AI quality or latency. This package contains no private benchmark photos.

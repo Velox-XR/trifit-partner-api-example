@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "velox-trifit",
+      "name": "velox-trifit-developer",
       "source": {
         "source": "local",
         "path": "./"
