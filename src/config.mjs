@@ -1,3 +1,4 @@
+import { validateWebhook } from './webhooks.mjs';
 export function validateConfig(config) {
   const invalid = value => typeof value !== 'string' || !value.trim() || /INVALID|DUMMY|YOUR_|REPLACE_/i.test(value);
   if (invalid(config.clientId) || invalid(config.applicationKey) || !config.applicationKey.startsWith('va_') || invalid(config.sessionSecret) || config.sessionSecret.length < 32) {
@@ -13,5 +14,5 @@ export function validateConfig(config) {
   if (!Number.isInteger(queueGapSeconds) || queueGapSeconds < 1 || queueGapSeconds > 3600) throw new Error('queueGapSeconds must be an integer from 1 to 3600.');
   if (!Number.isInteger(maxPending) || maxPending < 1 || maxPending > 100) throw new Error('maxPending must be an integer from 1 to 100.');
   if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid local demo port.');
-  return { ...config, baseUrl: base.href.replace(/\/$/, ''), queueGapSeconds, maxPending, port };
+  return { ...config, ...(config.webhook ? { webhook: validateWebhook(config.webhook, config.environment) } : {}), baseUrl: base.href.replace(/\/$/, ''), queueGapSeconds, maxPending, port };
 }

@@ -11,6 +11,13 @@ request history and developer downloads only.
 ## Required host bindings
 
 - Exact HTTPS origin and fixed mount prefix, no wildcard CORS.
+- Register `<origin><prefix>/webhooks/dressme` for the assigned integration.
+  Keep its signing secret on the backend. The callback route does not require a
+  browser cookie; raw-body signature and environment verification are mandatory.
+  A reverse proxy must preserve raw bytes and use the backend's configured Host.
+  The loopback evaluator still requires its loopback Host; expose only its
+  callback route through a development-only HTTPS forwarding proxy, never the
+  whole evaluator. Production hosts use the exact HTTPS origin binding.
 - Environment-specific backend credential and session-signing secret in private
   host configuration. The public template is invalid and cannot enable real mode.
 - A dedicated integration: Production `demo`; a separate Development identity.
@@ -18,13 +25,20 @@ request history and developer downloads only.
   queues sharing the same application key. Losing ownership must stop admissions
   and dispatch. Persist submission intent before the single API call.
 - Persistent receipt storage; accepted jobs resume by GET, never by another POST.
+- Webhook-first mode waits ten minutes before GET-only recovery, then checks at
+  most every 30 seconds. Preserve webhook receipts across restart and do not
+  change an uncertain request's endpoint, payload or idempotency key.
 - Separate page publication and paid-generation activation switches. Unconfigured
   pages show preview mode; a missing key must not fall back to another partner or a mock.
 
 The handler signs 48-hour visitor cookies, scopes them to the demo path, uses
 HttpOnly/SameSite=Strict/Secure on HTTPS, rejects wrong Host/Origin, bounds bodies
 to 14 MiB and permits at most two simultaneous input uploads. New session issuance
-is capped at 500/hour per single host process. The queue limits one pending request
+is capped at 500/hour per single host process. The personal and product transfers
+run concurrently within that two-upload bound. Both provisional and completed
+asset IDs are persisted; a failed transfer waits for its peer to settle before
+the request is marked failed. Neither upload nor generation is automatically
+replayed. The queue limits one pending request
 per visitor and 25 pending globally. These controls reduce accidental abuse; they
 are not strong bot authentication or a spend budget. Add approved ingress bot/rate
 controls and operational alerts before widening public use.

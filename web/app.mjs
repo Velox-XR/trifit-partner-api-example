@@ -1,4 +1,4 @@
-import { finalStates, reviewStates, blocksSubmission, statusLabel, statusMessage, progressStage, prepareImage, safeResultUrl } from './workspace.mjs';
+import { finalStates, reviewStates, blocksSubmission, statusLabel, statusMessage, progressStage, prepareImage, safeResultUrl, durationText } from './workspace.mjs';
 
 const $ = selector => document.querySelector(selector);
 const form = $('#try-on'), submit = $('#submit'), status = $('#status');
@@ -8,6 +8,7 @@ const previews = new Map(), records = new Map();
 let pending, configured = false, historyVerified = false, posting = false, preparing = false, pollTimer, polling = false;
 const inputErrors = { personal: [], product: [] };
 let reviewId = null, reviewTab = 'result', resultUrl = null, resultError = '', reviewSequence = 0;
+let downloading = false;
 try { pending = sessionStorage.getItem(storageKey); } catch { /* History remains the recovery source. */ }
 
 function node(tag, className, text) {
@@ -138,6 +139,9 @@ function renderReview() {
   $('#review-state').textContent = state ? statusLabel(state) : 'Ready when you are';
   for (const button of document.querySelectorAll('[data-review]')) button.setAttribute('aria-pressed', String(button.dataset.review === reviewTab));
   const open = $('#open-result'); open.hidden = !resultUrl;
+  $('#request-duration').textContent = durationText(state);
+  $('#download-request').hidden = state?.status !== 'succeeded';
+  $('#download-request').disabled = downloading;
   if (resultUrl) open.href = resultUrl; else open.removeAttribute('href');
   if (reviewTab === 'personal') stage.append(media(shopper, 'Shopper input'));
   else if (reviewTab === 'product') stage.append(media(product, 'Product input'));
@@ -168,17 +172,37 @@ async function review(id, { resetTab = true } = {}) {
 for (const button of document.querySelectorAll('[data-review]')) button.addEventListener('click', () => { reviewTab = button.dataset.review; renderReview(); });
 function renderHistory() {
   const list = $('#history'); list.replaceChildren();
+  $('#download-all').disabled = downloading || ![...records.values()].some(r => r.status === 'succeeded');
   const sorted = [...records.values()].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 25);
   for (const item of sorted) {
     const row = node('article', 'history-row'); row.dataset.selected = String(reviewId === item.id);
     const info = node('div'), badge = node('span', 'pill', statusLabel(item));
     badge.dataset.status = item.status;
     info.append(badge, node('p', 'small', item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Current request'), node('code', '', item.id));
+    info.append(node('p', 'small', durationText(item)));
     const open = node('button', 'quiet', item.status === 'succeeded' ? 'Review result' : 'Review request'); open.type = 'button';
     open.addEventListener('click', () => { void review(item.id); });
     row.append(info, open); list.append(row);
   }
 }
+async function downloadAssets(id) {
+  if (downloading) return;
+  downloading = true; renderHistory(); $('#download-request').disabled = true;
+  feedback($('#download-status'), 'Preparing your private asset ZIP…');
+  try {
+    const path = 'api/requests/' + (id ? encodeURIComponent(id) + '/' : '') + 'download.zip';
+    const response = await fetch(new URL(path, base), { credentials: 'same-origin', signal: AbortSignal.timeout(120000) });
+    if (!response.ok) { const data = await response.json(); throw new Error(data.error || 'ZIP download failed.'); }
+    if (!response.headers.get('content-type')?.startsWith('application/zip')) throw new Error('ZIP download could not be confirmed.');
+    const url = URL.createObjectURL(await response.blob()), link = node('a');
+    link.href = url; link.download = id ? 'velox-look-' + id + '.zip' : 'velox-demo-assets.zip'; document.body.append(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    feedback($('#download-status'), 'Your asset ZIP is ready. No generation was submitted.');
+  } catch (error) { feedback($('#download-status'), error.name === 'TimeoutError' ? 'ZIP preparation timed out. Try downloading one look.' : error.message, 'error'); }
+  finally { downloading = false; renderHistory(); $('#download-request').disabled = false; }
+}
+$('#download-request').addEventListener('click', () => { if (reviewId) void downloadAssets(reviewId); });
+$('#download-all').addEventListener('click', () => void downloadAssets());
 async function history({ reconcile = true } = {}) {
   const button = $('#refresh-history'); button.disabled = true;
   try {

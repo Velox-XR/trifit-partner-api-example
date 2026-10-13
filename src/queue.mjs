@@ -11,7 +11,7 @@ export class QueueError extends Error {
 }
 
 export class DemoQueue {
-  static async open({ directory, binding, apiFor, gapMs = 10000, maxPending = 25, now = Date.now }) {
+  static async open({ directory, binding, apiFor, webhook, gapMs = 10000, maxPending = 25, now = Date.now }) {
     if (!Number.isInteger(gapMs) || gapMs < 1000 || !Number.isInteger(maxPending) || maxPending < 1) throw new Error('Invalid queue configuration.');
     await mkdir(directory, { recursive: true, mode: 0o700 });
     const lockPath = join(directory, 'owner.lock');
@@ -25,7 +25,7 @@ export class DemoQueue {
       const rows = saved.trim() ? saved.trimEnd().split('\n').map(line => JSON.parse(line)) : [];
       if (rows.length && rows[0].binding !== binding) throw new Error('Queue belongs to another integration/environment. Do not reuse its directory.');
       journal = await open(path, 'a', 0o600);
-      const queue = new DemoQueue({ directory, binding, apiFor, gapMs, maxPending, now, journal, lock, lockPath });
+      const queue = new DemoQueue({ directory, binding, apiFor, webhook, gapMs, maxPending, now, journal, lock, lockPath });
       for (const row of rows.slice(1)) {
         const entry = row.entry;
         if (!entry?.id || !entry?.owner || !statuses.has(entry?.status)
@@ -69,7 +69,24 @@ export class DemoQueue {
   view(id, owner) {
     const entry = this.owned(id, owner);
     const waiting = [...this.entries.values()].filter(e => e.status === 'queued');
-    return { id, status: entry.status, position: entry.status === 'queued' ? waiting.findIndex(e => e.id === id) + 1 : null, queuePaused: Boolean(this.blocked), gapSeconds: this.gapMs / 1000 };
+    const difference = (start, end) => Number.isFinite(start) && Number.isFinite(end) && end >= start ? end - start : null;
+    return { id, status: entry.status, createdAt: entry.createdAt, position: entry.status === 'queued' ? waiting.findIndex(e => e.id === id) + 1 : null, queuePaused: Boolean(this.blocked), gapSeconds: this.gapMs / 1000,
+      completionMode: entry.webhookExpected ? 'webhook-first' : 'polling-only', completionSource: entry.completionSource || null,
+      timing: { totalMs: difference(entry.createdAt, entry.completedAt), uploadMs: difference(entry.createdAt, entry.queuedAt), queueMs: difference(entry.queuedAt, entry.submittedAt),
+        generationMs: difference(entry.submittedAt, entry.completedAt), apiTotalMs: entry.apiTotalMs ?? null, completedAt: entry.completedAt ?? null,
+        webhookReceivedAt: entry.webhookReceipt?.receivedAt ?? null } };
+  }
+  async receiveWebhook(receipt) {
+    return this.exclusive(async () => {
+      const entry = [...this.entries.values()].find(e => e.jobId === receipt.jobId)
+        || this.entries.get(receipt.requestId);
+      if (!entry?.webhookExpected || (entry.jobId && entry.jobId !== receipt.jobId) || !['submitting', 'running', 'succeeded', 'failed', 'needs_review'].includes(entry.status)) throw new QueueError('Webhook job not found.', 404);
+      if (entry.webhookReceipt) {
+        if (entry.webhookReceipt.eventId !== receipt.eventId || entry.webhookReceipt.bodyHash !== receipt.bodyHash) throw new QueueError('Webhook event conflicts with its saved receipt.', 409);
+        return; // Durable duplicate acknowledgement; never submit or upload again.
+      }
+      await this.write({ ...entry, webhookReceipt: receipt });
+    });
   }
   async accept({ id, owner, fingerprint }, upload) {
     const created = await this.exclusive(async () => {
@@ -87,7 +104,7 @@ export class DemoQueue {
       try {
         const payload = await upload((field, value) => this.change(id, { [field]: value }));
         if (!payload.personalAssetId || !payload.productAssetId) throw new Error('Missing completed asset IDs.');
-        await this.change(id, { payload, status: 'queued' });
+        await this.change(id, { payload, status: 'queued', queuedAt: this.now() });
       } catch { await this.change(id, { status: 'upload_failed' }); }
     }
     return this.view(id, owner);
@@ -98,28 +115,40 @@ export class DemoQueue {
     try {
       const active = [...this.entries.values()].find(e => e.status === 'running');
       if (active) {
+        const source = active.webhookReceipt ? 'webhook' : active.webhookExpected ? 'polling-recovery' : 'polling-only';
+        if (this.now() < (active.nextReadAt || 0) || (source === 'polling-recovery' && this.now() < active.submittedAt + (active.recoveryAfterMs ?? 600000))) return;
         try {
           const job = await this.apiFor(active.owner).request(`/dressme/jobs/${encodeURIComponent(active.jobId)}`);
           if (job.id !== active.jobId || !['queued', 'running', 'succeeded', 'failed'].includes(job.status) || job.simulated === true) throw new Error('Unexpected real job response.');
           if (job.status === 'succeeded' || job.status === 'failed') {
+            if (active.webhookReceipt && (active.webhookReceipt.status !== job.status || active.webhookReceipt.jobId !== job.id)) {
+              await this.change(active.id, { status: 'needs_review' }); return;
+            }
+            const apiStart = Date.parse(job.timings?.acceptedAt || job.createdAt), apiEnd = Date.parse(job.timings?.terminalObservedAt);
             // An upstream 'failed' submission_unconfirmed is still uncertain, not safe to replay.
-            await this.change(active.id, { status: job.error?.code === 'submission_unconfirmed' ? 'needs_review' : job.status, ...(job.result?.id ? { resultId: job.result.id } : {}) });
-          }
-        } catch { await this.change(active.id, { status: 'needs_review' }); }
+            await this.change(active.id, { status: job.error?.code === 'submission_unconfirmed' ? 'needs_review' : job.status, ...(job.error?.code === 'submission_unconfirmed' ? {} : { completedAt: this.now(), completionSource: source }),
+              ...(Number.isFinite(apiStart) && Number.isFinite(apiEnd) && apiEnd >= apiStart ? { apiTotalMs: apiEnd - apiStart } : {}), ...(job.result?.id ? { resultId: job.result.id } : {}) });
+          } else if (active.webhookExpected) await this.change(active.id, { nextReadAt: this.now() + 30000 });
+        } catch {
+          // A failed read is not a failed generation; retain the one known job ID.
+          if (active.webhookExpected) await this.change(active.id, { nextReadAt: this.now() + 30000 });
+          else await this.change(active.id, { status: 'needs_review' });
+        }
         return;
       }
       if (this.now() < this.lastSubmittedAt + this.gapMs) return;
       const next = [...this.entries.values()].find(e => e.status === 'queued');
       if (!next) return;
       // Persist identity, exact payload and start time BEFORE the only paid POST.
-      await this.change(next.id, { status: 'submitting', submittedAt: this.now(), idempotencyKey: next.id });
+      const payload = { ...next.payload, ...(this.webhook ? { notificationEndpointId: this.webhook.endpointId, context: { requestId: next.id } } : {}) };
+      await this.change(next.id, { status: 'submitting', payload, submittedAt: this.now(), idempotencyKey: next.id, webhookExpected: Boolean(this.webhook), ...(this.webhook ? { recoveryAfterMs: this.webhook.recoveryAfterMs ?? 600000 } : {}) });
       // Hosted adapters must still own the dispatcher immediately before an API call.
       if (this.assertOwnership) await this.assertOwnership();
       // File sync may be slow. Measure the gap from the actual call, not before I/O.
       const submittedAt = this.now();
       this.lastSubmittedAt = submittedAt;
       try {
-        const job = await this.apiFor(next.owner).createJob(next.payload, next.id);
+        const job = await this.apiFor(next.owner).createJob(payload, next.id);
         if (typeof job.id !== 'string' || !job.id || job.simulated === true) throw new Error('Missing real job receipt.');
         await this.change(next.id, { status: 'running', jobId: job.id, submittedAt });
       } catch { await this.change(next.id, { status: 'needs_review', submittedAt }); }

@@ -7,17 +7,17 @@ export const publicFiles = Object.freeze([
   'LICENSE', 'README.md', 'WALKTHROUGH.md', 'SECURITY.md', '.gitignore',
   'package.json', 'partner.config.example.json', 'server.mjs', 'demo.mjs',
   'src/client.mjs', 'src/config.mjs', 'src/queue.mjs', 'src/demo-server.mjs',
-  'src/downloads.mjs', 'src/mock-api.mjs', 'web/index.html', 'web/admin.html',
+  'src/downloads.mjs', 'src/mock-api.mjs', 'src/webhooks.mjs', 'src/asset-downloads.mjs', 'setup-webhook.mjs', 'test/completion-downloads.test.mjs', 'web/index.html', 'web/admin.html',
   'web/app.mjs', 'web/admin.mjs', 'web/style.css', 'web/workspace.mjs',
   'sdks/javascript/index.mjs', 'sdks/javascript/index.d.ts',
   'sdks/javascript/package.json', 'sdks/javascript/README.md', 'sdks/javascript/LICENSE',
   'docs/GETTING_STARTED.md', 'docs/SDK_CATALOG.md', 'docs/HOSTING.md',
   'skills/velox-partner-api/SKILL.md', 'test/integration.test.mjs', 'test/queue.test.mjs',
-  'test/developer-hub.test.mjs', 'test/workspace.test.mjs'
+  'test/developer-hub.test.mjs', 'test/workspace.test.mjs', 'test/parallel-upload.test.mjs'
 ]);
 
 // Dependency-free ZIP32, stored entries. Inputs come only from the fixed allowlist.
-function zip(files) {
+export function zip(files) {
   const local = [], central = []; let offset = 0;
   for (const [name, data] of files) {
     const path = Buffer.from(name); let crc = 0xffffffff;

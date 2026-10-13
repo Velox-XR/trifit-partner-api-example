@@ -51,9 +51,26 @@ export class DressMeClient {
   completeUpload(id) { return this.request(`/assets/${encodeURIComponent(id)}/complete`, { method: 'POST', body: {} }); }
   getAsset(id) { return this.request(`/assets/${encodeURIComponent(id)}`); }
 
-  createJob({ personalAssetId, productAssetId }, idempotencyKey) {
+  async uploadPair({ personal, product }, save) {
+    if (typeof save !== 'function') throw new Error('Persist upload receipts with save.');
+    // Independent transfers overlap, but settle both before reporting failure:
+    // the other transfer may have created an asset that still needs a receipt.
+    const results = await Promise.allSettled(['personal', 'product'].map(async role => {
+      const asset = await this.upload(role === 'personal' ? personal : product, {
+        role, fileName: 'demo-' + role,
+        onReserved: id => save(role + 'UploadId', id)
+      });
+      await save(role + 'AssetId', asset.id);
+      return asset.id;
+    }));
+    const failure = results.find(result => result.status === 'rejected');
+    if (failure) throw failure.reason;
+    return { personalAssetId: results[0].value, productAssetId: results[1].value };
+  }
+
+  createJob({ personalAssetId, productAssetId, notificationEndpointId, context }, idempotencyKey) {
     if (!idempotencyKey) throw new Error('Save an idempotency key before submitting.');
-    return this.request('/dressme/jobs', { method: 'POST', headers: { 'Idempotency-Key': idempotencyKey }, body: { personalAssetId, productAssetId } });
+    return this.request('/dressme/jobs', { method: 'POST', headers: { 'Idempotency-Key': idempotencyKey }, body: { personalAssetId, productAssetId, ...(notificationEndpointId ? { notificationEndpointId } : {}), ...(context ? { context } : {}) } });
   }
 
   async waitForJob(id, { timeoutMs = 120000, intervalMs = 1500, onStatus = () => {} } = {}) {

@@ -3,6 +3,8 @@ import { randomBytes, createHmac, createHash, timingSafeEqual } from 'node:crypt
 import { readFile } from 'node:fs/promises';
 import { QueueError } from './queue.mjs';
 import { buildPublicDownload, repositoryUrl } from './downloads.mjs';
+import { verifyWebhook } from './webhooks.mjs';
+import { buildAssetDownload } from './asset-downloads.mjs';
 
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const types = new Set(['image/png', 'image/jpeg', 'image/webp']);
@@ -24,11 +26,11 @@ function image(input) {
 
 // Shared source for the loopback evaluator and Velox's mounted HTTPS demo.
 // The host supplies the exact origin, persistent queue and private credentials.
-export async function createDemoHandler({ queue, apiFor, sessionSecret = randomBytes(32).toString('hex'), getOrigin, prefix = '', gapSeconds = 10, now = Date.now }) {
+export async function createDemoHandler({ queue, apiFor, webhook, sessionSecret = randomBytes(32).toString('hex'), getOrigin, prefix = '', gapSeconds = 10, now = Date.now, assetFetch = globalThis.fetch }) {
   if (!/^$|^\/[a-z0-9/-]+[a-z0-9]$/.test(prefix) || prefix.includes('//') || typeof getOrigin !== 'function' || sessionSecret.length < 32) throw new Error('Invalid demo host configuration.');
   const download = await buildPublicDownload();
   const sign = value => createHmac('sha256', sessionSecret).update(prefix + ':' + value).digest('hex');
-  let uploads = 0, sessionWindow = now(), sessionCount = 0;
+  let uploads = 0, downloads = 0, lastDownloadAt = -Infinity, sessionWindow = now(), sessionCount = 0;
   const assets = {
     '/': ['index.html', 'text/html; charset=utf-8'], '/demo': ['index.html', 'text/html; charset=utf-8'],
     '/admin': ['admin.html', 'text/html; charset=utf-8'],
@@ -48,6 +50,13 @@ export async function createDemoHandler({ queue, apiFor, sessionSecret = randomB
       const pathname = new URL(req.originalUrl || req.url, origin).pathname;
       if (prefix && pathname !== prefix && !pathname.startsWith(prefix + '/')) throw new QueueError('Not found.', 404);
       const path = pathname.slice(prefix.length) || '/';
+      if (req.method === 'POST' && path === '/webhooks/dressme') {
+        if (!queue || !webhook) throw new QueueError('Webhook not configured.', 404);
+        const chunks = []; let size = 0;
+        for await (const chunk of req) { size += chunk.length; if (size > 65536) throw new QueueError('Webhook too large.', 413); chunks.push(chunk); }
+        await queue.receiveWebhook(verifyWebhook(Buffer.concat(chunks), req.headers, webhook, now()));
+        res.writeHead(204); res.end(); return; // Acknowledge only after durable save.
+      }
       if (prefix && path === '/') { res.writeHead(303, { Location: prefix + '/demo' }); res.end(); return; }
       if (req.method === 'GET' && assets[path]) {
         const [file, type] = assets[path], bytes = await readFile(new URL('../web/' + file, import.meta.url));
@@ -71,7 +80,7 @@ export async function createDemoHandler({ queue, apiFor, sessionSecret = randomB
           const value = nonce + '.' + expires;
           res.setHeader('Set-Cookie', 'velox_demo_session=' + value + '.' + sign(value) + '; Path=' + (prefix || '/') + '; HttpOnly; SameSite=Strict; Max-Age=172800' + (secure ? '; Secure' : ''));
         }
-        return send(200, { configured: Boolean(queue), gapSeconds, mode: queue ? 'real' : 'preview', clientId: 'demo', expiresAt: new Date(expires).toISOString() });
+        return send(200, { configured: Boolean(queue), completionMode: webhook ? 'webhook-first' : 'polling-only', gapSeconds, mode: queue ? 'real' : 'preview', clientId: 'demo', expiresAt: new Date(expires).toISOString() });
       }
       if (!nonce) throw new QueueError('Open the demo first.', 401);
       const owner = 'demo_' + createHmac('sha256', sessionSecret).update(nonce).digest('hex');
@@ -81,24 +90,31 @@ export async function createDemoHandler({ queue, apiFor, sessionSecret = randomB
       }
       if (!queue) throw new QueueError('Preview only. Live generation is not enabled.', 503);
       const api = apiFor(owner);
+      const zipMatch = path.match(/^\/api\/requests(?:\/([a-f0-9-]+))?\/download\.zip$/i);
+      if (req.method === 'GET' && zipMatch) {
+        if (downloads >= 1) throw new QueueError('A ZIP is being prepared. Please try again shortly.', 429);
+        const entries = zipMatch[1] ? [queue.owned(zipMatch[1], owner)] : [...queue.entries.values()].filter(e => e.owner === owner && e.status === 'succeeded').sort((a, b) => b.createdAt - a.createdAt).slice(0, 25);
+        if (entries.length && now() < lastDownloadAt + 10000) throw new QueueError('Please wait 10 seconds between ZIP downloads.', 429);
+        if (entries.length) lastDownloadAt = now();
+        downloads++;
+        try {
+          const bytes = await buildAssetDownload({ entries: entries.map(e => ({ ...e, timing: queue.view(e.id, owner).timing })), api, fetchImpl: assetFetch });
+          res.writeHead(200, { 'Content-Type': 'application/zip', 'Content-Disposition': 'attachment; filename="velox-demo-assets.zip"', 'Content-Length': bytes.length }); res.end(bytes); return;
+        } finally { downloads--; }
+      }
       if (req.method === 'POST' && path === '/api/requests') {
         if (req.headers.origin !== origin || !req.headers['content-type']?.startsWith('application/json')) throw new QueueError('Same-origin JSON requests only.', 403);
         if (uploads >= 2) throw new QueueError('Uploads are busy. Please try again shortly.', 429);
-        uploads++;
+        uploads += 2; // One pair overlaps two transfers; preserve the global two-upload bound.
         try {
           const data = await body(req);
           if (!uuid.test(data.id || '') || data.consent !== true) throw new QueueError('A request ID and image permission are required.', 400);
           const product = image(data.product), personal = image(data.personal);
           const fingerprint = createHash('sha256').update(JSON.stringify([data.product, data.personal])).digest('hex');
-          const status = await queue.accept({ id: data.id, owner, fingerprint }, async save => {
-            const completedProduct = await api.upload(product, { role: 'product', fileName: 'demo-product', onReserved: id => save('productUploadId', id) });
-            await save('productAssetId', completedProduct.id);
-            const completedPersonal = await api.upload(personal, { role: 'personal', fileName: 'demo-personal', onReserved: id => save('personalUploadId', id) });
-            await save('personalAssetId', completedPersonal.id);
-            return { personalAssetId: completedPersonal.id, productAssetId: completedProduct.id };
-          });
+          const status = await queue.accept({ id: data.id, owner, fingerprint },
+            save => api.uploadPair({ personal, product }, save));
           return send(202, status);
-        } finally { uploads--; }
+        } finally { uploads -= 2; }
       }
       const match = path.match(/^\/api\/requests\/([a-f0-9-]+)(\/result)?$/i);
       if (req.method === 'GET' && match) {
@@ -122,9 +138,9 @@ export async function createDemoHandler({ queue, apiFor, sessionSecret = randomB
   };
 }
 
-export async function startDemoServer({ queue, apiFor, sessionSecret, port = 5190, gapSeconds = 10, prefix = '' }) {
+export async function startDemoServer({ queue, apiFor, webhook, sessionSecret, port = 5190, gapSeconds = 10, prefix = '', now, assetFetch }) {
   let origin;
-  const handler = await createDemoHandler({ queue, apiFor, sessionSecret, gapSeconds, prefix, getOrigin: () => origin });
+  const handler = await createDemoHandler({ queue, apiFor, webhook, sessionSecret, gapSeconds, prefix, now, assetFetch, getOrigin: () => origin });
   const server = createServer(handler);
   server.requestTimeout = 120000; server.headersTimeout = 15000;
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
