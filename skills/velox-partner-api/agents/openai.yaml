@@ -1,0 +1,4 @@
+interface:
+  display_name: "Velox TriFit API"
+  short_description: "Build and test Velox virtual try-on integrations"
+  default_prompt: "Use $velox-partner-api to build a Node.js VTO integration and validate the offline mock."

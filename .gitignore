@@ -9,3 +9,5 @@ uploads/
 results/
 partner.config.json
 .demo-state/
+
+dist/

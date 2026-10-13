@@ -25,6 +25,11 @@ visitor's own browser-session requests and public SDK downloads. It exposes no
 keys, routing, quota editing, other visitors' photos or traffic-test controls.
 The public pages must pass the Studio release gates before they are marked live.
 
+## Install the Codex plugin
+
+See [installation and test prompts](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/CODEX_PLUGIN.md). The GitHub marketplace
+package is separate from universal directory review and approval.
+
 ## One demo, one inspectable SDK integration
 
 The hosted application is this repository's browser UI, demo backend and shared

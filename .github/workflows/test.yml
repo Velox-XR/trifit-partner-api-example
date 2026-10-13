@@ -16,3 +16,4 @@ jobs:
       - run: npm test
       - run: npm run demo:mock
       - run: npm run demo:failure
+      - run: node scripts/package-plugin.mjs

@@ -5,7 +5,9 @@
   "private": true,
   "type": "module",
   "description": "Velox public SDKs, runnable DressMe demo, developer dashboard, tutorials and AI-agent integration skill.",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node server.mjs",
     "preview": "node server.mjs --preview",

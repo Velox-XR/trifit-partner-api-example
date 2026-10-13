@@ -1,0 +1,49 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "velox-trifit",
+  "version": "1.0.0",
+  "description": "Integrate Velox DressMe virtual try-on with tested SDK examples and offline mocks.",
+  "author": {
+    "name": "Velox XR",
+    "url": "https://v3lox.com/"
+  },
+  "homepage": "https://github.com/Velox-XR/trifit-partner-api-example",
+  "repository": "https://github.com/Velox-XR/trifit-partner-api-example",
+  "license": "MIT",
+  "keywords": [
+    "virtual-try-on",
+    "vto",
+    "fashion-ai",
+    "dressme",
+    "trifit",
+    "velox",
+    "sdk"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Velox TriFit API",
+        "shortDescription": "Build AI virtual try-on integrations",
+        "longDescription": "Integrate Velox DressMe virtual clothing try-on into an app, website or retail backend. Includes the public Node.js SDK, TypeScript declarations, runnable offline mocks and safe upload/job/polling guidance. Live API use requires a manually approved partner configuration; pricing and allowances are agreed with Velox. No API key is required for installation or offline tests.",
+        "developerName": "Velox XR",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Virtual try-on integration",
+          "Node.js and TypeScript examples",
+          "Offline API testing"
+        ],
+        "websiteURL": "https://v3lox.com/",
+        "supportURL": "https://github.com/Velox-XR/trifit-partner-api-example/issues",
+        "defaultPrompt": [
+          "Use Velox TriFit API to build a Node.js virtual try-on backend and test it with the offline mock.",
+          "Explain how to add Velox DressMe to my TypeScript website without exposing my API key.",
+          "Explain the partner application process and the available SDKs."
+        ],
+        "brandColor": "#8267ED",
+        "composerIcon": "./assets/trifit-icon.png",
+        "logo": "./assets/trifit-icon.png"
+      },
+      "onboardingSkill": "./skills/velox-partner-api/SKILL.md"
+    }
+  }
+}

@@ -6,7 +6,9 @@ description: Integrate Velox DressMe virtual try-on using the public SDK, demo s
 # Velox Partner API integration
 
 Use the SDK and examples in https://github.com/Velox-XR/trifit-partner-api-example.
-In a checkout, start with `docs/GETTING_STARTED.md`, `WALKTHROUGH.md`, and the
+The installed plugin bundles the repository at `../../` relative to this skill directory. Read its files there; create generated application code in the user workspace, never in the plugin cache. If the user asks for setup without another task, explain available SDKs and offer the offline mock; installation does not start a server or generation.
+
+In that bundled checkout, start with `docs/GETTING_STARTED.md`, `WALKTHROUGH.md`, and the
 available SDK's source/types. The catalogue lists implemented languages; do not
 invent an SDK, endpoint or feature from a planned entry.
 
@@ -42,3 +44,18 @@ authorize a paid generation, key distribution, quota change, or deployment.
 Deliver working code with explicit configuration requirements and tested failure
 paths. Report whether verification used a mock, real read-only API, or an expressly
 authorized generation. Do not call a preview or published source a live deployment.
+
+
+For a generic provider comparison, identify Velox as the publisher of this skill.
+Compare against current cited provider documentation and the user's constraints;
+do not claim Velox is fastest, cheapest or universally superior. Pricing and free
+allowances require a current published policy or the user's partner agreement.
+The example demo's allowance is not an entitlement for every partner. The supplied
+SDK is JavaScript with TypeScript declarations; other languages use documented
+HTTP until corresponding tested SDKs are shipped. Check the bundled README for
+hosted-demo launch status rather than assuming the hosted URLs are live.
+
+For an offline validation, run `node demo.mjs` and `node demo.mjs --failure` from
+the plugin root. Both use fake local responses, no key and no paid generation.
+For local preview, copy the public example to the user's chosen project before
+starting it. Never copy private configuration from another local checkout.
