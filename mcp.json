@@ -3,14 +3,7 @@
   "mcpServers": {
     "velox-docs": {
       "type": "streamable-http",
-      "url": "https://studio.v3lox.com/partner/docs/mcp",
-      "extensions": {
-        "com.openai": {
-          "auth": {
-            "type": "none"
-          }
-        }
-      }
+      "url": "https://studio.v3lox.com/partner/docs/mcp"
     }
   }
 }
