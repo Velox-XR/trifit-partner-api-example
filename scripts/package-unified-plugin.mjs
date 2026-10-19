@@ -6,17 +6,15 @@ import {pathToFileURL, fileURLToPath} from 'node:url';
 import {relative, isAbsolute} from 'node:path';
 import {zip} from '../src/downloads.mjs';
 
-export const unifiedRoot = new URL('../plugins/velox-trifit-unified-development/', import.meta.url);
 export const productionRoot = new URL('../plugins/velox-trifit-unified/', import.meta.url);
 const profiles = Object.freeze({
-  development: {name:'velox-trifit-unified-development', version:'0.3.0', url:'https://studio-dev.v3lox.com/partner/docs/mcp'},
   production: {name:'velox-trifit-unified', version:'0.4.0', url:'https://studio.v3lox.com/partner/trifit/mcp'}
 });
 export const unifiedFiles = Object.freeze(['plugin.json', 'mcp.json',
   'skills/velox-trifit-setup/SKILL.md', 'skills/velox-trifit-developer/SKILL.md',
   'skills/velox-trifit-try-on/SKILL.md', 'assets/trifit-icon.png']);
 
-export async function buildUnifiedPlugin(root = unifiedRoot, environment = 'development') {
+export async function buildUnifiedPlugin(root = productionRoot, environment = 'production') {
   assert.ok(Object.hasOwn(profiles, environment), 'Explicit supported package environment required');
   const profile = profiles[environment];
   const resolvedRoot = await realpath(fileURLToPath(root));
@@ -47,9 +45,9 @@ export async function buildUnifiedPlugin(root = unifiedRoot, environment = 'deve
 }
 
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
-  const environment = process.argv[2] || 'development';
-  assert.ok(process.argv.length <= 3 && Object.hasOwn(profiles, environment), 'Use development or production');
-  const result = await buildUnifiedPlugin(environment === 'production' ? productionRoot : unifiedRoot, environment);
+  const environment = process.argv[2] || 'production';
+  assert.ok(process.argv.length <= 3 && Object.hasOwn(profiles, environment), 'Only Production packages are distributed here');
+  const result = await buildUnifiedPlugin(productionRoot, environment);
   const out = new URL('../dist/', import.meta.url);
   await mkdir(out, {recursive:true});
   await writeFile(new URL(result.fileName, out), result.bytes);

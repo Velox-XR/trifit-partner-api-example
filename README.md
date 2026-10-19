@@ -37,8 +37,9 @@ The [Velox TriFit ChatGPT/Codex plugin](https://github.com/Velox-XR/trifit-partn
 with consented account or guest try-on in one package. The [v0.4.0 Production-targeted source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit-unified)
 and reproducible ZIP builder are available for inspection. **Production activation
 and client acceptance are in progress; this is not yet an invitation to connect
-or an approved public-directory listing.** The accepted v0.3.0 Development preview
-is retained separately. The existing developer package and its OpenAI review remain unchanged.
+or an approved public-directory listing.** This repository distributes Production
+packages only. Private Development packages and connection instructions are not
+included. The existing developer package and its OpenAI review remain unchanged.
 
 ## One demo, one inspectable SDK integration
 

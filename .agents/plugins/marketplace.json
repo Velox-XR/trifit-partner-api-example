@@ -17,18 +17,6 @@
       "category": "Developer Tools"
     },
     {
-      "name": "velox-trifit-unified-development",
-      "source": {
-        "source": "local",
-        "path": "./plugins/velox-trifit-unified-development"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Lifestyle"
-    },
-    {
       "name": "velox-trifit-unified",
       "source": {"source": "local", "path": "./plugins/velox-trifit-unified"},
       "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},

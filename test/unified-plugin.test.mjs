@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
-import {buildUnifiedPlugin, unifiedFiles, unifiedRoot, productionRoot} from '../scripts/package-unified-plugin.mjs';
+import {readFile, readdir} from 'node:fs/promises';
+import {buildUnifiedPlugin, unifiedFiles, productionRoot} from '../scripts/package-unified-plugin.mjs';
 import {buildPlugin} from '../scripts/package-plugin.mjs';
 
-test('unified source builds the exact tested six-file Development candidate', async () => {
+test('default builder produces only the exact six-file Production candidate', async () => {
   const first = await buildUnifiedPlugin(), second = await buildUnifiedPlugin();
-  assert.equal(first.sha256, 'c38274f4c043dea3fe3c47f23e3a05d5519c1c63e921768a097270eaa53e6a27');
+  assert.equal(first.sha256, '2c2f28bdbaa267a85358659590f1990055cc7f42bf9ce52c5d2e2e08dd0eaad9');
   assert.deepEqual(first.bytes, second.bytes);
   assert.deepEqual(first.files, unifiedFiles);
   const names = [], bytes = first.bytes;
@@ -16,7 +16,7 @@ test('unified source builds the exact tested six-file Development candidate', as
     const name = bytes.subarray(offset + 30, offset + 30 + pathLength).toString();
     names.push(name);
     const data = bytes.subarray(offset + 30 + pathLength, offset + 30 + pathLength + length);
-    const source = await readFile(new URL(name, unifiedRoot));
+    const source = await readFile(new URL(name, productionRoot));
     assert.deepEqual(data, name.endsWith('.png') ? source : Buffer.from(source.toString().replace(/\r\n/g, '\n')));
     offset += 30 + pathLength + length;
   }
@@ -24,17 +24,21 @@ test('unified source builds the exact tested six-file Development candidate', as
   assert.equal(bytes.readUInt32LE(offset), 0x02014b50);
 });
 
-test('marketplace adds the preview without replacing the developer package', async () => {
+test('public marketplace contains only Production packages and no Development source', async () => {
   const catalogue = JSON.parse(await readFile(new URL('../.agents/plugins/marketplace.json', import.meta.url)));
   const developer = catalogue.plugins.find(p => p.name === 'velox-trifit-developer');
   assert.equal(developer.source.path, './');
-  const preview = catalogue.plugins.find(p => p.name === 'velox-trifit-unified-development');
-  assert.equal(preview.source.path, './plugins/velox-trifit-unified-development');
-  const manifest = JSON.parse(await readFile(new URL('../' + preview.source.path + '/plugin.json', import.meta.url)));
-  assert.equal(manifest.name, preview.name);
-  assert.notEqual(manifest.name, developer.name);
   const production = catalogue.plugins.find(p => p.name === 'velox-trifit-unified');
   assert.equal(production.source.path, './plugins/velox-trifit-unified');
+  assert.deepEqual(catalogue.plugins.map(p => p.name), ['velox-trifit-developer', 'velox-trifit-unified']);
+  const roots = [new URL('../', import.meta.url), new URL('../' + production.source.path + '/', import.meta.url)];
+  for (const root of roots) {
+    const manifest = JSON.parse(await readFile(new URL('plugin.json', root)));
+    assert.ok(catalogue.plugins.some(p => p.name === manifest.name));
+    const mcp = JSON.parse(await readFile(new URL('mcp.json', root)));
+    for (const server of Object.values(mcp.mcpServers)) assert.equal(new URL(server.url).origin, 'https://studio.v3lox.com');
+  }
+  assert.deepEqual(await readdir(new URL('../plugins/', import.meta.url)), ['velox-trifit-unified']);
 });
 
 test('Production package is reproducible, separately bound and preserves the reviewed docs plugin', async () => {
@@ -52,9 +56,7 @@ test('Production package is reproducible, separately bound and preserves the rev
     assert.doesNotMatch(text, /studio-dev\.v3lox|trifit-dev\.v3lox|plugin_asdk_app_|link_6ad|Bearer /);
   }
   assert.deepEqual(await readFile(new URL('assets/trifit-icon.png', productionRoot)), await readFile(new URL('../assets/trifit-icon.png', import.meta.url)));
-  assert.deepEqual(await readFile(new URL('skills/velox-trifit-developer/SKILL.md', productionRoot)), await readFile(new URL('skills/velox-trifit-developer/SKILL.md', unifiedRoot)));
-  await assert.rejects(buildUnifiedPlugin(productionRoot), /Assertion/);
-  await assert.rejects(buildUnifiedPlugin(unifiedRoot, 'production'), /Assertion/);
+  await assert.rejects(buildUnifiedPlugin(productionRoot, 'development'), /Explicit supported/);
   await assert.rejects(buildUnifiedPlugin(productionRoot, 'other'), /Explicit supported/);
 });
 
