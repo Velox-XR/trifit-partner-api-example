@@ -6,19 +6,19 @@ import {pathToFileURL, fileURLToPath} from 'node:url';
 import {relative, isAbsolute} from 'node:path';
 import {zip} from '../src/downloads.mjs';
 
-export const productionRoot = new URL('../plugins/velox-trifit-unified/', import.meta.url);
+export const productionRoot = new URL('../plugins/velox-trifit/', import.meta.url);
 const profiles = Object.freeze({
-  production: {name:'velox-trifit-unified', version:'0.4.0', url:'https://studio.v3lox.com/partner/trifit/mcp'}
+  production: {name:'velox-trifit', version:'1.2.0', url:'https://studio.v3lox.com/partner/trifit/mcp'}
 });
-export const unifiedFiles = Object.freeze(['plugin.json', 'mcp.json',
+export const trifitFiles = Object.freeze(['plugin.json', 'mcp.json',
   'skills/velox-trifit-setup/SKILL.md', 'skills/velox-trifit-developer/SKILL.md',
   'skills/velox-trifit-try-on/SKILL.md', 'assets/trifit-icon.png']);
 
-export async function buildUnifiedPlugin(root = productionRoot, environment = 'production') {
+export async function buildTriFitPlugin(root = productionRoot, environment = 'production') {
   assert.ok(Object.hasOwn(profiles, environment), 'Explicit supported package environment required');
   const profile = profiles[environment];
   const resolvedRoot = await realpath(fileURLToPath(root));
-  const entries = await Promise.all(unifiedFiles.map(async name => {
+  const entries = await Promise.all(trifitFiles.map(async name => {
     const file = new URL(name, root), resolved = await realpath(fileURLToPath(file));
     const rel = relative(resolvedRoot, resolved);
     assert.ok(rel && !rel.startsWith('..') && !isAbsolute(rel), 'Package file must stay inside its source root');
@@ -40,14 +40,14 @@ export async function buildUnifiedPlugin(root = productionRoot, environment = 'p
     assert.ok(name.startsWith('./') && files.has(name.slice(2)), 'Manifest reference must be packaged');
   }
   const bytes = zip(entries);
-  return {bytes, sha256:createHash('sha256').update(bytes).digest('hex'), files:[...unifiedFiles],
+  return {bytes, sha256:createHash('sha256').update(bytes).digest('hex'), files:[...trifitFiles],
     version:manifest.version, fileName:`${manifest.name}-${manifest.version}.zip`};
 }
 
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
   const environment = process.argv[2] || 'production';
   assert.ok(process.argv.length <= 3 && Object.hasOwn(profiles, environment), 'Only Production packages are distributed here');
-  const result = await buildUnifiedPlugin(productionRoot, environment);
+  const result = await buildTriFitPlugin(productionRoot, environment);
   const out = new URL('../dist/', import.meta.url);
   await mkdir(out, {recursive:true});
   await writeFile(new URL(result.fileName, out), result.bytes);

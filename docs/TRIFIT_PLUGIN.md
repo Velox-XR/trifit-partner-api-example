@@ -6,7 +6,7 @@ account or limited guest session.
 
 ## Release status
 
-**v0.4.0 is the Production-targeted release candidate, named Velox TriFit.**
+**v1.2.0 is the Production-targeted release candidate, named Velox TriFit.**
 Production activation and client acceptance are in progress. Do not treat this
 source publication as proof that the connection is installed or ready, or as an
 OpenAI-approved listing. This repository distributes Production packages only;
@@ -23,7 +23,7 @@ read the [walkthrough](../WALKTHROUGH.md), or [apply for Partner API access](htt
 
 ## Inspect or build the Production package
 
-Production source: [`plugins/velox-trifit-unified`](../plugins/velox-trifit-unified).
+Production source: [`plugins/velox-trifit`](../plugins/velox-trifit).
 It contains one portable manifest, one remote MCP connection, three skills and an
 icon. There is no bundled API credential, OAuth token, customer image or server
 implementation. Repository code is MIT licensed; this does not license Velox's
@@ -32,16 +32,16 @@ hosted services or grant commercial API access.
 With Node.js 22 or later, from this repository:
 
 ```sh
-node --test test/unified-plugin.test.mjs
+node --test test/trifit-plugin.test.mjs
 npm run plugin:production:build
 ```
 
-The Production command creates `dist/velox-trifit-unified-0.4.0.zip` and its
+The Production command creates `dist/velox-trifit-1.2.0.zip` and its
 SHA-256 file. The command does not install, connect, upload, generate, deploy or
 submit a review. The fixed six-file Production archive has SHA-256:
 
 ```text
-2c2f28bdbaa267a85358659590f1990055cc7f42bf9ce52c5d2e2e08dd0eaad9
+457e588ab7b1a8b41e69c8e9b0ab5b74f7b52b1f27a1d5b54ed8aee1e5c4e0cc
 ```
 
 ## Install in supported desktop clients
@@ -53,11 +53,17 @@ codex plugin marketplace add Velox-XR/trifit-partner-api-example --ref main
 ```
 
 After Production readiness is confirmed, open the desktop Plugins directory,
-choose the **Velox XR** marketplace, and install **Velox TriFit** v0.4.0
-(`velox-trifit-unified@velox-xr`). Refresh the marketplace or restart
+choose the **Velox XR** marketplace, and install **Velox TriFit** v1.2.0
+(`velox-trifit@velox-xr`). Refresh the marketplace or restart
 the desktop app if needed. Start a fresh chat with **Try now** and explicitly
 select the plugin during acceptance testing. This is manual repository
 distribution, not installation from the public OpenAI directory.
+
+Version 1.2.0 is newer than the earlier documentation-only `velox-trifit` 1.0.1
+package. Existing users must review the expanded capabilities and approve any
+account or guest permissions through normal consent; installation never grants
+those permissions automatically. The separate `velox-trifit-developer` package
+and its existing review are unchanged.
 
 Local and repository marketplace support varies by client. A GitHub link or ZIP
 is **not** a universal one-click install link for the ChatGPT website. Follow
