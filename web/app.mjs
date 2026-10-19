@@ -1,4 +1,5 @@
 import { finalStates, reviewStates, blocksSubmission, statusLabel, statusMessage, progressStage, prepareImage, safeResultUrl, durationText } from './workspace.mjs';
+import { starterProducts, loadStarterProduct } from './starter-products.mjs';
 
 const $ = selector => document.querySelector(selector);
 const form = $('#try-on'), submit = $('#submit'), status = $('#status');
@@ -29,6 +30,7 @@ function remember(id) {
   try { if (id) sessionStorage.setItem(storageKey, id); else sessionStorage.removeItem(storageKey); } catch { /* Read-only history recovers it after reload. */ }
 }
 function controls() {
+  for (const button of document.querySelectorAll('[data-starter-product]')) button.disabled = preparing || posting;
   submit.disabled = preparing || !configured || !historyVerified || posting || Boolean(pending) || !selected.personal || !selected.product;
   submit.textContent = preparing ? 'Preparing your images…' : pending || posting ? 'Request in progress' : 'Create my DressMe look ↗';
   $('#selection-hint').textContent = preparing ? 'Resizing locally in your browser. Your original files are unchanged.' : pending ? 'Finish or resolve the existing request before starting another.' : !configured ? 'You can explore the trays. Generation is not enabled.' : !historyVerified ? 'Confirming your existing requests before allowing a new one.' : !selected.personal || !selected.product ? 'Select one photo and one product to get started.' : 'One pair selected. A new generation starts only when you submit.';
@@ -92,6 +94,31 @@ function gallery(role) {
     });
     card.append(choose, remove); list.append(card);
   }
+}
+for (const product of starterProducts) {
+  const button = node('button', 'starter-product'); button.type = 'button';
+  button.dataset.starterProduct = product.id;
+  const img = node('img'); img.src = new URL('./samples/' + product.file, base); img.alt = product.alt;
+  img.loading = 'lazy'; img.width = 120; img.height = 160;
+  button.append(img, node('strong', '', product.name), node('span', 'small', 'Use this product'));
+  button.addEventListener('click', async () => {
+    if (preparing || posting) return;
+    preparing = true; controls(); inputErrors.product = []; showInputErrors();
+    try {
+      if (trays.product.length >= 8) throw new Error('The tray holds 8 images. Remove a local preview before adding more.');
+      feedback($('#product-status'), 'Preparing starter product locally. Nothing is uploaded.', 'busy');
+      const result = await prepareImage(await loadStarterProduct(product.id, base));
+      const item = { file: result.file, url: URL.createObjectURL(result.file) };
+      trays.product.push(item); selected.product = item;
+      feedback($('#product-status'), product.name + ' selected. Add your photo, then approve and submit when ready. Nothing uploaded.', 'success');
+    } catch (error) {
+      inputErrors.product = [error.message]; feedback($('#product-status'), error.message, 'error');
+    } finally {
+      preparing = false; form.elements.consent.checked = false;
+      gallery('product'); controls(); if (!reviewId) renderReview(); showInputErrors(inputErrors.product.length > 0);
+    }
+  });
+  $('#starter-products').append(button);
 }
 for (const role of ['personal', 'product']) {
   const input = $('#' + role + '-files');

@@ -9,5 +9,6 @@ uploads/
 results/
 partner.config.json
 .demo-state/
+.account-example/
 
 dist/

@@ -22,7 +22,12 @@ test('public ZIP is deterministic and every file matches allowlisted GitHub sour
   assert.equal(first.sha256, second.sha256);
   assert.equal(first.sha256, createHash('sha256').update(first.bytes).digest('hex'));
   const files = entries(first.bytes); assert.equal(files.size, publicFiles.length);
-  for (const name of publicFiles) assert.equal(files.get(name).toString(), (await readFile(new URL('../' + name, import.meta.url), 'utf8')).replace(/\r\n/g, '\n'), name);
+  for (const name of publicFiles) {
+    if (/\.(webp|png|jpg)$/.test(name)) assert.deepEqual(files.get(name), await readFile(new URL('../' + name, import.meta.url)), name);
+    else assert.equal(files.get(name).toString(), (await readFile(new URL('../' + name, import.meta.url), 'utf8')).replace(/\r\n/g, '\n'), name);
+  }
+  assert(![...files.keys()].some(name => name.startsWith('.account-example/')));
+  assert.deepEqual(JSON.parse(files.get('package-lock.json')).packages[''].dependencies, JSON.parse(files.get('package.json')).dependencies);
   assert(!files.has('partner.config.json')); assert(![...files.keys()].some(name => name.startsWith('.demo-state/') || name.startsWith('uploads/')));
   const config = JSON.parse(files.get('partner.config.example.json'));
   assert.equal(config.clientId, 'demo'); assert.match(config.applicationKey, /INVALID/); assert.equal(config.allowRealGeneration, false);

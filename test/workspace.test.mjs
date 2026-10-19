@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
 import * as helpers from '../web/workspace.mjs';
+import { starterProducts } from '../web/starter-products.mjs';
 import { startDemoServer } from '../src/demo-server.mjs';
 
 test('status messages distinguish admission, generation, uncertainty and failures without an ETA', () => {
@@ -39,7 +40,7 @@ async function workspace({ saved, configured = true, initial = [], failHistory =
   get('#try-on').elements = { consent: { checked: true } }; get('#try-on').reportValidity = () => true;
   const calls = [], storage = new Map(saved ? [['velox-demo-pending-request', saved]] : []);
   const fakeURL = class extends URL { static createObjectURL() { return 'blob:local-input'; } static revokeObjectURL() {} };
-  const source = (await readFile(new URL('../web/app.mjs', import.meta.url), 'utf8')).replace(/^import[^\n]+\n/, '');
+  const source = (await readFile(new URL('../web/app.mjs', import.meta.url), 'utf8')).replace(/^import[^\n]+\n/gm, '');
   const fetch = async (url, options) => {
     const path = new URL(url).pathname, method = options?.method || 'GET'; calls.push({ path, method });
     if (method === 'POST' && failPost) throw new Error('connection lost');
@@ -48,6 +49,7 @@ async function workspace({ saved, configured = true, initial = [], failHistory =
     return { ok, json: async () => data };
   };
   const context = { ...helpers, prepareImage: prepare, URL: fakeURL, AbortSignal, Map, Set, console, Date, Image: class {}, document: { querySelector: get, querySelectorAll: () => [], createElement: () => new Element() }, location: { href: 'http://localhost/demo' }, fetch, sessionStorage: { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value), removeItem: key => storage.delete(key) }, crypto: { randomUUID: () => 'new-request' }, setTimeout: () => 1, clearTimeout: () => {}, FileReader: class { readAsDataURL() { this.result = 'data:image/png;base64,dGVzdA=='; this.onload(); } } };
+  Object.assign(context, { starterProducts, loadStarterProduct: async id => ({ type: 'image/webp', name: id + '.webp' }) });
   const ui = await runInNewContext('(async () => {' + source + '\nreturn { select: () => { selected.personal = selected.product = { file: { type: "image/png" }, url: "blob:input" }; controls(); }, submit: () => form.listeners.submit({ preventDefault() {} }), refresh: () => history(), poll }; })()', context);
   return { ui, calls, nodes, storage };
 }
@@ -55,6 +57,17 @@ async function workspace({ saved, configured = true, initial = [], failHistory =
 test('preview permits local selection but never generation', async () => {
   const { ui, calls, nodes } = await workspace({ configured: false }); ui.select(); await ui.submit();
   assert(nodes.get('#submit').disabled); assert(!calls.some(call => call.method === 'POST'));
+});
+
+test('starter product selection reuses local preparation, resets consent and submits nothing', async () => {
+  const { calls, nodes } = await workspace({ configured: false });
+  const buttons = nodes.get('#starter-products').children;
+  assert.equal(buttons.length, 5);
+  await buttons[0].listeners.click();
+  assert.equal(nodes.get('#try-on').elements.consent.checked, false);
+  assert.equal(nodes.get('#selected-product').children.length, 1);
+  assert.match(nodes.get('#product-status').textContent, /Nothing uploaded/);
+  assert(!calls.some(call => call.method === 'POST'));
 });
 
 function pngFile(width = 6000, height = 4000) {

@@ -21,12 +21,17 @@
       </section>
     </section>
     <p class="notice" id="mode" role="status">Checking demo availability…</p>
+    <p class="notice">Want your own saved library and history? <a href="https://trifit.v3lox.com/" target="_blank" rel="noopener">Try the TriFit app ↗</a> with a free account and its available daily, weekly and monthly allowances. This demo instead uses a shared limited queue; neither option is unlimited.</p>
     <div class="workspace-layout">
       <div class="workspace-main">
         <section id="input-errors" class="input-errors" role="alert" aria-live="assertive" tabindex="-1" hidden></section>
         <section class="card library-section" aria-labelledby="product-heading">
           <div class="section-heading"><div><p class="eyebrow">01 / CHOOSE YOUR COLLECTION</p><h2 id="product-heading">Your product tray.</h2></div><label class="file-button">Add products<input id="product-files" type="file" name="product" multiple accept="image/png,image/jpeg,image/webp" aria-label="Add product images" aria-describedby="product-status"></label></div>
           <p class="small">Add garment images and select the one you want to try. These local previews are not a shared or saved partner catalogue.</p>
+          <h3>Or start with an outfit collage</h3>
+          <p class="small">Five owner-selected outfit boards from the provider-comparison tests. Choose one complete collage as your clothing reference, then add your own photo. People shown within a board are reference content, not your personal photo. Selecting a board uploads nothing.</p>
+          <p class="small">Clothing and accessories may not all transfer exactly. These example boards do not imply endorsement by the brands shown.</p>
+          <div id="starter-products" class="starter-products" aria-label="Sample clothing references"></div>
           <div id="product-library" class="image-library"><p class="empty-library">Your collection starts here.<br><span>Add a product image to see it in the tray.</span></p></div>
           <p id="product-status" class="image-feedback" role="status" aria-live="polite">JPEG, PNG or WebP · automatically resized in your browser · originals unchanged · 8 images per tray.</p>
         </section>
@@ -70,6 +75,7 @@
         </section>
       </div>
       <aside class="developer-rail" aria-label="Build with Velox">
+        <section class="card"><p class="eyebrow">PERSONAL TRIFIT EXPERIENCE</p><h2>Keep your looks.</h2><p>Use the TriFit app for your personal photos, products, history and current free account allowances. No plugin or Partner API key needed.</p><a class="quiet button-link" href="https://trifit.v3lox.com/" target="_blank" rel="noopener">Open TriFit app ↗</a><p class="small">Sign in or create an account there. Guest demo history does not transfer automatically.</p></section>
         <section class="card developer-card"><p class="eyebrow">FROM DEMO TO YOUR PRODUCT</p><h2>Try it here.<br>Build it your way.</h2><p>This workspace is a runnable JavaScript SDK integration. Explore the code behind the experience—not just a video of it.</p><a class="button-link" href="https://github.com/Velox-XR/trifit-partner-api-example" target="_blank" rel="noopener">Explore on GitHub ↗</a><a class="quiet button-link" href="./admin">Dashboard & SDK downloads</a><p class="small">JavaScript SDK + TypeScript declarations. Public SDKs and examples are MIT licensed.</p></section>
         <section class="card"><p class="eyebrow">A CLEAR PATH TO INTEGRATION</p><ol class="build-steps"><li><strong>Explore the live experience</strong><span>Bring a photo and a garment. Follow the request from inputs to result.</span></li><li><strong>Inspect the working example</strong><span>Download the SDK, read the walkthrough, or use the AI-agent integration guide.</span></li><li><strong>Apply for your own access</strong><span>Velox reviews your request, creates a unique partner integration and emails your private configuration.</span></li></ol><a class="text-link" href="https://studio.v3lox.com/#contact">Apply for Partner API access ↗</a></section>
         <details class="card developer-notes"><summary>What happens behind the scenes?</summary><ol><li>The browser sends the selected pair to the demo backend.</li><li>The backend uploads the images and queues one DressMe request.</li><li>The server-only SDK credential calls the Partner API with its registered webhook endpoint.</li><li>The backend verifies and durably saves the signed callback, then confirms the result through the authorized API.</li><li>The browser reads the demo's saved status and displays your result.</li></ol><p class="small">No API or signing key is exposed. Missing webhooks use delayed GET-only recovery, never another generation. Uncertain submissions stop for review. The duration label reports the actual completion source.</p><a class="text-link" href="https://github.com/Velox-XR/trifit-partner-api-example/blob/main/WALKTHROUGH.md" target="_blank" rel="noopener">Read the technical walkthrough ↗</a></details>

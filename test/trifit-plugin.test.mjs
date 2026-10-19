@@ -4,9 +4,17 @@ import {readFile, readdir} from 'node:fs/promises';
 import {buildTriFitPlugin, trifitFiles, productionRoot} from '../scripts/package-trifit-plugin.mjs';
 import {buildPlugin} from '../scripts/package-plugin.mjs';
 
+test('plugin skills offer TriFit app as well as limited demo', async () => {
+  for (const name of ['setup', 'developer', 'try-on']) {
+    const text = await readFile(new URL('../plugins/velox-trifit/skills/velox-trifit-' + name + '/SKILL.md', import.meta.url), 'utf8');
+    assert.match(text, /https:\/\/trifit\.v3lox\.com\//); assert.match(text, /https:\/\/studio\.v3lox\.com\/partners\/demo\/demo/);
+    assert.match(text, /allowance/); assert.match(text, /limited/);
+  }
+});
+
 test('default builder produces only the exact six-file Production candidate', async () => {
   const first = await buildTriFitPlugin(), second = await buildTriFitPlugin();
-  assert.equal(first.sha256, '457e588ab7b1a8b41e69c8e9b0ab5b74f7b52b1f27a1d5b54ed8aee1e5c4e0cc');
+  assert.equal(first.sha256, 'ff60dc756e7f5db22b117e5771f2b334d33e63d464ab2e759fb474f82c469ba9');
   assert.deepEqual(first.bytes, second.bytes);
   assert.deepEqual(first.files, trifitFiles);
   const names = [], bytes = first.bytes;
@@ -44,7 +52,7 @@ test('public marketplace contains only Production packages and no Development so
 test('Production package is reproducible, separately bound and preserves the reviewed docs plugin', async () => {
   const first = await buildTriFitPlugin(productionRoot, 'production');
   assert.deepEqual(first.bytes, (await buildTriFitPlugin(productionRoot, 'production')).bytes);
-  assert.equal(first.fileName, 'velox-trifit-1.2.0.zip');
+  assert.equal(first.fileName, 'velox-trifit-1.2.1.zip');
   assert.deepEqual(first.files, trifitFiles);
   const manifest = JSON.parse(await readFile(new URL('plugin.json', productionRoot)));
   assert.equal(manifest.extensions['com.openai'].interface.displayName, 'Velox TriFit');

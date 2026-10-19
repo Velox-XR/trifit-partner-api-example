@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node server.mjs",
     "preview": "node server.mjs --preview",
+    "account:example": "node examples/account/main.mjs",
     "demo:mock": "node demo.mjs",
     "demo:failure": "node demo.mjs --failure",
     "test": "node --test test/*.test.mjs",

@@ -12,10 +12,13 @@ exact SDK implementation behind it.
 
 | Want to… | Go here |
 | --- | --- |
-| Try the Velox-hosted example | [Demo](https://studio.v3lox.com/partners/demo/demo) |
+| Try without an account | [Hosted demo](https://studio.v3lox.com/partners/demo/demo) — free shared, limited queue |
+| Try with your own saved photos, products and history | [TriFit app](https://trifit.v3lox.com/) — sign in/create an account and use its available free daily/weekly/monthly allowance |
 | See your demo requests and download the SDK ZIP | [Demo dashboard & SDKs](https://studio.v3lox.com/partners/demo/admin) |
 | Explore immediately on your computer, without credentials | Download this repository; run `npm run preview` with Node.js 22+ |
 | Build a real integration | [Getting started](docs/GETTING_STARTED.md) · [Apply for access](https://studio.v3lox.com/partner-api#apply) |
+| Run real DressMe from code with my existing TriFit account, without a partner key | [Example 2: account sign-in](examples/account/README.md) |
+| Understand which access route to use | [All DressMe options](docs/DRESSME_ACCESS.md) |
 | Read the API flow | [Technical walkthrough](WALKTHROUGH.md) |
 | Choose an SDK | [SDK catalogue](docs/SDK_CATALOG.md) |
 | Work with an AI coding agent | [Velox Partner API skill](skills/velox-partner-api/SKILL.md) |
@@ -26,6 +29,40 @@ keys, routing, quota editing, other visitors' photos or traffic-test controls.
 Hosted UI updates follow the Studio Development-to-Production release gates;
 the public host may run an earlier accepted version than the source you inspect.
 
+## See real public try-on examples
+
+Existing official TriFit examples: AI personal portraits, clothing references and
+their actual TriFit outputs. These are historical examples, not mocks, newly run
+tests or performance/quality comparisons. [Provenance and media notes](web/samples/README.md).
+
+| Example | Personal photo | Clothing reference | TriFit result |
+| --- | --- | --- | --- |
+| Amara · activewear | ![Amara, an AI personal model, before the try-on](web/samples/public-amara-person.webp) | ![Dark activewear clothing reference](web/samples/public-amara-reference.webp) | ![Existing TriFit result showing Amara in dark activewear](web/samples/public-amara-result.webp) |
+| Mateo · overshirt | ![Mateo, an AI personal model, before the try-on](web/samples/public-mateo-person.webp) | ![Light blue overshirt clothing reference](web/samples/public-mateo-reference.webp) | ![Existing TriFit result showing Mateo in a light blue overshirt](web/samples/public-mateo-result.webp) |
+
+Try your own photos in the [TriFit app](https://trifit.v3lox.com/) with available
+account allowance, or the [shared demo](https://studio.v3lox.com/partners/demo/demo)
+without an account. The live host receives UI updates through its separate release.
+
+### Outfit-collage starter products
+
+The demo source includes the **same five clothing collages used in our provider
+comparison tests**, copied without image edits. Select a whole board as the product
+reference and use a separate personal photo. Reference models inside a board are
+not the target person. Accessory transfer and garment fidelity can vary.
+
+| Green trench · details | Green trench · full look | Burgundy trench & skirt |
+| --- | --- | --- |
+| ![Green trench outfit collage with garments and accessories](web/samples/collage-green-trench-details.png) | ![Green trench full-look collage](web/samples/collage-green-trench-look.png) | ![Burgundy trench jacket, skirt and accessories collage](web/samples/collage-burgundy-trench.png) |
+
+| Navy blazer & argyle skirt | Leather jacket & denim |
+| --- | --- |
+| ![Navy blazer, white shirt, argyle skirt and leg warmers collage](web/samples/collage-navy-blazer.jpg) | ![Leather jacket, burgundy top and jeans collage](web/samples/collage-leather-denim.jpg) |
+
+These are product inputs, **not generated result images or proof of provider
+rankings**. They are separate from the matched Amara/Mateo examples above.
+Brand names within the boards do not imply endorsement.
+
 ## Install the Codex plugin
 
 See [installation and test prompts](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/CODEX_PLUGIN.md). The GitHub marketplace
@@ -34,7 +71,7 @@ package is separate from universal directory review and approval.
 ### Velox TriFit — API guidance and try-on in one plugin
 
 The [Velox TriFit ChatGPT/Codex plugin](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md) combines API guidance
-with consented account or guest try-on in one package. The [v1.2.0 Production-targeted source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit)
+with consented account or guest try-on in one package. The [v1.2.1 Production-targeted source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit)
 and reproducible ZIP builder are available for inspection. **Production activation
 and client acceptance are in progress; this is not yet an invitation to connect
 or an approved public-directory listing.** This repository distributes Production
@@ -58,7 +95,8 @@ partner-specific application or a mock presented as real generation.
   bypassing the queue and usage limits.
 - The dashboard ZIP contains this same public source, SDK, examples and guides.
 - No API key is needed to visit the Velox-hosted demo.
-- To run your own real backend, apply for **your own** partner configuration.
+- To run your own commercial partner backend, apply for **your own** partner configuration.
+- For code using your own TriFit account instead, use [Example 2](examples/account/README.md) without a partner key.
 
 The checked-in [configuration template](partner.config.example.json) identifies
 the `demo` integration and Production API URL, but its key is deliberately
@@ -83,6 +121,8 @@ The public workspace follows the fuller partner-demo layout, with a developer
 sidebar linking to the public code, SDK ZIP, walkthrough and access application.
 
 - Add up to eight shopper photos and eight product images to **local trays**.
+  The source also includes five starter outfit collages from the comparison tests.
+  Click one to add it to the product tray without uploading anything.
   Select a pair and inspect it before sending a request. Adding, selecting or
   removing a preview performs no upload or generation.
 - JPEG, PNG and WebP photos are prepared locally in the browser: automatically
@@ -105,7 +145,7 @@ No production/development selector, shared photo library, routing, webhook
 registration or load-test controls are exposed by this public UI. The private
 partner workbench is unchanged.
 
-For real access:
+For real **Partner API** access:
 
 1. [Apply for Partner API access](https://studio.v3lox.com/partner-api#apply),
    describing your platform, expected usage and launch timing.
@@ -128,7 +168,9 @@ URL. See [hosting](docs/HOSTING.md) for the exact origin/proxy contract. With no
 webhook configured, the local example remains explicitly polling-only; it does not
 claim webhook delivery. The standalone mock remains an unpaid API-flow fixture.
 
-A free TriFit account is not a partner credential. Real API use can incur charges,
+A free TriFit account is not a partner credential, but can authorise the separate
+[personal-account example](examples/account/README.md) using its own available
+allowance. Real Partner API use can incur charges,
 including in Development. Never commit the private configuration or reuse the
 Velox-hosted demo key in another deployment.
 

@@ -8,7 +8,7 @@ import {zip} from '../src/downloads.mjs';
 
 export const productionRoot = new URL('../plugins/velox-trifit/', import.meta.url);
 const profiles = Object.freeze({
-  production: {name:'velox-trifit', version:'1.2.0', url:'https://studio.v3lox.com/partner/trifit/mcp'}
+  production: {name:'velox-trifit', version:'1.2.1', url:'https://studio.v3lox.com/partner/trifit/mcp'}
 });
 export const trifitFiles = Object.freeze(['plugin.json', 'mcp.json',
   'skills/velox-trifit-setup/SKILL.md', 'skills/velox-trifit-developer/SKILL.md',

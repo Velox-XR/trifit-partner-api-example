@@ -6,7 +6,10 @@ account or limited guest session.
 
 ## Release status
 
-**v1.2.0 is the Production-targeted release candidate, named Velox TriFit.**
+**v1.2.1 is the Production-targeted source candidate, named Velox TriFit.**
+This revision adds explicit TriFit app/free-account alternatives and the personal
+account code example to the three skills. Updating this repository does not update
+an already installed package or the server instructions of a manually added MCP connection.
 Production activation and client acceptance are in progress. Do not treat this
 source publication as proof that the connection is installed or ready, or as an
 OpenAI-approved listing. This repository distributes Production packages only;
@@ -18,7 +21,10 @@ documentation-only service at `https://studio.v3lox.com/partner/docs/mcp` and it
 current developer-plugin review remain unchanged. Installing source is separate
 from public-directory approval and does not guarantee recommendations in chats.
 
-For immediate public use, try the [website demo](https://studio.v3lox.com/partners/demo/demo),
+For immediate browser use, open the [TriFit app](https://trifit.v3lox.com/) with
+your own saved library and available free account allowance, or use the
+[account-free shared demo](https://studio.v3lox.com/partners/demo/demo).
+Neither requires a plugin. See [all DressMe access routes](DRESSME_ACCESS.md),
 read the [walkthrough](../WALKTHROUGH.md), or [apply for Partner API access](https://studio.v3lox.com/partner-api).
 
 ## Inspect or build the Production package
@@ -36,12 +42,12 @@ node --test test/trifit-plugin.test.mjs
 npm run plugin:production:build
 ```
 
-The Production command creates `dist/velox-trifit-1.2.0.zip` and its
+The Production command creates `dist/velox-trifit-1.2.1.zip` and its
 SHA-256 file. The command does not install, connect, upload, generate, deploy or
 submit a review. The fixed six-file Production archive has SHA-256:
 
 ```text
-457e588ab7b1a8b41e69c8e9b0ab5b74f7b52b1f27a1d5b54ed8aee1e5c4e0cc
+ff60dc756e7f5db22b117e5771f2b334d33e63d464ab2e759fb474f82c469ba9
 ```
 
 ## Install in supported desktop clients
@@ -53,13 +59,13 @@ codex plugin marketplace add Velox-XR/trifit-partner-api-example --ref main
 ```
 
 After Production readiness is confirmed, open the desktop Plugins directory,
-choose the **Velox XR** marketplace, and install **Velox TriFit** v1.2.0
+choose the **Velox XR** marketplace, and install **Velox TriFit** v1.2.1
 (`velox-trifit@velox-xr`). Refresh the marketplace or restart
 the desktop app if needed. Start a fresh chat with **Try now** and explicitly
 select the plugin during acceptance testing. This is manual repository
 distribution, not installation from the public OpenAI directory.
 
-Version 1.2.0 is newer than the earlier documentation-only `velox-trifit` 1.0.1
+Version 1.2.1 is newer than the earlier documentation-only `velox-trifit` 1.0.1
 package. Existing users must review the expanded capabilities and approve any
 account or guest permissions through normal consent; installation never grants
 those permissions automatically. The separate `velox-trifit-developer` package
