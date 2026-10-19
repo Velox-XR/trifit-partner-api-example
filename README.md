@@ -15,7 +15,7 @@ exact SDK implementation behind it.
 | Try the Velox-hosted example | [Demo](https://studio.v3lox.com/partners/demo/demo) |
 | See your demo requests and download the SDK ZIP | [Demo dashboard & SDKs](https://studio.v3lox.com/partners/demo/admin) |
 | Explore immediately on your computer, without credentials | Download this repository; run `npm run preview` with Node.js 22+ |
-| Build a real integration | [Getting started](docs/GETTING_STARTED.md) · [Apply for access](https://studio.v3lox.com/#contact) |
+| Build a real integration | [Getting started](docs/GETTING_STARTED.md) · [Apply for access](https://studio.v3lox.com/partner-api#apply) |
 | Read the API flow | [Technical walkthrough](WALKTHROUGH.md) |
 | Choose an SDK | [SDK catalogue](docs/SDK_CATALOG.md) |
 | Work with an AI coding agent | [Velox Partner API skill](skills/velox-partner-api/SKILL.md) |
@@ -106,8 +106,8 @@ partner workbench is unchanged.
 
 For real access:
 
-1. [Contact Velox](https://studio.v3lox.com/#contact), mentioning Partner API /
-   DressMe, your platform, expected usage and launch timing.
+1. [Apply for Partner API access](https://studio.v3lox.com/partner-api#apply),
+   describing your platform, expected usage and launch timing.
 2. Velox reviews your request, creates a unique partner integration and emails
    private, environment-specific configuration.
 3. Save the supplied `partner.config.json` beside `package.json`.
