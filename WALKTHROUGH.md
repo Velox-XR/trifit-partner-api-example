@@ -5,10 +5,10 @@ The browser demo and public dashboard use the included
 MIT. Download the complete public source from the dashboard, or inspect it here.
 See [Getting started](docs/GETTING_STARTED.md) for the quickest path.
 
-[Register interest](https://studio.v3lox.com/#contact) · [Quick start](README.md)
+[Apply for Partner API access](https://studio.v3lox.com/partner-api#apply) · [Quick start](README.md)
 
-Mention **Partner API / DressMe** in the existing contact form. The dedicated
-application page is awaiting its website release; see the [README](README.md).
+Use the Partner API application form to describe your platform, expected usage
+and launch timing. Applying does not issue a key or start a paid request.
 
 ## Before running real requests
 
@@ -19,10 +19,11 @@ configuration files. Save the supplied `partner.config.json` locally, outside Gi
 `/me` identity/environment check. `npm run preview` and `npm run demo:mock` are
 separate, explicit no-generation modes.
 
-The intended public Velox demo uses its own dedicated partner integration. Visitors
+The [Velox-hosted demo](https://studio.v3lox.com/partners/demo/demo) uses its own dedicated partner integration. Visitors
 do not apply individually just to try that hosted demo and never see its key.
-Clients integrating into their own products apply for separate access. The hosted
-demo has not been launched by publishing this repository.
+Clients integrating into their own products apply for separate access. Check the
+hosted page for current availability and limits; publishing or downloading this
+repository does not activate your own backend.
 
 ## 1. Understand the boundary
 

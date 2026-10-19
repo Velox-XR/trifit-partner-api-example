@@ -63,6 +63,12 @@ is **not** a universal one-click install link for the ChatGPT website. Follow
 for your supported client. Never paste an API key into a chat or modify installed
 cache files to make the connection work.
 
+For complete-package testing in ChatGPT, use **Work mode in the desktop app**
+with this installed package selected. Test Codex separately. The browser custom
+connection below is useful for testing tools, but is not a substitute for either
+complete-package check. Keep existing connections unless a normal consent screen
+asks for the permissions needed by the action you explicitly requested.
+
 ## ChatGPT web testing
 
 For an authorised Development tester whose ChatGPT account exposes **Add custom

@@ -23,7 +23,8 @@ command demonstrating the API flow with artificial local responses.
 
 ## 3. Get your own real access
 
-[Apply to Velox](https://studio.v3lox.com/#contact), mentioning Partner API / DressMe.
+[Apply to Velox](https://studio.v3lox.com/partner-api#apply) with your platform,
+expected usage and launch timing. Applying does not activate access or incur a charge.
 After review, Velox supplies private configuration for your own integration.
 Save it as `partner.config.json`, which is ignored by Git, then run `npm start`.
 Do not use `demo` as your own identity unless Velox explicitly assigned it to you.
