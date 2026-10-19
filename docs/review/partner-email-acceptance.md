@@ -15,12 +15,15 @@ No mailbox credentials, private connection IDs or customer content belong here.
 - One message was sent at **20:52:20 UTC**. Both the sender's Sent record and the
   independently read recipient Inbox record were verified. The message addressed
   to `partner@v3lox.com` actually arrived; this is not just a provider send result.
-- A genuine Velox acknowledgement reply is still pending. Delivery is not approval
-  or key issuance. No receipt reference has been invented.
+- The owner sent a real test reply from the receiving organisation mailbox. It
+  arrived in the applicant's original thread at **20:56:07 UTC**; From, To and
+  In-Reply-To were checked, and its actual new body ("my reply!") was read in chat.
+  This passes the controlled mail round trip. It is not a formal application
+  approval, an application reference, or evidence that any key was issued.
 - The candidate's **68 offline tests passed** again. Its reproducible ZIP SHA-256
   remains `9428450d8ec0241164a5fc9f2ab827ad966a0e0e91eafee47113554894f2d117`.
 
-This verifies the controlled sender-selection, consent, one-send and delivery
+This verifies the controlled sender-selection, consent, one-send, delivery and reply-reading
 path. It does **not** prove installation/discovery of v1.2.1 in ChatGPT Work or
 Codex: the installed package observed during the check was still v1.2.0. The
 two-client checks below remain separate. Private message IDs and mailbox details
@@ -60,11 +63,12 @@ this document. Record observed outputs/tool calls and pass/fail separately.
 3. **Passed:** preview and approve the exact test email. Send once; retain provider evidence.
 4. **Passed:** verify arrival in the Velox inbox using separately authorised access. Do not
    infer arrival from the sender's Sent folder.
-5. **Pending:** a Velox reviewer replies with a receipt, or the separately configured receipt
-   service sends one. Never fabricate a receipt from the sending client.
-6. **Pending:** read the actual reply in the original client and report received-for-review.
-7. **Observed so far:** no provisioning, quota, generation, app-configuration or
-   existing-review mutation was made by this controlled test. Recheck at completion.
+5. **Passed for a manual test acknowledgement:** the owner replied from the receiving
+   organisation mailbox. No automatic receipt service or application reference was invented.
+6. **Passed:** read the matching real reply in the original client, report its actual
+   text, and do not upgrade a test reply to a formal review/approval decision.
+7. **Observed:** no provisioning, quota, generation, app-configuration or
+   existing-review mutation was made by this controlled test.
 
 Any automatic inbound-mail receipt or Studio dashboard ingestion is a separate,
 explicitly scoped implementation and acceptance check. No such automation is
