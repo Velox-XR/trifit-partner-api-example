@@ -38,7 +38,7 @@ npm run plugin:production:build
 
 The Production command creates `dist/velox-trifit-unified-0.4.0.zip` and its
 SHA-256 file. The command does not install, connect, upload, generate, deploy or
-submits a review. The fixed six-file Production archive has SHA-256:
+submit a review. The fixed six-file Production archive has SHA-256:
 
 ```text
 2c2f28bdbaa267a85358659590f1990055cc7f42bf9ce52c5d2e2e08dd0eaad9
