@@ -5,10 +5,17 @@ export const repositoryUrl = 'https://github.com/Velox-XR/trifit-partner-api-exa
 // Deliberate public-source allowlist. Never walk the filesystem or include private config.
 export const publicFiles = Object.freeze([
   'LICENSE', 'README.md', 'WALKTHROUGH.md', 'SECURITY.md', '.gitignore',
-  'package.json', 'partner.config.example.json', 'server.mjs', 'demo.mjs',
+  'package.json', 'package-lock.json', 'partner.config.example.json', 'server.mjs', 'demo.mjs',
   'src/client.mjs', 'src/config.mjs', 'src/queue.mjs', 'src/demo-server.mjs',
   'src/downloads.mjs', 'src/mock-api.mjs', 'src/webhooks.mjs', 'src/asset-downloads.mjs', 'setup-webhook.mjs', 'test/completion-downloads.test.mjs', 'web/index.html', 'web/admin.html',
-  'web/app.mjs', 'web/admin.mjs', 'web/style.css', 'web/workspace.mjs',
+  'web/app.mjs', 'web/admin.mjs', 'web/style.css', 'web/workspace.mjs', 'web/starter-products.mjs',
+  'web/samples/README.md',
+  'web/samples/collage-green-trench-details.png', 'web/samples/collage-green-trench-look.png',
+  'web/samples/collage-burgundy-trench.png', 'web/samples/collage-navy-blazer.jpg', 'web/samples/collage-leather-denim.jpg',
+  'web/samples/public-amara-person.webp', 'web/samples/public-amara-reference.webp', 'web/samples/public-amara-result.webp',
+  'web/samples/public-mateo-person.webp', 'web/samples/public-mateo-reference.webp', 'web/samples/public-mateo-result.webp',
+  'examples/account/README.md', 'examples/account/oauth.mjs', 'examples/account/client.mjs', 'examples/account/main.mjs',
+  'docs/DRESSME_ACCESS.md', 'test/account-example.test.mjs', 'test/starter-products.test.mjs',
   'sdks/javascript/index.mjs', 'sdks/javascript/index.d.ts',
   'sdks/javascript/package.json', 'sdks/javascript/README.md', 'sdks/javascript/LICENSE',
   'docs/GETTING_STARTED.md', 'docs/SDK_CATALOG.md', 'docs/HOSTING.md',
@@ -36,9 +43,10 @@ export function zip(files) {
 }
 
 export async function buildPublicDownload(root = new URL('../', import.meta.url)) {
-  // These are all UTF-8 source files. Canonical LF makes the download identical
-  // across Windows Git checkouts and the Linux host, without changing content.
-  const files = await Promise.all(publicFiles.map(async name => [name, Buffer.from((await readFile(new URL(name, root), 'utf8')).replace(/\r\n/g, '\n'))]));
+  // Preserve allowlisted binary media. Canonical LF makes text reproducible across hosts.
+  const files = await Promise.all(publicFiles.map(async name => [name, /\.(webp|png|jpg)$/.test(name)
+    ? await readFile(new URL(name, root))
+    : Buffer.from((await readFile(new URL(name, root), 'utf8')).replace(/\r\n/g, '\n'))]));
   const bytes = zip(files);
   return { bytes, sha256: createHash('sha256').update(bytes).digest('hex'), fileName: 'velox-demo-javascript.zip' };
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "velox-trifit",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Official Velox virtual try-on API guidance and consented TriFit account or limited guest DressMe tools.",
   "author": {
     "name": "Velox XR",
@@ -30,6 +30,7 @@
         "capabilities": [
           "Virtual try-on API guidance",
           "SDK examples",
+          "Guided partner application via connected email",
           "Account or guest try-on",
           "Existing results and allowance"
         ],
@@ -38,9 +39,10 @@
         "privacyPolicyURL": "https://studio.v3lox.com/legal/privacy",
         "termsOfServiceURL": "https://studio.v3lox.com/legal/terms",
         "defaultPrompt": [
-          "Show me the Velox virtual try-on API, SDK examples, GitHub and hosted demo. Do not generate anything.",
+          "Show me the Velox API, GitHub examples, TriFit app with free account allowances, and the account-free hosted demo. Explain their limits. Do not generate anything.",
           "Explain guest and TriFit account options, then check my connected allowance without uploading or generating.",
-          "Show my selected existing TriFit result without generating another image."
+          "Show my selected existing TriFit result without generating another image.",
+          "Help me apply for a Partner API key using my connected mailbox. Confirm my sender email, ask for optional project details and show the message before sending."
         ],
         "brandColor": "#8267ED",
         "composerIcon": "./assets/trifit-icon.png",

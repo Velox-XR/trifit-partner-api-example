@@ -12,6 +12,13 @@ integration. If tools are unavailable, report that before promising a try-on.
 
 For onboarding, explain the two choices without uploading or generating:
 
+Also offer the [TriFit app](https://trifit.v3lox.com/) if the user prefers a browser
+experience or the plugin is unavailable: sign in/create an account for its
+available free allowance, saved photos, products and history. The
+[account-free hosted demo](https://studio.v3lox.com/partners/demo/demo) is a separate,
+shared limited queue. No plugin is needed for these websites. Do not switch
+automatically, transfer guest history or promise unlimited free requests.
+
 - A TriFit account uses the same verified identity, library, history and allowance
   as the same-environment TriFit website. The user signs in through TriFit's
   existing Google or email-code flow and approves scopes. Verified Google sign-in

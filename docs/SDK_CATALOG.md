@@ -6,6 +6,7 @@ This repository is the public source of truth for the packages listed here.
 | --- | --- | --- | --- |
 | JavaScript / Node.js 22+ | Available, MIT | [SDK](../sdks/javascript/index.mjs) | Root demo: `npm run preview`; real mode with assigned config: `npm start` |
 | TypeScript declarations | Included with JavaScript SDK | [Types](../sdks/javascript/index.d.ts) | Import the JavaScript SDK with its accompanying declarations |
+| Personal account OAuth/MCP example / Node.js 22+ | Source with offline contract tests; live sign-in acceptance still required | [Account example](../examples/account/README.md) | `npm ci`, then `npm run account:example`; explicit `--actions` for uploads/try-ons |
 
 The [public demo dashboard](https://studio.v3lox.com/partners/demo/admin) will
 provide the credential-free SDK integration ZIP after the hosting release. See
@@ -21,9 +22,11 @@ version information. CI must never run a paid generation.
 
 - `sdks/<language>/`: distributable SDK source, types and reference documentation.
 - `web/`, `src/`, `server.mjs`: the first runnable SDK integration: the public demo.
+- `examples/account/`: the second example, using a verified TriFit account and its allowance without a partner key.
 - `docs/`, `WALKTHROUGH.md`: onboarding, API flow, operations and tutorials.
 - `skills/velox-partner-api/`: a task-focused AI-agent integration skill.
 - `test/`: offline API contract, queue, ownership and download checks.
 
-The public key template is intentionally invalid. Additional examples must preserve
-that boundary and link to Velox's access application rather than distribute keys.
+The public partner key template is intentionally invalid. Neither example distributes
+keys. Account OAuth does not provision commercial Partner API access. See
+[access routes](DRESSME_ACCESS.md) for the distinction.

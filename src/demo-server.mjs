@@ -36,7 +36,13 @@ export async function createDemoHandler({ queue, apiFor, webhook, sessionSecret 
     '/admin': ['admin.html', 'text/html; charset=utf-8'],
     '/app.mjs': ['app.mjs', 'text/javascript; charset=utf-8'], '/admin.mjs': ['admin.mjs', 'text/javascript; charset=utf-8'],
     '/workspace.mjs': ['workspace.mjs', 'text/javascript; charset=utf-8'],
-    '/style.css': ['style.css', 'text/css; charset=utf-8']
+    '/style.css': ['style.css', 'text/css; charset=utf-8'],
+    '/starter-products.mjs': ['starter-products.mjs', 'text/javascript; charset=utf-8'],
+    '/samples/collage-green-trench-details.png': ['samples/collage-green-trench-details.png', 'image/png'],
+    '/samples/collage-green-trench-look.png': ['samples/collage-green-trench-look.png', 'image/png'],
+    '/samples/collage-burgundy-trench.png': ['samples/collage-burgundy-trench.png', 'image/png'],
+    '/samples/collage-navy-blazer.jpg': ['samples/collage-navy-blazer.jpg', 'image/jpeg'],
+    '/samples/collage-leather-denim.jpg': ['samples/collage-leather-denim.jpg', 'image/jpeg']
   };
   return async (req, res) => {
     res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Content-Type-Options', 'nosniff');

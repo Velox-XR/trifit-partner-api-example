@@ -1,5 +1,11 @@
 # From trying DressMe to building with it
 
+**Choose your route first:** [all DressMe access options](DRESSME_ACCESS.md).
+For personal use, open the [TriFit app](https://trifit.v3lox.com/) and sign in or
+create an account to use its available free allowances. For code using that same
+account without a Partner API key, follow [Example 2](../examples/account/README.md).
+The steps below describe the separate partner-backend integration.
+
 ## 1. Try the hosted integration
 
 [Demo](https://studio.v3lox.com/partners/demo/demo) ·
