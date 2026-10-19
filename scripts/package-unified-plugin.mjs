@@ -1,0 +1,50 @@
+// Package only the reviewed client instructions/configuration; no server or secrets.
+import assert from 'node:assert/strict';
+import {readFile, mkdir, writeFile, realpath} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {pathToFileURL, fileURLToPath} from 'node:url';
+import {relative, isAbsolute} from 'node:path';
+import {zip} from '../src/downloads.mjs';
+
+export const unifiedRoot = new URL('../plugins/velox-trifit-unified-development/', import.meta.url);
+export const unifiedFiles = Object.freeze(['plugin.json', 'mcp.json',
+  'skills/velox-trifit-setup/SKILL.md', 'skills/velox-trifit-developer/SKILL.md',
+  'skills/velox-trifit-try-on/SKILL.md', 'assets/trifit-icon.png']);
+
+export async function buildUnifiedPlugin(root = unifiedRoot) {
+  const resolvedRoot = await realpath(fileURLToPath(root));
+  const entries = await Promise.all(unifiedFiles.map(async name => {
+    const file = new URL(name, root), resolved = await realpath(fileURLToPath(file));
+    const rel = relative(resolvedRoot, resolved);
+    assert.ok(rel && !rel.startsWith('..') && !isAbsolute(rel), 'Package file must stay inside its source root');
+    const bytes = name.endsWith('.png') ? await readFile(file)
+      : Buffer.from((await readFile(file, 'utf8')).replace(/\r\n/g, '\n'));
+    return [name, bytes];
+  }));
+  const files = new Map(entries);
+  const manifest = JSON.parse(files.get('plugin.json'));
+  assert.equal(manifest.name, 'velox-trifit-unified-development');
+  assert.equal(manifest.version, '0.3.0');
+  assert.deepEqual(JSON.parse(files.get('mcp.json')), {
+    $schema:'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json',
+    mcpServers:{'velox-trifit':{type:'streamable-http',url:'https://studio-dev.v3lox.com/partner/docs/mcp'}}
+  });
+  const ext = manifest.extensions['com.openai'];
+  assert.deepEqual(Object.keys(ext).sort(), ['interface', 'onboardingSkill']);
+  for (const name of [ext.onboardingSkill, ext.interface.logo, ext.interface.composerIcon]) {
+    assert.ok(name.startsWith('./') && files.has(name.slice(2)), 'Manifest reference must be packaged');
+  }
+  const bytes = zip(entries);
+  return {bytes, sha256:createHash('sha256').update(bytes).digest('hex'), files:[...unifiedFiles],
+    version:manifest.version, fileName:`${manifest.name}-${manifest.version}.zip`};
+}
+
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  const result = await buildUnifiedPlugin();
+  const out = new URL('../dist/', import.meta.url);
+  await mkdir(out, {recursive:true});
+  await writeFile(new URL(result.fileName, out), result.bytes);
+  await writeFile(new URL(`${result.fileName}.sha256`, out), `${result.sha256}  ${result.fileName}\n`);
+  console.log(JSON.stringify({file:`dist/${result.fileName}`,sha256:result.sha256,files:result.files.length,
+    environment:'development',publicRelease:false}));
+}

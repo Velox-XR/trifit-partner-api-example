@@ -26,6 +26,12 @@ const extras=['mcp.json','.mcp.json','mcp-server.mjs','test/docs-mcp.test.mjs','
 export const pluginFiles=[...new Set([...publicFiles,...extras])].sort();
 export async function buildPlugin(){
  const entries=await Promise.all(pluginFiles.map(async name=>[name,name.endsWith('.png') ? await readFile(new URL(name,root)) : Buffer.from((await readFile(new URL(name,root),'utf8')).replace(/\r\n/g,'\n'))]));
+ // This ZIP contains only the developer package, not sibling repo previews.
+ const catalogue=entries.find(([name])=>name==='.agents/plugins/marketplace.json');
+ const manifest=JSON.parse(entries.find(([name])=>name==='plugin.json')[1]);
+ const marketplace=JSON.parse(catalogue[1]);
+ marketplace.plugins=marketplace.plugins.filter(plugin=>plugin.name===manifest.name);
+ catalogue[1]=Buffer.from(JSON.stringify(marketplace,null,2)+'\n');
  const bytes=zip(entries);return {bytes,sha256:createHash('sha256').update(bytes).digest('hex'),files:pluginFiles};
 }
 if(process.argv[1] && pathToFileURL(process.argv[1]).href===import.meta.url){
