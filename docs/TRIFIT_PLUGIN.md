@@ -9,7 +9,9 @@ account or limited guest session.
 **v1.2.1 is the Production-targeted source candidate, named Velox TriFit.**
 This revision adds explicit TriFit app/free-account alternatives and the personal
 account code example to the three skills, plus an optional connected-mailbox
-application workflow. The email workflow is source-prepared, not live-send accepted;
+application workflow. One owner-approved email test passed sender selection,
+preview/approval, delivery to the Velox inbox and reading a genuine manual reply.
+See the [acceptance evidence and remaining client checks](review/partner-email-acceptance.md).
 Velox inbox auto-acknowledgement is not configured by this package.
 Updating this repository does not update
 an already installed package or the server instructions of a manually added MCP connection.
@@ -85,6 +87,32 @@ with this installed package selected. Test Codex separately. The browser custom
 connection below is useful for testing tools, but is not a substitute for either
 complete-package check. Keep existing connections unless a normal consent screen
 asks for the permissions needed by the action you explicitly requested.
+
+### Update an existing installation and test the application flow
+
+Refresh the **Velox XR** marketplace after this version is available on `main`.
+Open the existing **Velox TriFit** package and update it to **1.2.1**; do not add
+another MCP connection or uninstall a working account/guest connection. Restart
+the desktop app if its plugin view still shows the old version. The package
+details must show **1.2.1**, not merely an app connection labelled "dev mode".
+
+Start a fresh chat with that package selected, in ChatGPT Work or Codex, and send:
+
+> Help me apply for a Velox Partner API key from my connected mailbox. Skip
+> project details and expected usage. Confirm which sender to use and preview
+> the email to partner@v3lox.com. Do not send anything yet.
+
+Expected: it identifies an authorised mailbox (or offers to connect one), asks
+you to choose if needed, and previews the email without redirecting to the form,
+sending, issuing a key or starting a try-on. A real send requires your separate
+approval. To read the already completed test rather than send another, use:
+
+> Read the existing "TEST ONLY — TriFit Partner API application flow" thread
+> in my chosen mailbox. Show the actual Velox reply. Do not send or apply again.
+
+Mail reading/sending requires a separately connected email plugin with those
+capabilities. The source/ZIP release does not automatically update the bare
+ChatGPT-web MCP connection or publish the package in OpenAI's public directory.
 
 ## ChatGPT web testing
 
@@ -167,8 +195,9 @@ receipt.”** The client checks that specific thread, not unrelated inbox messag
 A reply appears here when checked; continuous monitoring is not implicit. If you
 want a notification later, request a supported scheduled follow-up separately.
 
-**Current acceptance boundary:** the instructions and packaging are prepared;
-an approved end-to-end mailbox send/receipt test remains outstanding. Merely
+**Current acceptance boundary:** a controlled one-message send/delivery/manual-reply
+test passed with the candidate instructions loaded directly; installed-package
+discovery and behavior still need checking in both clients. Merely
 sending an email does not create a Studio application-dashboard record. Automatic
 Velox inbox acknowledgement/ingestion must be configured and verified separately;
 until then the receipt is a team reply. This package neither auto-approves access
