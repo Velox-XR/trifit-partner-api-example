@@ -14,7 +14,8 @@
     "demo:mock": "node demo.mjs",
     "demo:failure": "node demo.mjs --failure",
     "test": "node --test test/*.test.mjs",
-    "plugin:unified:build": "node scripts/package-unified-plugin.mjs"
+    "plugin:unified:build": "node scripts/package-unified-plugin.mjs",
+    "plugin:production:build": "node scripts/package-unified-plugin.mjs production"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",

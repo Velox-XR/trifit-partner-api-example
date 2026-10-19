@@ -5,8 +5,7 @@ description: Use connected Velox TriFit to preview clothing on selected personal
 
 # Velox TriFit try-on
 
-This package is a private Development candidate, not a public release. Use its
-connected `velox-trifit` tools; do not substitute another image generator or
+This package connects to Production. Use its connected `velox-trifit` tools; do not substitute another image generator or
 integration. If tools are unavailable, report that before promising a try-on.
 
 ## Connect and choose access
@@ -23,8 +22,7 @@ For onboarding, explain the two choices without uploading or generating:
   configured delay between dispatches, not a promise of completion in ten seconds.
   Guest photos/history are not automatically transferred when an account is linked.
 
-Use the normal connection/consent UI; the user enters credentials or Development
-access codes there, never in chat or tool arguments. The server narrows consent to
+Use the normal connection/consent UI; the user enters credentials there, never in chat or tool arguments. The server narrows consent to
 one mode. Call `get_trifit_account` to read `quotaSource` before choosing tools:
 `trifit-account` means account tools; `shared-hosted-demo` means guest tools.
 Never switch mode, environment or account automatically, including after errors or
@@ -34,8 +32,7 @@ exhaustion. Missing permissions require consent, not a fallback credential.
 
 Use `get_trifit_allowance` and `list_trifit_library` for an account. Use
 `get_guest_demo_status` for a guest; report its actual session/shared allowance,
-expiry, queue state and `minimumStartGapSeconds`. Do not hardcode the Development
-ten-attempt session policy as a public offer. Failed attempts may count.
+expiry, queue state and `minimumStartGapSeconds`. Do not advertise Development test allowances as a public offer. Failed attempts may count.
 
 An explanation-only request does not authorize tools, uploads or generation.
 Checking allowance does not authorize a try-on. Do not reuse a prior test approval
@@ -69,9 +66,8 @@ After explicit approval and an available allowance:
 - **Account:** call `create_trifit_try_on` once with the two account asset IDs,
   `permissionConfirmed: true` and one new stable request UUID. Keep that UUID.
 - **Guest:** call `create_try_on` once with `consent: true` and either both
-  attachment descriptors or both uploaded asset IDs, not a mixture. In Development,
-  a separately requested new attempt after a terminal result uses the latest
-  `previous_request_id` from status. Never advance it automatically as a retry.
+  attachment descriptors or both uploaded asset IDs, not a mixture. Production guest sessions allow one attempt; do not create
+  another session or change receipt IDs to bypass that limit.
 
 Accepted attempts may consume allowance even if they fail. After a timeout,
 uncertain acceptance, failure or `needs_review`, do not resubmit or change IDs.

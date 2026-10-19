@@ -1,4 +1,4 @@
-# Velox TriFit unified plugin
+# Velox TriFit plugin
 
 One plugin for two tasks: learn how to integrate DressMe using official API
 documentation and SDK examples, or preview clothing using a consented TriFit
@@ -6,22 +6,24 @@ account or limited guest session.
 
 ## Release status
 
-**v0.3.0 is a Development preview for authorised testers. It is not a Production
-release, an OpenAI-approved listing or a promise of unrestricted free use.**
-Publishing this source does not open Development to everyone or bypass its access
-screen. The existing developer plugin and its review are not replaced by this preview.
+**v0.4.0 is the Production-targeted release candidate, named Velox TriFit.**
+Production activation and client acceptance are in progress. Do not treat this
+source publication as proof that the connection is installed or ready, or as an
+OpenAI-approved listing. This repository distributes Production packages only;
+private testing packages and Development connection details are not included.
 
-The planned unified Production service will use a separate Studio URL,
-`https://studio.v3lox.com/partner/trifit/mcp`, after Development acceptance and
-protected promotion. **Do not use that planned address as a live connection yet.**
-The current documentation-only Production endpoint remains separate.
+The Production package uses `https://studio.v3lox.com/partner/trifit/mcp`.
+**Wait for verified Production readiness before connecting it.** The existing
+documentation-only service at `https://studio.v3lox.com/partner/docs/mcp` and its
+current developer-plugin review remain unchanged. Installing source is separate
+from public-directory approval and does not guarantee recommendations in chats.
 
 For immediate public use, try the [website demo](https://studio.v3lox.com/partners/demo/demo),
 read the [walkthrough](../WALKTHROUGH.md), or [apply for Partner API access](https://studio.v3lox.com/partner-api).
 
-## Inspect or build the exact preview
+## Inspect or build the Production package
 
-Source: [`plugins/velox-trifit-unified-development`](../plugins/velox-trifit-unified-development).
+Production source: [`plugins/velox-trifit-unified`](../plugins/velox-trifit-unified).
 It contains one portable manifest, one remote MCP connection, three skills and an
 icon. There is no bundled API credential, OAuth token, customer image or server
 implementation. Repository code is MIT licensed; this does not license Velox's
@@ -31,16 +33,15 @@ With Node.js 22 or later, from this repository:
 
 ```sh
 node --test test/unified-plugin.test.mjs
-npm run plugin:unified:build
+npm run plugin:production:build
 ```
 
-The command creates `dist/velox-trifit-unified-development-0.3.0.zip` and its
-SHA-256 file. It does not install anything, connect an account, upload, generate,
-deploy or submit a review. The fixed six-file allowlist reproduces the tested
-candidate SHA-256:
+The Production command creates `dist/velox-trifit-unified-0.4.0.zip` and its
+SHA-256 file. The command does not install, connect, upload, generate, deploy or
+submit a review. The fixed six-file Production archive has SHA-256:
 
 ```text
-c38274f4c043dea3fe3c47f23e3a05d5519c1c63e921768a097270eaa53e6a27
+2c2f28bdbaa267a85358659590f1990055cc7f42bf9ce52c5d2e2e08dd0eaad9
 ```
 
 ## Install in supported desktop clients
@@ -51,8 +52,9 @@ Add this repository as a marketplace using the Codex CLI:
 codex plugin marketplace add Velox-XR/trifit-partner-api-example --ref main
 ```
 
-Then open the desktop Plugins directory, choose the **Velox XR** marketplace,
-and install **Velox TriFit · Unified Dev**. Refresh the marketplace or restart
+After Production readiness is confirmed, open the desktop Plugins directory,
+choose the **Velox XR** marketplace, and install **Velox TriFit** v0.4.0
+(`velox-trifit-unified@velox-xr`). Refresh the marketplace or restart
 the desktop app if needed. Start a fresh chat with **Try now** and explicitly
 select the plugin during acceptance testing. This is manual repository
 distribution, not installation from the public OpenAI directory.
@@ -71,17 +73,17 @@ asks for the permissions needed by the action you explicitly requested.
 
 ## ChatGPT web testing
 
-For an authorised Development tester whose ChatGPT account exposes **Add custom
-MCP server**, the test endpoint is:
+For a ChatGPT account exposing **Add custom MCP server**, use the Production
+endpoint only after readiness is confirmed:
 
 ```text
-https://studio-dev.v3lox.com/partner/docs/mcp
+https://studio.v3lox.com/partner/trifit/mcp
 ```
 
 Use ChatGPT's normal custom-connection and OAuth consent flow. Complete the
-Development access screen and TriFit sign-in yourself. Select account or guest
-deliberately. Availability is controlled by the ChatGPT account/workspace and
-Velox's Development access, not by this repository.
+TriFit sign-in yourself. Select account or guest deliberately. Availability is
+controlled by the ChatGPT account/workspace and the live Velox service, not by
+this repository.
 
 This custom MCP connection tests server tools. It does not by itself demonstrate
 that the complete three-skill archive has been installed in ChatGPT. Do not
@@ -101,6 +103,9 @@ Google sign-in can avoid another email-code step; a ChatGPT email or name cannot
 be used as proof of identity.
 
 Guests share the hosted demo queue and its actual session/shared allowances.
+The Production guest policy is one attempt per guest session and a shared
+10/day guest cap, also subject to the hosted demo integration's allowance and
+availability. Private test allowances do not apply to the public service.
 Read the returned limits and dispatch spacing before submitting; a 10-second gap
 between dispatches does not mean the result will finish in 10 seconds. Guest
 history does not automatically migrate into an account. Connection expiry or
