@@ -31,14 +31,14 @@ the public host may run an earlier accepted version than the source you inspect.
 See [installation and test prompts](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/CODEX_PLUGIN.md). The GitHub marketplace
 package is separate from universal directory review and approval.
 
-### Unified plugin source — Development preview
+### Velox TriFit — API guidance and try-on in one plugin
 
-The [unified ChatGPT/Codex plugin](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/UNIFIED_PLUGIN.md) combines API guidance
-with consented account or guest try-on in one package. Its [source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit-unified-development)
-and reproducible ZIP builder are available here for inspection and authorised
-Development testing. **This preview is not a Production release or an approved
-public-directory listing.** Development sign-in and access restrictions still apply.
-The existing developer package and its OpenAI review are separate and unchanged.
+The [Velox TriFit ChatGPT/Codex plugin](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/UNIFIED_PLUGIN.md) combines API guidance
+with consented account or guest try-on in one package. The [v0.4.0 Production-targeted source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit-unified)
+and reproducible ZIP builder are available for inspection. **Production activation
+and client acceptance are in progress; this is not yet an invitation to connect
+or an approved public-directory listing.** The accepted v0.3.0 Development preview
+is retained separately. The existing developer package and its OpenAI review remain unchanged.
 
 ## One demo, one inspectable SDK integration
 

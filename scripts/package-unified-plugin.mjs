@@ -7,11 +7,18 @@ import {relative, isAbsolute} from 'node:path';
 import {zip} from '../src/downloads.mjs';
 
 export const unifiedRoot = new URL('../plugins/velox-trifit-unified-development/', import.meta.url);
+export const productionRoot = new URL('../plugins/velox-trifit-unified/', import.meta.url);
+const profiles = Object.freeze({
+  development: {name:'velox-trifit-unified-development', version:'0.3.0', url:'https://studio-dev.v3lox.com/partner/docs/mcp'},
+  production: {name:'velox-trifit-unified', version:'0.4.0', url:'https://studio.v3lox.com/partner/trifit/mcp'}
+});
 export const unifiedFiles = Object.freeze(['plugin.json', 'mcp.json',
   'skills/velox-trifit-setup/SKILL.md', 'skills/velox-trifit-developer/SKILL.md',
   'skills/velox-trifit-try-on/SKILL.md', 'assets/trifit-icon.png']);
 
-export async function buildUnifiedPlugin(root = unifiedRoot) {
+export async function buildUnifiedPlugin(root = unifiedRoot, environment = 'development') {
+  assert.ok(Object.hasOwn(profiles, environment), 'Explicit supported package environment required');
+  const profile = profiles[environment];
   const resolvedRoot = await realpath(fileURLToPath(root));
   const entries = await Promise.all(unifiedFiles.map(async name => {
     const file = new URL(name, root), resolved = await realpath(fileURLToPath(file));
@@ -23,11 +30,11 @@ export async function buildUnifiedPlugin(root = unifiedRoot) {
   }));
   const files = new Map(entries);
   const manifest = JSON.parse(files.get('plugin.json'));
-  assert.equal(manifest.name, 'velox-trifit-unified-development');
-  assert.equal(manifest.version, '0.3.0');
+  assert.equal(manifest.name, profile.name);
+  assert.equal(manifest.version, profile.version);
   assert.deepEqual(JSON.parse(files.get('mcp.json')), {
     $schema:'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json',
-    mcpServers:{'velox-trifit':{type:'streamable-http',url:'https://studio-dev.v3lox.com/partner/docs/mcp'}}
+    mcpServers:{'velox-trifit':{type:'streamable-http',url:profile.url}}
   });
   const ext = manifest.extensions['com.openai'];
   assert.deepEqual(Object.keys(ext).sort(), ['interface', 'onboardingSkill']);
@@ -40,11 +47,13 @@ export async function buildUnifiedPlugin(root = unifiedRoot) {
 }
 
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
-  const result = await buildUnifiedPlugin();
+  const environment = process.argv[2] || 'development';
+  assert.ok(process.argv.length <= 3 && Object.hasOwn(profiles, environment), 'Use development or production');
+  const result = await buildUnifiedPlugin(environment === 'production' ? productionRoot : unifiedRoot, environment);
   const out = new URL('../dist/', import.meta.url);
   await mkdir(out, {recursive:true});
   await writeFile(new URL(result.fileName, out), result.bytes);
   await writeFile(new URL(`${result.fileName}.sha256`, out), `${result.sha256}  ${result.fileName}\n`);
   console.log(JSON.stringify({file:`dist/${result.fileName}`,sha256:result.sha256,files:result.files.length,
-    environment:'development',publicRelease:false}));
+    environment,publicDirectoryApproval:false}));
 }
