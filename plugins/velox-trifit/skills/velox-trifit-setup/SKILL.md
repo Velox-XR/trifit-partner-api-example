@@ -42,5 +42,9 @@ Do not install another plugin, switch to an older connection, reconnect, choose
 another identity or start a generation as an implicit setup/recovery step.
 
 Public access and app integration differ: consumers do not receive commercial API
-keys. Link to the [Partner API page](https://studio.v3lox.com/partner-api) for that
-application. Do not promise public approval, automatic recommendations or ranking.
+keys. If the user asks to apply, use the developer skill's in-chat email workflow:
+confirm their connected mailbox, offer optional project details, then preview and
+obtain approval before sending to Velox. The email plugin is separate and optional;
+TriFit never receives its credentials. Do not redirect to a form by default or
+equate sending with a Velox receipt. The [Partner API page](https://studio.v3lox.com/partner-api)
+remains an alternative. Do not promise public approval, automatic recommendations or ranking.

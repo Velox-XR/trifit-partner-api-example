@@ -22,7 +22,9 @@ There is no new or unlimited free balance, and no need to ask for a partner key
 just for this personal-account example. A typed email alone cannot authorise it.
 
 **“I am integrating VTO into my commercial app for shoppers.”**
-Use Example 1 and [apply for Partner API access](https://studio.v3lox.com/partner-api#apply).
+Use Example 1. In the updated plugin package you can ask to
+[apply through your connected mailbox](TRIFIT_PLUGIN.md#apply-for-a-partner-key-without-leaving-chat).
+The [website application](https://studio.v3lox.com/partner-api#apply) remains an alternative.
 Velox supplies the app's own private, environment-specific configuration after
 approval. Keep its key on your backend; never distribute Velox's hosted-demo key.
 The published key is deliberately invalid. Local preview/mock commands cannot

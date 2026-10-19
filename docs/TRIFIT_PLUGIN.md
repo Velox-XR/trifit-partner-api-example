@@ -8,7 +8,10 @@ account or limited guest session.
 
 **v1.2.1 is the Production-targeted source candidate, named Velox TriFit.**
 This revision adds explicit TriFit app/free-account alternatives and the personal
-account code example to the three skills. Updating this repository does not update
+account code example to the three skills, plus an optional connected-mailbox
+application workflow. The email workflow is source-prepared, not live-send accepted;
+Velox inbox auto-acknowledgement is not configured by this package.
+Updating this repository does not update
 an already installed package or the server instructions of a manually added MCP connection.
 Production activation and client acceptance are in progress. Do not treat this
 source publication as proof that the connection is installed or ready, or as an
@@ -30,8 +33,8 @@ read the [walkthrough](../WALKTHROUGH.md), or [apply for Partner API access](htt
 ## Inspect or build the Production package
 
 Production source: [`plugins/velox-trifit`](../plugins/velox-trifit).
-It contains one portable manifest, one remote MCP connection, three skills and an
-icon. There is no bundled API credential, OAuth token, customer image or server
+It contains one portable manifest, one remote MCP connection, three skills, a
+partner-application workflow reference and an icon. There is no bundled API credential, OAuth token, customer image or server
 implementation. Repository code is MIT licensed; this does not license Velox's
 hosted services or grant commercial API access.
 
@@ -44,10 +47,10 @@ npm run plugin:production:build
 
 The Production command creates `dist/velox-trifit-1.2.1.zip` and its
 SHA-256 file. The command does not install, connect, upload, generate, deploy or
-submit a review. The fixed six-file Production archive has SHA-256:
+submit a review. The fixed seven-file Production archive has SHA-256:
 
 ```text
-ff60dc756e7f5db22b117e5771f2b334d33e63d464ab2e759fb474f82c469ba9
+9428450d8ec0241164a5fc9f2ab827ad966a0e0e91eafee47113554894f2d117
 ```
 
 ## Install in supported desktop clients
@@ -127,6 +130,50 @@ To generate, explicitly choose a personal photograph and clothing image, approve
 their processing and request one try-on. The plugin must submit once and read
 that receipt, never automatically retry an uncertain paid request. AI results are
 visual previews, not a guarantee of clothing size or physical fit.
+
+## Apply for a partner key without leaving chat
+
+In the updated **complete plugin package**, ask:
+
+> Help me apply for a Velox Partner API application key from my connected email
+> account. Confirm the sender email. Ask for optional project details and usage;
+> I can skip those. Show me the application before sending it.
+
+The application goes to **partner@v3lox.com**. ChatGPT/Codex uses your separately
+connected email plugin, such as Gmail or Outlook Email, when that client exposes
+an authorised send action. The TriFit MCP does not gain access to your mailbox or
+send as you. It cannot use a typed address as proof of mailbox ownership.
+Email access is optional and is not required for documentation or try-ons.
+
+You confirm the sender, recipient and complete message before sending. Project,
+company/platform, expected usage and timing are optional. Photos, keys, private
+result URLs and chat history are not attached. Applying does not incur a charge,
+start a generation or activate an API key. The website form is an alternative,
+not a required redirect.
+
+The chat must distinguish these states:
+
+| Evidence | What the chat can report |
+| --- | --- |
+| Preview or saved draft only | Not sent |
+| Email provider confirms sending | Sent; awaiting Velox acknowledgement |
+| Ambiguous send response | Submission uncertain; check Sent, do not automatically resend |
+| Delivery-failure notice | Delivery failed; not a Velox receipt |
+| Actual matching Velox acknowledgement | Received for review; show the real message/reference |
+| Actual later approval email | Report the decision; do not expose credentials in the chat |
+
+With read permission, ask: **“Check Velox's reply to my application and show its
+receipt.”** The client checks that specific thread, not unrelated inbox messages.
+A reply appears here when checked; continuous monitoring is not implicit. If you
+want a notification later, request a supported scheduled follow-up separately.
+
+**Current acceptance boundary:** the instructions and packaging are prepared;
+an approved end-to-end mailbox send/receipt test remains outstanding. Merely
+sending an email does not create a Studio application-dashboard record. Automatic
+Velox inbox acknowledgement/ingestion must be configured and verified separately;
+until then the receipt is a team reply. This package neither auto-approves access
+nor issues keys. A manually registered MCP connection does not automatically
+load this packaged skill; its server guidance needs separate release acceptance.
 
 ## Before public release
 

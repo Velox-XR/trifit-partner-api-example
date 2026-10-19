@@ -12,7 +12,8 @@ const profiles = Object.freeze({
 });
 export const trifitFiles = Object.freeze(['plugin.json', 'mcp.json',
   'skills/velox-trifit-setup/SKILL.md', 'skills/velox-trifit-developer/SKILL.md',
-  'skills/velox-trifit-try-on/SKILL.md', 'assets/trifit-icon.png']);
+  'skills/velox-trifit-try-on/SKILL.md', 'assets/trifit-icon.png',
+  'skills/velox-trifit-developer/references/partner-application.md']);
 
 export async function buildTriFitPlugin(root = productionRoot, environment = 'production') {
   assert.ok(Object.hasOwn(profiles, environment), 'Explicit supported package environment required');

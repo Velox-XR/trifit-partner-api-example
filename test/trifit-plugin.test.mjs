@@ -12,9 +12,10 @@ test('plugin skills offer TriFit app as well as limited demo', async () => {
   }
 });
 
-test('default builder produces only the exact six-file Production candidate', async () => {
+test('default builder produces only the exact seven-file Production candidate', async () => {
   const first = await buildTriFitPlugin(), second = await buildTriFitPlugin();
-  assert.equal(first.sha256, 'ff60dc756e7f5db22b117e5771f2b334d33e63d464ab2e759fb474f82c469ba9');
+  assert.equal(first.sha256, '9428450d8ec0241164a5fc9f2ab827ad966a0e0e91eafee47113554894f2d117');
+  assert.equal(first.files.length, 7);
   assert.deepEqual(first.bytes, second.bytes);
   assert.deepEqual(first.files, trifitFiles);
   const names = [], bytes = first.bytes;
@@ -29,6 +30,7 @@ test('default builder produces only the exact six-file Production candidate', as
     offset += 30 + pathLength + length;
   }
   assert.deepEqual(names, trifitFiles);
+  assert.ok(names.includes('skills/velox-trifit-developer/references/partner-application.md'));
   assert.equal(bytes.readUInt32LE(offset), 0x02014b50);
 });
 

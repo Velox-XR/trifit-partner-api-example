@@ -30,6 +30,7 @@
         "capabilities": [
           "Virtual try-on API guidance",
           "SDK examples",
+          "Guided partner application via connected email",
           "Account or guest try-on",
           "Existing results and allowance"
         ],
@@ -40,7 +41,8 @@
         "defaultPrompt": [
           "Show me the Velox API, GitHub examples, TriFit app with free account allowances, and the account-free hosted demo. Explain their limits. Do not generate anything.",
           "Explain guest and TriFit account options, then check my connected allowance without uploading or generating.",
-          "Show my selected existing TriFit result without generating another image."
+          "Show my selected existing TriFit result without generating another image.",
+          "Help me apply for a Partner API key using my connected mailbox. Confirm my sender email, ask for optional project details and show the message before sending."
         ],
         "brandColor": "#8267ED",
         "composerIcon": "./assets/trifit-icon.png",

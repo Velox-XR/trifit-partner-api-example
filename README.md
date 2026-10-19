@@ -78,6 +78,11 @@ or an approved public-directory listing.** This repository distributes Productio
 packages only. Private Development packages and connection instructions are not
 included. The existing developer package and its OpenAI review remain unchanged.
 
+The candidate also includes [applying by email inside the chat](docs/TRIFIT_PLUGIN.md#apply-for-a-partner-key-without-leaving-chat):
+confirm your connected sender mailbox, optionally add project details, then review
+and approve the message to **partner@v3lox.com**. No automatic key issuance. This
+mailbox workflow still needs an approved end-to-end send/receipt acceptance test.
+
 ## One demo, one inspectable SDK integration
 
 The hosted application is this repository's browser UI, demo backend and shared
@@ -147,8 +152,9 @@ partner workbench is unchanged.
 
 For real **Partner API** access:
 
-1. [Apply for Partner API access](https://studio.v3lox.com/partner-api#apply),
-   describing your platform, expected usage and launch timing.
+1. [Apply through your connected mailbox in the updated plugin](docs/TRIFIT_PLUGIN.md#apply-for-a-partner-key-without-leaving-chat),
+   or use the [website form](https://studio.v3lox.com/partner-api#apply).
+   In-chat project, expected usage and launch timing details are optional.
 2. Velox reviews your request, creates a unique partner integration and emails
    private, environment-specific configuration.
 3. Save the supplied `partner.config.json` beside `package.json`.

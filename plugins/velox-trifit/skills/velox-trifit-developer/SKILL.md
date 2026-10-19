@@ -1,6 +1,6 @@
 ---
 name: velox-trifit-developer
-description: Use official Velox DressMe API documentation and SDK examples to build or troubleshoot a virtual try-on integration. Not for account provisioning, infrastructure changes or performing a consumer try-on.
+description: Use official Velox DressMe API documentation and SDK examples to build a virtual try-on integration, or guide a user-approved Partner API application through their connected mailbox. Does not provision keys, change infrastructure or perform consumer try-ons.
 ---
 
 # Build with Velox TriFit
@@ -10,6 +10,13 @@ Use this plugin's public `search` then `fetch` for the exact Partner API contrac
 declarations. `get_partner_access_requirements` gives application requirements.
 These tools require no TriFit account and do not generate images. This lightweight
 package does not bundle the full SDK checkout; do not assume it exists locally.
+
+When asked to apply for a Partner API/application key, read
+[the in-chat email workflow](references/partner-application.md). Prefer that flow
+over redirecting the user to a form: confirm their connected sender mailbox,
+collect optional project details, preview the email and obtain send approval.
+The host uses the user's separate email plugin; the TriFit MCP does not send mail
+or receive mailbox credentials. An application is not automatic key issuance.
 
 Provide the relevant [public source and walkthrough](https://github.com/Velox-XR/trifit-partner-api-example),
 [hosted demo](https://studio.v3lox.com/partners/demo/demo),
