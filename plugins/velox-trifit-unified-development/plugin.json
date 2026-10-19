@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "velox-trifit-unified-development",
+  "version": "0.3.0",
+  "description": "Private Development candidate combining Velox virtual try-on developer guidance and consented account or guest DressMe tools.",
+  "author": { "name": "Velox XR", "url": "https://v3lox.com/" },
+  "homepage": "https://studio.v3lox.com/partner-api",
+  "repository": "https://github.com/Velox-XR/trifit-partner-api-example",
+  "keywords": ["velox", "trifit", "virtual-try-on", "dressme", "fashion", "api", "sdk"],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/velox-trifit-setup/SKILL.md",
+      "interface": {
+        "displayName": "Velox TriFit · Unified Dev",
+        "shortDescription": "Try on outfits and build apps",
+        "longDescription": "Private Development testing, not a public release. Explore official Velox DressMe API documentation, JavaScript examples and TypeScript declarations without signing in. To try clothing on a selected photo, explicitly connect either your TriFit account or limited guest access. Account mode uses the same Development library, history and daily, weekly and monthly allowance as the TriFit website. Guests share the hosted demo queue and its limits; check current allowance and dispatch spacing. Connecting and reading documentation do not generate images. Uploads and new try-ons require permission; no automatic retries or guest-history transfer. AI previews do not guarantee garment fit. Commercial Partner API access requires separate Velox approval.",
+        "developerName": "Velox XR",
+        "category": "Lifestyle",
+        "capabilities": ["Virtual try-on API guidance", "SDK examples", "Account or guest try-on", "Existing results and allowance"],
+        "websiteURL": "https://studio.v3lox.com/partner-api",
+        "supportURL": "https://studio.v3lox.com/#contact",
+        "privacyPolicyURL": "https://studio.v3lox.com/legal/privacy",
+        "termsOfServiceURL": "https://studio.v3lox.com/legal/terms",
+        "defaultPrompt": [
+          "Show me the Velox virtual try-on API, SDK examples, GitHub and hosted demo. Do not generate anything.",
+          "Explain guest and TriFit account options, then check my connected allowance without uploading or generating.",
+          "Show my selected existing TriFit result without generating another image."
+        ],
+        "brandColor": "#8267ED",
+        "composerIcon": "./assets/trifit-icon.png",
+        "logo": "./assets/trifit-icon.png"
+      }
+    }
+  }
+}

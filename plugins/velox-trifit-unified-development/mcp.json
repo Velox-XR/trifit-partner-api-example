@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "velox-trifit": {
+      "type": "streamable-http",
+      "url": "https://studio-dev.v3lox.com/partner/docs/mcp"
+    }
+  }
+}
