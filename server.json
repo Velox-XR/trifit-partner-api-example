@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Velox-XR/velox-trifit-developer",
-  "title": "Velox TriFit Developer",
-  "description": "Official DressMe virtual try-on API docs, SDK examples and backend integration guidance. Read-only.",
-  "version": "1.1.0",
+  "title": "Velox TriFit",
+  "description": "DressMe API docs and SDK guidance; OAuth account/guest photo upload and virtual try-on tools.",
+  "version": "2.0.0",
   "websiteUrl": "https://studio.v3lox.com/partner-api",
   "repository": {
     "url": "https://github.com/Velox-XR/trifit-partner-api-example",
@@ -12,7 +12,7 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://studio.v3lox.com/partner/docs/mcp"
+      "url": "https://studio.v3lox.com/partner/trifit/mcp"
     }
   ]
 }

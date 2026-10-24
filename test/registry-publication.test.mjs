@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {checkCandidate, checkPublished, readEntry, repository} from '../scripts/registry-publication.mjs';
 const manifest = JSON.parse(await readFile(new URL('../server.json', import.meta.url), 'utf8'));
-const env = {GITHUB_REPOSITORY:repository, GITHUB_REF:'refs/heads/main', GITHUB_SHA:'a'.repeat(40), EXPECTED_SHA:'a'.repeat(40), CONFIRMATION:'PUBLISH-VELOX-DOCS-REGISTRY'};
+const env = {GITHUB_REPOSITORY:repository, GITHUB_REF:'refs/heads/main', GITHUB_SHA:'a'.repeat(40), EXPECTED_SHA:'a'.repeat(40), CONFIRMATION:'PUBLISH-VELOX-TRIFIT-REGISTRY'};
 const entry = () => ({server:structuredClone(manifest), _meta:{'io.modelcontextprotocol.registry/official':{status:'active', isLatest:true}}});
-test('only exact confirmed main and public documentation manifest are publishable', () => {
+test('only exact confirmed main and current unified manifest are publishable', () => {
   checkCandidate(manifest, env);
   for (const patch of [{GITHUB_REPOSITORY:'other/repo'}, {GITHUB_REF:'refs/heads/feature'}, {EXPECTED_SHA:'b'.repeat(40)}, {EXPECTED_SHA:'main'}, {CONFIRMATION:''}]) assert.throws(() => checkCandidate(manifest, {...env,...patch}));
-  for (const patch of [{name:'io.github.AlexGrona/velox-trifit-developer'}, {remotes:[{type:'streamable-http',url:'https://studio.v3lox.com/partner/trifit/mcp'}]}, {packages:[]}, {unexpected:'value'}]) assert.throws(() => checkCandidate({...manifest,...patch}, env));
+  for (const patch of [{name:'io.github.AlexGrona/velox-trifit-developer'}, {remotes:[{type:'streamable-http',url:'https://studio.v3lox.com/partner/docs/mcp'}]}, {packages:[]}, {unexpected:'value'}]) assert.throws(() => checkCandidate({...manifest,...patch}, env));
+  assert.throws(() => checkCandidate(manifest, {...env, CONFIRMATION:'PUBLISH-VELOX-DOCS-REGISTRY'}));
 });
 test('only matching active/latest registry metadata confirms publication', () => {
   assert.equal(checkPublished(entry(), manifest).status, 'active');
@@ -25,7 +26,7 @@ test('only matching active/latest registry metadata confirms publication', () =>
 test('only an explicit 404 means absent; network or permission failures never authorize publication', async () => {
   let seen;
   assert.equal(await readEntry(manifest, async (url, options) => { seen={url,options}; return {status:404}; }), null);
-  assert.match(seen.url, /io.github.Velox-XR%2Fvelox-trifit-developer\/versions\/1.1.0$/);
+  assert.match(seen.url, /io.github.Velox-XR%2Fvelox-trifit-developer\/versions\/2.0.0$/);
   assert.equal(seen.options.redirect, 'error');
   for (const status of [401,403,429,500]) await assert.rejects(readEntry(manifest, async () => ({status})));
   await assert.rejects(readEntry(manifest, async () => {throw new Error('network');}));

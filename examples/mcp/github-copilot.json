@@ -2,7 +2,7 @@
   "mcpServers": {
     "velox-trifit-docs": {
       "type": "http",
-      "url": "https://studio.v3lox.com/partner/docs/mcp",
+      "url": "https://studio.v3lox.com/partner/trifit/mcp",
       "tools": [
         "search",
         "fetch",

@@ -1,4 +1,4 @@
-name: Publish public documentation MCP registry entry
+name: Publish current Velox TriFit MCP registry entry
 on:
   workflow_dispatch:
     inputs:
@@ -7,7 +7,7 @@ on:
         required: true
         type: string
       confirmation:
-        description: Type PUBLISH-VELOX-DOCS-REGISTRY
+        description: Type PUBLISH-VELOX-TRIFIT-REGISTRY
         required: true
         type: string
 permissions:
@@ -36,7 +36,7 @@ jobs:
         run: node scripts/registry-publication.mjs preflight
       - run: npm ci --ignore-scripts
       - run: npm test
-      - name: Verify existing live public documentation tools only
+      - name: Verify current unified inventory and call public documentation tools only
         run: npm run mcp:verify-public
   publish:
     needs: preflight

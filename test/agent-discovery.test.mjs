@@ -5,10 +5,10 @@ import {publicFiles, buildPublicDownload} from '../src/downloads.mjs';
 const root = new URL('../', import.meta.url);
 const read = async name => (await readFile(new URL(name, root), 'utf8')).replace(/\r\n/g, '\n');
 const json = async name => JSON.parse(await read(name));
-const endpoint = 'https://studio.v3lox.com/partner/docs/mcp';
+const endpoint = 'https://studio.v3lox.com/partner/trifit/mcp';
 const tools = ['search', 'fetch', 'get_integration_example', 'get_partner_access_requirements'];
 
-test('client configuration dialects select only the public documentation server', async () => {
+test('new client configurations use the current unified endpoint with documentation tool restrictions', async () => {
   const vscode = await json('examples/mcp/vscode.json');
   assert.deepEqual(vscode, {servers:{'velox-trifit-docs':{type:'http', url:endpoint}}});
   const cloud = await json('examples/mcp/github-copilot.json');
@@ -19,14 +19,17 @@ test('client configuration dialects select only the public documentation server'
   assert.deepEqual(JSON.parse(codex.match(/^enabled_tools = (.+)$/m)[1]), tools);
   const openai = await json('mcp.json');
   assert.equal(openai.mcpServers['velox-docs'].type, 'streamable-http');
-  assert.equal(openai.mcpServers['velox-docs'].url, endpoint);
+  assert.equal(openai.mcpServers['velox-docs'].url, 'https://studio.v3lox.com/partner/docs/mcp', 'Do not silently migrate the separately published OpenAI package');
 });
 
 test('registry candidate identifies the existing remote implementation without credentials', async () => {
   const metadata = await json('server.json');
   assert.equal(metadata.name, 'io.github.Velox-XR/velox-trifit-developer');
   assert.equal(metadata.$schema, 'https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json');
-  assert.equal(metadata.version, (await read('src/docs-mcp.mjs')).match(/docsVersion = '([^']+)'/)[1]);
+  assert.equal(metadata.version, '2.0.0', 'New registry publication supersedes the old endpoint without overwriting immutable 1.1.0');
+  assert.equal(metadata.title, 'Velox TriFit');
+  assert.match(metadata.description, /OAuth.*try-on/);
+  assert.doesNotMatch(metadata.description, /Read-only\.$/);
   assert.ok(metadata.description.length > 0 && metadata.description.length <= 100);
   assert.deepEqual(metadata.remotes, [{type:'streamable-http', url:endpoint}]);
   assert.equal(metadata.packages, undefined);
