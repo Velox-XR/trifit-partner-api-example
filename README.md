@@ -24,7 +24,7 @@ exact SDK implementation behind it.
 | Use Codex or GitHub Copilot to build a web/mobile integration | [MCP setup and mobile starter prompt](docs/CODING_AGENTS.md) · [Portable integration skill](skills/velox-partner-api/SKILL.md) |
 | Install the published OpenAI Developer plugin | [Velox TriFit Developer](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458) — read-only API guidance |
 | Connect the current MCP server | [Velox TriFit MCP](https://studio.v3lox.com/partner/trifit/mcp) — protocol endpoint; [client setup and tool restrictions](docs/CODING_AGENTS.md) |
-| Check registry publication and the legacy-endpoint correction | [Velox TriFit registry listing](https://registry.modelcontextprotocol.io/?q=velox-trifit) · [Publication record](docs/MCP_REGISTRY.md) |
+| Find the current MCP server in the official registry | [Velox TriFit registry listing](https://registry.modelcontextprotocol.io/?q=velox-trifit) · [Publication record](docs/MCP_REGISTRY.md) |
 | Find the public API overview | [Velox TriFit Partner API](https://studio.v3lox.com/partner-api) |
 
 **Two public pages, not the Velox operator admin.** The dashboard shows only the
@@ -73,11 +73,11 @@ The [Velox TriFit Developer OpenAI listing](https://chatgpt.com/plugins/plugin_a
 is published (verified 24 October 2026, version 1.1.2). You can also connect the
 public documentation MCP directly in [Codex or Copilot](docs/CODING_AGENTS.md)
 without installing the full plugin. Neither route grants live Partner API access.
-The first [official MCP Registry publication](https://registry.modelcontextprotocol.io/?q=velox-trifit),
-`io.github.Velox-XR/velox-trifit-developer` version `1.1.0`, was verified active and
-latest on **24 October 2026**, but incorrectly selected the legacy documentation
-endpoint. The current connection is `https://studio.v3lox.com/partner/trifit/mcp`.
-The version `2.0.0` correction is prepared, not yet verified published.
+The [official MCP Registry listing](https://registry.modelcontextprotocol.io/?q=velox-trifit),
+`io.github.Velox-XR/velox-trifit-developer` version `2.0.0`, was independently verified
+**active and latest** on **24 October 2026**. It points to the current connection:
+`https://studio.v3lox.com/partner/trifit/mcp`. This supersedes the initial 1.1.0
+legacy-endpoint publication under the same identifier, not a second listing.
 GitHub's curated registry onboarding is **pending**;
 the [listing request](https://github.com/github/github-mcp-server/discussions/1257#discussioncomment-19164911)
 has been submitted, not approved. See the [publication record and update checklist](docs/MCP_REGISTRY.md).

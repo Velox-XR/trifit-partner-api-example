@@ -5,15 +5,21 @@
 and OAuth-protected account/guest upload and try-on tools; it is not a read-only
 server. Coding-agent examples explicitly restrict which tools may be used.
 
-## Endpoint correction candidate — 24 October 2026
+## Verified current-endpoint publication — 24 October 2026
 
 The first publication selected the legacy documentation-only endpoint. That was
-not the intended current connection. Version **2.0.0** prepares an update of the
+not the intended current connection. Version **2.0.0** updates the
 same registry identifier, not a second competing listing. This is a registry
 publication version for the endpoint/capability change, not a worker, OpenAI
 package or hosted runtime version. The live unified server reports `0.3.1`.
-Do not claim 2.0.0 is published until the exact active/latest registry record is
-verified. Version 1.1.0 below remains the historical record, not the new setup URL.
+The [exact 2.0.0 registry record](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Velox-XR%2Fvelox-trifit-developer/versions/2.0.0)
+was independently verified **active** and **latest**, with the current endpoint,
+after publication at **2026-10-24T14:35:07Z**. The
+[guarded publication workflow](https://github.com/Velox-XR/trifit-partner-api-example/actions/runs/40103119691)
+succeeded from reviewed main commit `135f0c133b63b4029e16551a4f4eedd85a569915`.
+Version 1.1.0 below remains historical, not the new setup URL. The existing
+[GitHub curation request](https://github.com/github/github-mcp-server/discussions/1257#discussioncomment-19164911)
+has been corrected to 2.0.0 and the current endpoint; GitHub inclusion is still pending.
 
 The current endpoint passed initialize, 18-tool inventory/authentication-metadata
 validation and all four anonymous documentation calls on 24 October 2026. No
