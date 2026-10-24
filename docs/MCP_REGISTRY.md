@@ -19,11 +19,18 @@ Before publishing:
    It reports any outdated application link separately from protocol success;
    resolve that warning before claiming the guidance is current. Record environment,
    version and checksums without secrets. This command is not part of offline CI.
-3. Complete any hosted documentation release through Development acceptance
-   and protected Production promotion. Do not claim a pending page is live.
-4. Use the official `mcp-publisher` release and verify the namespace via
-   `mcp-publisher login github`. A repository maintainer must authorize any new
-   OAuth access; never substitute a partner key or copy unrelated credentials.
+3. Register only the currently deployed public server. Pending website/corpus
+   improvements are a separate release and must pass Development acceptance
+   and protected Production promotion; do not claim those changes are live.
+   Registration does not deploy code or change the published OpenAI connection.
+4. For the Velox-XR organization namespace, use the reviewed main-only
+   `Publish public documentation MCP registry entry` GitHub Actions workflow.
+   Enter the exact reviewed main commit and `PUBLISH-VELOX-DOCS-REGISTRY`.
+   The workflow uses the official checksum-pinned publisher and GitHub OIDC;
+   no dedicated secret, partner key or personal token is needed. Interactive
+   `mcp-publisher login github` cannot establish organization roles and may
+   authorize only the personal namespace; do not rename the organization entry
+   to work around that restriction.
 5. Publish `server.json`, then read the official registry entry and confirm its
    exact name/version, endpoint, active status and latest-version metadata.
 6. If absent from GitHub's curated MCP registry, request onboarding using the
@@ -42,6 +49,13 @@ curl "https://api.mcp.github.com/v0.1/servers?search=velox-trifit"
 Check each client's UI as well as the APIs. Listing, client installation,
 successful tool calls and appearing in a generic search are different checks.
 Never publish keys, partner identities, private media or fabricated ratings.
+
+The workflow fails closed on a changed repository, branch, commit, manifest,
+or registry read error. It skips an already matching active/latest version;
+after an uncertain publish outcome, inspect that version before rerunning.
+The hosted verifier may still report an older application anchor separately
+from protocol success. That warning remains a corpus-release task, not proof
+of updated documentation or a reason to misrepresent current registry metadata.
 
 References:
 

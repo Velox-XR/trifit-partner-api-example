@@ -1,0 +1,77 @@
+name: Publish public documentation MCP registry entry
+on:
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: Exact reviewed main commit (40-character SHA)
+        required: true
+        type: string
+      confirmation:
+        description: Type PUBLISH-VELOX-DOCS-REGISTRY
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: velox-public-docs-registry
+  cancel-in-progress: false
+env:
+  EXPECTED_SHA: ${{ inputs.expected_sha }}
+  CONFIRMATION: ${{ inputs.confirmation }}
+jobs:
+  preflight:
+    if: github.repository == 'Velox-XR/trifit-partner-api-example' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      already_registered: ${{ steps.registry.outputs.already_registered }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.x'
+      - id: registry
+        run: node scripts/registry-publication.mjs preflight
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - name: Verify existing live public documentation tools only
+        run: npm run mcp:verify-public
+  publish:
+    needs: preflight
+    if: needs.preflight.outputs.already_registered == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22.x'
+      - name: Recheck publication boundary
+        id: registry
+        run: node scripts/registry-publication.mjs preflight
+      - name: Install checksum-pinned official publisher
+        if: steps.registry.outputs.already_registered == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --max-time 60 --output "$RUNNER_TEMP/mcp-publisher.tar.gz" https://github.com/modelcontextprotocol/registry/releases/download/v1.8.4/mcp-publisher_linux_amd64.tar.gz
+          echo "5dc2fd415369c73551259f31cd33e2aacc9e0d1021e7f08fef1492d93b781628  $RUNNER_TEMP/mcp-publisher.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/mcp-publisher.tar.gz" -C "$RUNNER_TEMP" mcp-publisher
+          "$RUNNER_TEMP/mcp-publisher" validate server.json
+      - name: Publish existing remote server through organization OIDC
+        if: steps.registry.outputs.already_registered == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          trap '"$RUNNER_TEMP/mcp-publisher" logout' EXIT
+          "$RUNNER_TEMP/mcp-publisher" login github-oidc --registry https://registry.modelcontextprotocol.io
+          "$RUNNER_TEMP/mcp-publisher" publish server.json
+      - name: Verify exact active and latest public entry
+        run: node scripts/registry-publication.mjs verify
