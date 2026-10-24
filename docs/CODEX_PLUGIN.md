@@ -54,6 +54,11 @@ its registered MCP URL or reopen its review. Build source ZIPs with
 `node scripts/package-plugin.mjs`; never upload private configuration or media.
 A local install or registry entry alone does not prove search ranking or recommendations.
 
+The maintained GitHub Developer package is version **1.1.4** for the portable
+skill and coding-agent guidance in this source. It is not an assertion that the
+OpenAI directory release has changed. The remote documentation server's own
+implementation version and registry metadata use a separate version sequence.
+
 ## Access and comparisons
 
 Code is MIT licensed; real service use requires a manually approved partner
