@@ -1,16 +1,33 @@
-# MCP registry release checklist
+# MCP registry publication and update checklist
 
 `server.json` describes the public **read-only documentation** server, not the
-account/guest try-on server. The proposed namespace is
-`io.github.Velox-XR/velox-trifit-developer`; publishing requires verification of
-the Velox-XR GitHub organization. This file is a publication candidate, **not
-evidence that a registry listing is live**.
+account/guest try-on server.
+
+## Verified publication — 24 October 2026
+
+- [Official MCP Registry listing](https://registry.modelcontextprotocol.io/?q=velox-trifit):
+  `io.github.Velox-XR/velox-trifit-developer`, version `1.1.0`.
+- [Exact version metadata](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Velox-XR%2Fvelox-trifit-developer/versions/1.1.0)
+  was independently verified **active** and **latest** after publication.
+- [Successful organization-identity publication workflow](https://github.com/Velox-XR/trifit-partner-api-example/actions/runs/40099586800)
+  published the existing endpoint using GitHub's short-lived OIDC identity.
+- GitHub's separate curated registry onboarding is **pending**. The
+  [public listing request](https://github.com/github/github-mcp-server/discussions/1257#discussioncomment-19164911)
+  was submitted; this is not confirmation of GitHub inclusion or approval.
+
+This dated record is distinct from client installation, hosted code deployment
+and search-engine indexing. Native Codex CLI and GitHub Copilot CLI each completed
+all four public documentation tool calls on 24 October 2026. VS Code UI and GitHub
+hosted-agent execution have not been acceptance-tested. Neither publication nor
+successful tool calls guarantee search rankings or automatic recommendations.
+
+## Publishing a future version
 
 The registry version is the MCP server implementation version (`1.1.0`), not the
 OpenAI plugin package version. This remote server needs no npm package, API key,
 OAuth scope or new endpoint. Do not migrate the published OpenAI MCP URL.
 
-Before publishing:
+Before publishing a new version:
 
 1. Merge reviewed source changes after offline tests pass.
 2. Validate `server.json` against its pinned official schema. Confirm the exact
@@ -38,8 +55,7 @@ Before publishing:
    repository, MIT licence, remote endpoint and no-auth/read-only description.
    Do not claim GitHub listing or automatic recommendations until verified.
 
-Read-only discovery queries (replace the search value with the exact server name
-when published):
+Read-only discovery queries:
 
 ```sh
 curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=velox-trifit"
