@@ -10,10 +10,12 @@ export function checkCandidate(manifest, env) {
   assert.equal(env.GITHUB_REF, 'refs/heads/main');
   assert.match(env.EXPECTED_SHA || '', /^[a-f0-9]{40}$/);
   assert.equal(env.GITHUB_SHA, env.EXPECTED_SHA);
-  assert.equal(env.CONFIRMATION, 'PUBLISH-VELOX-DOCS-REGISTRY');
+  assert.equal(env.CONFIRMATION, 'PUBLISH-VELOX-TRIFIT-REGISTRY');
   assert.equal(manifest.name, name);
   assert.match(manifest.version, /^\d+\.\d+\.\d+$/);
-  assert.deepEqual(manifest.remotes, [{type:'streamable-http', url:'https://studio.v3lox.com/partner/docs/mcp'}]);
+  assert.deepEqual(manifest.remotes, [{type:'streamable-http', url:'https://studio.v3lox.com/partner/trifit/mcp'}]);
+  assert.equal(manifest.title, 'Velox TriFit');
+  assert.equal(manifest.description, 'DressMe API docs and SDK guidance; OAuth account/guest photo upload and virtual try-on tools.');
   assert.deepEqual(manifest.repository, {url:`https://github.com/${repository}`, source:'github'});
   assert.equal(manifest.websiteUrl, 'https://studio.v3lox.com/partner-api');
   assert.equal(manifest.packages, undefined);

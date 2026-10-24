@@ -1,3 +1,3 @@
 [mcp_servers.velox-trifit-docs]
-url = "https://studio.v3lox.com/partner/docs/mcp"
+url = "https://studio.v3lox.com/partner/trifit/mcp"
 enabled_tools = ["search", "fetch", "get_integration_example", "get_partner_access_requirements"]

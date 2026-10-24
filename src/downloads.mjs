@@ -22,7 +22,7 @@ export const publicFiles = Object.freeze([
   'docs/CODING_AGENTS.md', 'docs/MCP_REGISTRY.md', 'server.json', 'mcp.json', 'src/docs-mcp.mjs',
   'examples/mcp/vscode.json', 'examples/mcp/github-copilot.json', 'examples/mcp/codex.toml',
   '.agents/skills/velox-partner-api/SKILL.md', 'scripts/sync-agent-skill.mjs', 'test/agent-discovery.test.mjs',
-  'scripts/verify-public-docs-mcp.mjs',
+  'scripts/verify-public-docs-mcp.mjs', 'scripts/public-mcp-contract.mjs',
   'skills/velox-partner-api/SKILL.md', 'test/integration.test.mjs', 'test/queue.test.mjs',
   'test/developer-hub.test.mjs', 'test/workspace.test.mjs', 'test/parallel-upload.test.mjs'
 ]);

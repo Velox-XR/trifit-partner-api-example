@@ -1,16 +1,24 @@
 # Velox TriFit API with Codex and GitHub Copilot
 
 Build web or mobile virtual try-on integrations from official DressMe API
-documentation. Use the public, read-only MCP server below; no partner API key,
-OAuth connection, local plugin ZIP or npm server installation is required.
+documentation. Use the current unified MCP endpoint below. Its public documentation
+tools need no partner API key, OAuth connection, local plugin ZIP or npm server
+installation. The server as a whole is **not read-only**: account/guest tools are
+separately OAuth-protected and must not be enabled for unattended documentation tasks.
 
 ```text
-https://studio.v3lox.com/partner/docs/mcp
+https://studio.v3lox.com/partner/trifit/mcp
 ```
 
-It exposes `search`, `fetch`, `get_integration_example` and
-`get_partner_access_requirements` over Streamable HTTP. It does not upload photos,
-generate try-ons, read accounts, issue credentials or grant service allowance.
+For coding, allow only `search`, `fetch`, `get_integration_example` and
+`get_partner_access_requirements` over Streamable HTTP. These four tools do not
+upload photos, generate try-ons, read accounts, issue credentials or grant allowance.
+The live inventory checked on 24 October 2026 contains 18 tools: five public
+guidance tools (including `get_partner_application_guide`) and 13 OAuth-protected
+account/guest tools. A metadata check is not authenticated client acceptance.
+The old `/partner/docs/mcp` endpoint is legacy; do not use it for new direct setup.
+Existing reviewed OpenAI package connections are managed separately and are not
+silently migrated by these instructions.
 Real application access is separate: [apply here](https://studio.v3lox.com/partner-api#apply).
 
 ## Choose your client
@@ -24,16 +32,11 @@ account/guest try-on package; installing it does not grant Partner API access.
 
 ### Codex
 
-With Codex CLI installed:
-
-```sh
-codex mcp add velox-trifit-docs --url https://studio.v3lox.com/partner/docs/mcp
-codex mcp list
-```
-
-Alternatively merge [this TOML entry](../examples/mcp/codex.toml) into your Codex
+Merge [this TOML entry](../examples/mcp/codex.toml) into your Codex
 configuration. It includes an explicit four-tool allowlist. Preserve other
-servers and settings. Start a new session if needed and verify the tools below.
+servers and settings. The local name `velox-trifit-docs` describes the restricted
+task, not a different server. Run `codex mcp list`, start a new session if needed
+and verify the tools below. Do not log in to TriFit for documentation-only work.
 Do not configure a duplicate connection if the Developer plugin supplies one.
 
 ### GitHub Copilot in VS Code
@@ -41,7 +44,8 @@ Do not configure a duplicate connection if the Developer plugin supplies one.
 Merge [the VS Code configuration](../examples/mcp/vscode.json) into your project's
 `.vscode/mcp.json`. In VS Code open **MCP: List Servers**, select
 `velox-trifit-docs`, and follow the client's trust/start controls. In Copilot Chat
-agent mode, check that the four documentation tools are available. This file
+agent mode, use the tool picker to enable **only the four documentation tools**
+listed above. The configuration file alone does not enforce that selection. This file
 uses `servers` and `type: http`, not the OpenAI plugin package schema.
 
 ### GitHub Copilot cloud agent
@@ -52,9 +56,12 @@ It uses `mcpServers` and an explicit `tools` allowlist. An administrator may nee
 to enable custom MCP servers. No secret is required for this public endpoint.
 
 Cloud-agent tool calls can run autonomously. Keep this connection limited to the
-four read-only documentation tools; do not substitute the account/guest try-on
-endpoint. Remote OAuth support and tool availability differ between Copilot
-surfaces, so a VS Code connection is not proof of cloud-agent acceptance.
+four read-only documentation tools on the current endpoint. Do not add OAuth
+credentials, account tools, upload tools or `*`. GitHub documents that hosted
+agents do not support remote OAuth MCP authentication. This example targets only
+the endpoint's anonymous tools; mixed-auth hosted-agent compatibility must be
+validated in that client and is not established by a CLI test. If rejected, stop
+and report the client limitation rather than silently substituting the legacy URL.
 
 ### Optional portable integration skill
 
@@ -108,6 +115,11 @@ tests and configuration parsing are separate from native-client acceptance;
 record the client version and successful tool results when testing each client.
 Registry publication is also separate from search indexing and recommendations.
 See [the registry release checklist](MCP_REGISTRY.md) for publication status.
+On 24 October 2026, native Codex CLI and GitHub Copilot CLI each successfully
+called all four allowed documentation tools at `/partner/trifit/mcp` without a
+TriFit sign-in. This is not a VS Code UI, hosted Copilot or authenticated try-on
+acceptance result. The tests identified older catalogue/mock-example text in the
+served corpus; prefer the maintained linked source and verify release status.
 
 Official client references:
 
