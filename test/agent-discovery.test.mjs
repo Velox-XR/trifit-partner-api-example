@@ -33,6 +33,20 @@ test('registry candidate identifies the existing remote implementation without c
   assert.deepEqual(metadata.repository, {url:'https://github.com/Velox-XR/trifit-partner-api-example', source:'github'});
 });
 
+test('public discovery docs distinguish official publication from pending GitHub curation', async () => {
+  const readme = await read('README.md');
+  const guide = await read('docs/MCP_REGISTRY.md');
+  for (const content of [readme, guide]) {
+    assert.ok(content.includes('https://registry.modelcontextprotocol.io/?q=velox-trifit'));
+    assert.ok(content.includes('https://github.com/github/github-mcp-server/discussions/1257#discussioncomment-19164911'));
+    assert.match(content, /24 October 2026/);
+    assert.match(content, /GitHub.*curated.*pending/);
+    assert.doesNotMatch(content, /Registry metadata is being prepared|proposed namespace|approved by GitHub/);
+  }
+  assert.ok(guide.includes('https://github.com/Velox-XR/trifit-partner-api-example/actions/runs/40099586800'));
+  assert.match(guide, /active.*latest/);
+});
+
 test('repository-discoverable skill stays identical to its maintained portable source', async () => {
   const source = await read('skills/velox-partner-api/SKILL.md');
   assert.equal(await read('.agents/skills/velox-partner-api/SKILL.md'), source);
