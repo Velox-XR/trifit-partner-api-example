@@ -8,9 +8,9 @@ This repository is the public source of truth for the packages listed here.
 | TypeScript declarations | Included with JavaScript SDK | [Types](../sdks/javascript/index.d.ts) | Import the JavaScript SDK with its accompanying declarations |
 | Personal account OAuth/MCP example / Node.js 22+ | Source with offline contract tests; live sign-in acceptance still required | [Account example](../examples/account/README.md) | `npm ci`, then `npm run account:example`; explicit `--actions` for uploads/try-ons |
 
-The [public demo dashboard](https://studio.v3lox.com/partners/demo/admin) will
-provide the credential-free SDK integration ZIP after the hosting release. See
-the root README for live status. Its contents are the same files in this repository,
+The [public demo dashboard](https://studio.v3lox.com/partners/demo/admin) provides
+the credential-free SDK integration ZIP from its deployed source version. That
+version can lag this repository's latest commit. Its source is maintained here,
 not the private, partner-configured SDK package from Velox's internal admin.
 
 Additional language SDKs are not yet released. Do not mistake a code snippet or

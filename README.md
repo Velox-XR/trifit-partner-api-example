@@ -21,7 +21,9 @@ exact SDK implementation behind it.
 | Understand which access route to use | [All DressMe options](docs/DRESSME_ACCESS.md) |
 | Read the API flow | [Technical walkthrough](WALKTHROUGH.md) |
 | Choose an SDK | [SDK catalogue](docs/SDK_CATALOG.md) |
-| Work with an AI coding agent | [Velox Partner API skill](skills/velox-partner-api/SKILL.md) |
+| Use Codex or GitHub Copilot to build a web/mobile integration | [MCP setup and mobile starter prompt](docs/CODING_AGENTS.md) · [Portable integration skill](skills/velox-partner-api/SKILL.md) |
+| Install the published OpenAI Developer plugin | [Velox TriFit Developer](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458) — read-only API guidance |
+| Find the public API overview | [Velox TriFit Partner API](https://studio.v3lox.com/partner-api) |
 
 **Two public pages, not the Velox operator admin.** The dashboard shows only the
 visitor's own browser-session requests and public SDK downloads. It exposes no
@@ -64,6 +66,12 @@ rankings**. They are separate from the matched Amara/Mateo examples above.
 Brand names within the boards do not imply endorsement.
 
 ## Install the Codex plugin
+
+The [Velox TriFit Developer OpenAI listing](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458)
+is published (verified 24 October 2026, version 1.1.2). You can also connect the
+public documentation MCP directly in [Codex or Copilot](docs/CODING_AGENTS.md)
+without installing the full plugin. Neither route grants live Partner API access.
+Registry metadata is being prepared separately; see [publication checklist](docs/MCP_REGISTRY.md).
 
 See [installation and test prompts](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/CODEX_PLUGIN.md). The GitHub marketplace
 package is separate from universal directory review and approval.

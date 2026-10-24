@@ -22,7 +22,9 @@ test('public docs MCP works through the official client and exposes only read-on
  assert.match((await call('fetch',{id:'sdk-reference'})).text,/without email or Velox accounts/);
  assert.match((await call('get_integration_example',{language:'javascript'})).example.text,/LOCAL SIMULATION ONLY/);
  assert.match((await call('get_integration_example',{language:'typescript'})).declarations.text,/VeloxDressMe/);
- assert.match((await call('get_partner_access_requirements')).provisioning,/Manual Velox approval/);
+ const access=await call('get_partner_access_requirements');
+ assert.match(access.provisioning,/Manual Velox approval/);
+ assert.equal(access.applicationUrl,'https://studio.v3lox.com/partner-api#apply');
  for(const [name,args] of [['fetch',{id:'../../.env'}],['get_integration_example',{language:'java'}],['search',{query:'a'.repeat(201)}]]){
   assert.equal((await client.callTool({name,arguments:args})).isError,true);
  }

@@ -19,6 +19,10 @@ export const publicFiles = Object.freeze([
   'sdks/javascript/index.mjs', 'sdks/javascript/index.d.ts',
   'sdks/javascript/package.json', 'sdks/javascript/README.md', 'sdks/javascript/LICENSE',
   'docs/GETTING_STARTED.md', 'docs/SDK_CATALOG.md', 'docs/HOSTING.md',
+  'docs/CODING_AGENTS.md', 'docs/MCP_REGISTRY.md', 'server.json',
+  'examples/mcp/vscode.json', 'examples/mcp/github-copilot.json', 'examples/mcp/codex.toml',
+  '.agents/skills/velox-partner-api/SKILL.md', 'scripts/sync-agent-skill.mjs', 'test/agent-discovery.test.mjs',
+  'scripts/verify-public-docs-mcp.mjs',
   'skills/velox-partner-api/SKILL.md', 'test/integration.test.mjs', 'test/queue.test.mjs',
   'test/developer-hub.test.mjs', 'test/workspace.test.mjs', 'test/parallel-upload.test.mjs'
 ]);

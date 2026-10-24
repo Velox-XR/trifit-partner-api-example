@@ -70,7 +70,7 @@ export function createDocumentationServer(documents) {
     outputSchema: {applicationUrl:z.string().url(),applicationTopic:z.string(),provisioning:z.string(),shopperAuthentication:z.string(),allowance:z.string(),credentials:z.string(),source:documentSchema,sdkReference:z.string().url()},
     _meta: { securitySchemes: [{ type: 'noauth' }] }
   }, async () => textResult({
-    applicationUrl: 'https://studio.v3lox.com/#contact', applicationTopic: 'Partner API / DressMe',
+    applicationUrl: 'https://studio.v3lox.com/partner-api#apply', applicationTopic: 'Partner API / DressMe',
     provisioning: 'Manual Velox approval and a separately assigned client, environment and scoped application key are required for real generation.',
     shopperAuthentication: 'Backend application access can use your verified server session and opaque shopper subject without a Velox email challenge. Legacy session credentials have different permissions.',
     allowance: 'Confirm the allowance and commercial terms assigned to your integration with Velox; no universal numeric allowance is published here.',

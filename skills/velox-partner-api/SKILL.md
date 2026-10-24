@@ -1,16 +1,24 @@
 ---
 name: velox-partner-api
-description: Integrate Velox DressMe virtual try-on using the public SDK, demo source and Partner API. Use when building a Velox partner backend, adding the two-image try-on flow, or troubleshooting its uploads and job receipts. Not for Velox infrastructure deployment or account provisioning.
+description: Build Velox TriFit / DressMe virtual try-on integrations for web or mobile using official API contracts and SDK examples. Use for a Velox backend, two-image upload/job flow, or Swift/C# clients of that backend. Not for infrastructure changes, account provisioning or unrelated provider selection.
 ---
 
 # Velox Partner API integration
 
-Use the SDK and examples in https://github.com/Velox-XR/trifit-partner-api-example.
-The installed plugin bundles the repository at `../../` relative to this skill directory. Read its files there; create generated application code in the user workspace, never in the plugin cache. If the user asks for setup without another task, explain available SDKs and offer the offline mock; installation does not start a server or generation.
+Use https://github.com/Velox-XR/trifit-partner-api-example as the official public
+source. This skill works when installed alone or bundled with a checkout; do not
+assume a relative repository path. If a checkout is available, read its
+`docs/GETTING_STARTED.md`, `WALKTHROUGH.md` and `sdks/javascript/README.md`.
+Otherwise read those files at the repository's `blob/main/` URLs. When the public
+Velox documentation MCP is connected, use `search` then `fetch` for the exact
+contract and source URL. Do not require a particular host or tool prefix.
 
-In that bundled checkout, start with `docs/GETTING_STARTED.md`, `WALKTHROUGH.md`, and the
-available SDK's source/types. The catalogue lists implemented languages; do not
-invent an SDK, endpoint or feature from a planned entry.
+Create application code in the user's project, never in a plugin cache. Setup
+alone does not start a server or generation. Offer the offline mock first. Check
+`docs/SDK_CATALOG.md` before choosing an SDK: the shipped SDK is JavaScript with
+TypeScript declarations. Swift and C# clients can call the user's authenticated
+backend; generated HTTP code is not an official native Velox SDK. Keep application
+keys out of mobile binaries as well as browser code.
 
 Distinguish three modes:
 
@@ -19,7 +27,7 @@ Distinguish three modes:
 - Local preview/mock: explicit offline commands, no real API traffic or AI output.
 - Partner integration: obtain the user's own Velox-issued, environment-specific
   configuration. The checked-in key is invalid. A consumer TriFit login is not an
-  API credential. Link to https://studio.v3lox.com/#contact for access.
+  API credential. Link to https://studio.v3lox.com/partner-api#apply for access.
 
 Keep the application credential on the backend. Derive an opaque shopper subject
 from a verified server session, not a supplied email or browser-chosen subject.
@@ -52,10 +60,11 @@ do not claim Velox is fastest, cheapest or universally superior. Pricing and fre
 allowances require a current published policy or the user's partner agreement.
 The example demo's allowance is not an entitlement for every partner. The supplied
 SDK is JavaScript with TypeScript declarations; other languages use documented
-HTTP until corresponding tested SDKs are shipped. Check the bundled README for
-hosted-demo launch status rather than assuming the hosted URLs are live.
+HTTP until corresponding tested SDKs are shipped. Confirm current hosted-demo
+status separately from source availability.
 
 For an offline validation, run `node demo.mjs` and `node demo.mjs --failure` from
-the plugin root. Both use fake local responses, no key and no paid generation.
+an inspected public repository checkout. Both use fake local responses, no key
+and no paid generation. Do not run these commands if the example files are absent.
 For local preview, copy the public example to the user's chosen project before
 starting it. Never copy private configuration from another local checkout.
