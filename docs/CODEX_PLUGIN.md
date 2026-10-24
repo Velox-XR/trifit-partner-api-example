@@ -7,6 +7,11 @@ It cannot generate images, issue keys, access partner accounts or read private f
 
 ## Install from GitHub
 
+For the published OpenAI release, use [Velox TriFit Developer](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458).
+For direct MCP connections in Codex or GitHub Copilot, see
+[coding-agent setup](CODING_AGENTS.md). A local plugin ZIP is not required for
+those connections. GitHub source and the directory release can have different versions.
+
 ```sh
 codex plugin marketplace add Velox-XR/trifit-partner-api-example
 codex plugin add velox-trifit-developer@velox-xr
@@ -32,7 +37,7 @@ The MCP starts at `http://127.0.0.1:4319/mcp` for local development. Connect usi
 MCP Inspector with Streamable HTTP. Tools are `search`, `fetch`,
 `get_integration_example` and `get_partner_access_requirements`. No key is needed
 for these read-only tools or mock tests. The bundled remote connection uses
-`https://studio.v3lox.com/partner/docs/mcp`; deployment is pending until recorded below.
+`https://studio.v3lox.com/partner/docs/mcp` and is publicly available without authentication.
 
 Example prompts after installation:
 
@@ -40,13 +45,19 @@ Example prompts after installation:
 - Explain Velox application authentication without exposing a key in browser code.
 - Show the available SDKs and how to apply for partner access.
 
-## Submission status — 13 October 2026
+## Published release — verified 24 October 2026
 
-The MCP-backed draft passed OpenAI metadata and skill checks. Endpoint deployment,
-domain verification, review information and approval remain pending. It is not
-published in the public directory. Build the ZIP with
-`node scripts/package-plugin.mjs`; do not upload private configuration or media.
-A successful local install or validator scan does not imply public discoverability.
+The OpenAI listing shows **Velox TriFit Developer v1.1.2** with an Install option.
+This is the read-only Developer plugin, not the separate account/guest try-on
+package. These documentation changes do not upload a replacement package, change
+its registered MCP URL or reopen its review. Build source ZIPs with
+`node scripts/package-plugin.mjs`; never upload private configuration or media.
+A local install or registry entry alone does not prove search ranking or recommendations.
+
+The maintained GitHub Developer package is version **1.1.4** for the portable
+skill and coding-agent guidance in this source. It is not an assertion that the
+OpenAI directory release has changed. The remote documentation server's own
+implementation version and registry metadata use a separate version sequence.
 
 ## Access and comparisons
 

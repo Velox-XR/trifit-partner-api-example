@@ -35,5 +35,5 @@ try {
   else { console.error(`Example stopped: ${error.name}${error.code ? ` (${error.code})` : ''}. No automatic retry.`); process.exitCode = 1; }
 } finally {
   await mock.close();
-  console.log('\nRegister Partner API interest: https://studio.v3lox.com/#contact (mention Partner API / DressMe)');
+  console.log('\nRegister Partner API interest: https://studio.v3lox.com/partner-api#apply (mention Partner API / DressMe)');
 }
