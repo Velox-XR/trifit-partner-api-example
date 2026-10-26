@@ -8,6 +8,31 @@ const json = async name => JSON.parse(await read(name));
 const endpoint = 'https://studio.v3lox.com/partner/trifit/mcp';
 const tools = ['search', 'fetch', 'get_integration_example', 'get_partner_access_requirements'];
 
+test('developer README leads with API/MCP routes and preserves access boundaries', async () => {
+  const readme = await read('README.md');
+  const opening = readme.split('\n## Start here\n')[0];
+  assert.match(opening, /^# Velox TriFit — Virtual Try-On API, MCP Server and JavaScript SDK\n/);
+  for (const url of [
+    'https://studio.v3lox.com/partner-api',
+    'https://studio.v3lox.com/partner-api/quickstart',
+    'https://studio.v3lox.com/partner-api/mcp',
+    endpoint,
+    'https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458',
+  ]) assert.ok(opening.includes(url), `Missing public entry point: ${url}`);
+  for (const tool of tools) assert.ok(opening.includes('`' + tool + '`'));
+  assert.match(opening, /server as a whole is not read-only/);
+  assert.match(opening, /separate OAuth authorization and user consent/);
+  assert.match(opening, /does not grant Partner API credentials/);
+  assert.match(opening, /README update does not migrate it/);
+  assert.match(opening, /JavaScript SDK with TypeScript\ndeclarations/);
+  for (const [, href] of opening.matchAll(/\]\(([^\s)]+)\)/g)) {
+    if (/^https?:/.test(href) || href.startsWith('#')) continue;
+    const relative = href.split('#')[0];
+    assert.ok(publicFiles.includes(relative), `Missing ZIP dependency: ${relative}`);
+    await readFile(new URL(relative, root));
+  }
+});
+
 test('new client configurations use the current unified endpoint with documentation tool restrictions', async () => {
   const vscode = await json('examples/mcp/vscode.json');
   assert.deepEqual(vscode, {servers:{'velox-trifit-docs':{type:'http', url:endpoint}}});

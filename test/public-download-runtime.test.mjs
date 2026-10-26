@@ -41,5 +41,5 @@ test('downloaded ZIP runs its agent-discovery tests without borrowing checkout f
     cwd:destination, env:childEnv, encoding:'utf8', timeout:30000,
   });
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
-  assert.match(result.stdout, /# pass 6/);
+  assert.match(result.stdout, /^# pass 7$/m);
 });

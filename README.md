@@ -1,12 +1,39 @@
-# Velox Developer Hub — DressMe & TriFit
+# Velox TriFit — Virtual Try-On API, MCP Server and JavaScript SDK
 
-Build virtual try-on into your website, app or retail platform. **DressMe** turns
-a shopper photo and a garment image into an AI outfit preview. **TriFit** is
-Velox's consumer experience.
+Build virtual try-on into a website, mobile app or retail platform with the
+**Velox TriFit Partner API**, or connect a coding agent to the **Velox TriFit MCP
+server** for official API documentation and integration examples. **DressMe** is
+the virtual try-on operation: it turns a shopper photo and a garment image into
+an AI outfit preview. The [TriFit app](https://trifit.v3lox.com/) is the consumer
+experience; using it is separate from obtaining Partner API credentials.
 
-This repository is the public home for Velox SDK source, runnable integrations,
-tutorials and AI-agent integration skills. Start with the demo, then inspect the
-exact SDK implementation behind it.
+This official developer repository contains the **JavaScript SDK with TypeScript
+declarations**, runnable REST integrations, tutorials, Codex and GitHub Copilot
+MCP configuration examples, and a portable integration skill. Read the
+[API overview](https://studio.v3lox.com/partner-api), then choose the integration
+route below. Other languages can use the documented HTTP API; this repository
+does not claim an unshipped SDK.
+
+## Choose REST API or MCP
+
+| Integration route | What it provides | Start here |
+| --- | --- | --- |
+| REST API in your application backend | Submit virtual try-on requests using your separately approved partner configuration; keep keys out of browsers and mobile apps | [REST quickstart](https://studio.v3lox.com/partner-api/quickstart) · [JavaScript SDK](sdks/javascript/README.md) · [Access requirements](docs/GETTING_STARTED.md) |
+| MCP in a coding agent | Search official docs, fetch API contracts and get integration examples while building an application | [MCP integration guide](https://studio.v3lox.com/partner-api/mcp) · [Codex and GitHub Copilot setup](docs/CODING_AGENTS.md) |
+| Portable integration skill | Reusable instructions for an agent to plan and implement the integration; it can also use the public source without MCP | [Skill source and installation](docs/CODING_AGENTS.md#optional-portable-integration-skill) |
+
+For a new direct MCP connection, use
+`https://studio.v3lox.com/partner/trifit/mcp`. Documentation-only work needs no
+TriFit sign-in or Partner API key: allow only `search`, `fetch`,
+`get_integration_example` and `get_partner_access_requirements` as described in
+the client guide. **The server as a whole is not read-only.** Its account/guest
+upload and try-on tools require separate OAuth authorization and user consent;
+they are not part of a documentation check. Connecting MCP or installing a skill
+does not grant Partner API credentials, generation allowance or deployment access.
+
+The [published OpenAI Developer plugin](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458)
+is a separate installation route. Its existing reviewed connection is managed
+separately; a new direct MCP setup or this README update does not migrate it.
 
 ## Start here
 
