@@ -49,6 +49,7 @@ separately; a new direct MCP setup or this README update does not migrate it.
 | Read the API flow | [Technical walkthrough](WALKTHROUGH.md) |
 | Choose an SDK | [SDK catalogue](docs/SDK_CATALOG.md) |
 | Use Codex or GitHub Copilot to build a web/mobile integration | [MCP setup and mobile starter prompt](docs/CODING_AGENTS.md) · [Portable integration skill](skills/velox-partner-api/SKILL.md) |
+| Verify the agent connection, then build safely offline | [Four-call MCP check](docs/CODING_AGENTS.md#read-only-connection-check) · [Agent-to-backend tutorial](docs/CODING_AGENTS.md#from-agent-guidance-to-an-offline-virtual-try-on-integration) |
 | Install the published OpenAI Developer plugin | [Velox TriFit Developer](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458) — read-only API guidance |
 | Connect the current MCP server | [Velox TriFit MCP](https://studio.v3lox.com/partner/trifit/mcp) — protocol endpoint; [client setup and tool restrictions](docs/CODING_AGENTS.md) |
 | Find the current MCP server in the official registry | [Velox TriFit registry listing](https://registry.modelcontextprotocol.io/?q=velox-trifit) · [Publication record](docs/MCP_REGISTRY.md) |
