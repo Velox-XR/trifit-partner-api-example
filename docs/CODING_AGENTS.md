@@ -33,7 +33,8 @@ account/guest try-on package; installing it does not grant Partner API access.
 ### Codex
 
 Merge [this TOML entry](../examples/mcp/codex.toml) into your Codex
-configuration. It includes an explicit four-tool allowlist. Preserve other
+configuration (`~/.codex/config.toml`, or `.codex/config.toml` in a trusted
+project). It includes an explicit four-tool allowlist. Preserve other
 servers and settings. The local name `velox-trifit-docs` describes the restricted
 task, not a different server. Run `codex mcp list`, start a new session if needed
 and verify the tools below. Do not log in to TriFit for documentation-only work.
@@ -77,16 +78,90 @@ It can use public source files without MCP and does not require the whole plugin
 
 ## Read-only connection check
 
-Ask the coding agent:
+After configuring the client and its tool restrictions, start a fresh task. This
+is a connection check, not an application build or a try-on. Ask the agent to
+make these **exactly four remote documentation calls**, once each, in order:
 
-> Use the Velox TriFit documentation tools to find Partner API authentication and
-> available SDKs. Fetch the matching documents and cite the official URLs. State
-> whether Swift and C# have shipped SDKs. Do not read an account, upload, generate,
-> apply for access or change any settings.
+| Tool | Arguments | Check the returned result |
+| --- | --- | --- |
+| `search` | `{"query":"SDK catalogue"}` | Includes the `sdk-catalog` document and an official source URL |
+| `fetch` | `{"id":"sdk-catalog"}` | Names the JavaScript SDK and TypeScript declarations; does not invent a Swift or C# SDK |
+| `get_integration_example` | `{"language":"javascript"}` | Returns a simulated offline example and separate real-access guidance |
+| `get_partner_access_requirements` | `{}` | Links to the access application and explains manual approval and backend-only keys |
 
-Expected: official documentation and source links, JavaScript SDK with TypeScript
-declarations, and no account actions. If tools are unavailable, inspect client
-configuration/policy; do not describe plain web search as a successful MCP test.
+Copyable test prompt:
+
+> Use only the configured Velox TriFit documentation connection. Call search with
+> {"query":"SDK catalogue"}, fetch with {"id":"sdk-catalog"},
+> get_integration_example with {"language":"javascript"}, then
+> get_partner_access_requirements with {}. Make each call once and stop if any
+> call fails. Report the returned source URLs, available SDKs, simulated-example
+> status and access requirements. Do not run the returned code, use shell or web
+> search, read accounts, upload photos, generate images, send an application,
+> authenticate to TriFit or change settings. Do not substitute another connection.
+
+MCP initialization and the client's protocol-level tool discovery may also occur;
+they are not extra `tools/call` invocations. Retain the client name/version, date,
+configured endpoint, four actual tool names/arguments, results and document
+hashes when supplied. Record extra agent actions and errors honestly. Generated
+prose alone is not proof of successful tool execution. This test does not prove
+that an unconfigured agent will discover or recommend Velox.
+
+If the client presents a TriFit login for this documentation-only task, stop and
+inspect the selected tools, connection and policy. Do not authorize account or
+guest operations just to pass the check. If tools are unavailable, report the
+client limitation; do not present plain web search as a successful MCP test.
+
+## From agent guidance to an offline virtual try-on integration
+
+The coding agent uses MCP to learn the contracts; your application backend uses
+the REST API/SDK to perform separately authorized work. Connecting MCP does not
+insert an agent into every shopper request, install a skill, or give a shopper
+Partner API credentials.
+
+1. **Read the contracts.** Complete the check above, then inspect the linked
+   [SDK reference](../sdks/javascript/README.md) and
+   [walkthrough](../WALKTHROUGH.md). Ask the agent to distinguish documented facts,
+   placeholders and unresolved decisions.
+2. **Build with local fixtures.** In a separate implementation task, let the agent
+   adapt the public example to your existing backend. The following commands use
+   this repository's local mocks and offline tests, not Velox generation:
+
+   ```sh
+   npm run demo:mock
+   npm run demo:failure
+   npm test
+   ```
+
+   A one-pixel mock result proves API-flow/error handling, not image quality,
+   latency or Production readiness. `npm run preview` is the separate local UI
+   preview; it cannot upload or generate.
+3. **Define the application boundary.** Keep the integration key on your backend.
+   Authenticate the shopper there, derive an opaque subject from that verified
+   session, and record consent before processing images. Save reserved upload
+   IDs, final canonical asset IDs, the exact submission payload, its UUID
+   idempotency key and the accepted job ID durably. A lost submission response
+   requires reconciliation of the original receipt, not a new key or paid retry.
+4. **Review before real use.** Arrange your own environment-specific Partner API
+   configuration, terms, retention and allowance with Velox. Review the code,
+   privacy/security boundary and offline failures before separately authorizing
+   any real uploads, generation or deployment. Never reuse the hosted demo key.
+
+For a personal-account application instead of a commercial partner backend, use
+the separate [account OAuth example](../examples/account/README.md). Its sign-in,
+consent and account allowance are not interchangeable with a Partner API key.
+The optional skill above supplies reusable instructions; it does not grant
+either kind of access.
+
+## Troubleshoot the correct layer
+
+| Symptom | Check first | Do not use as a workaround |
+| --- | --- | --- |
+| Velox is missing from a client registry search | Distinguish the official MCP Registry from GitHub's curated registry; use the documented manual configuration if supported | Claim curated approval, create a duplicate listing or promise automatic recommendations |
+| Server is configured but the four tools are unavailable | Correct client schema, trust/start state, tool selection and organization policy | Enable all account/upload/generation tools or weaken organization controls |
+| Tools return older text than linked public source | Record the returned hash/date and source URL; report the corpus mismatch | Describe current repository text as the exact response received |
+| Hosted Copilot rejects the mixed-auth server | Record that client's error and supported authentication limits | Fall back silently to the legacy endpoint, add credentials or claim a CLI test proves hosted acceptance |
+| A real submission has an unknown outcome | Preserve the original payload, idempotency key and job/receipt evidence for operator reconciliation | Automatically issue a fresh paid request |
 
 ## Mobile application starter prompt
 
@@ -123,7 +198,7 @@ served corpus; prefer the maintained linked source and verify release status.
 
 Official client references:
 
-- [Codex MCP configuration](https://developers.openai.com/codex/mcp)
-- [VS Code MCP servers](https://code.visualstudio.com/docs/agent-customization/mcp-servers)
+- [Codex MCP configuration and tool allowlists](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)
+- [VS Code MCP configuration formats](https://code.visualstudio.com/docs/agents/reference/mcp-configuration)
 - [GitHub Copilot MCP configuration](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers)
 - [GitHub Copilot agent skills](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills)

@@ -83,6 +83,27 @@ test('repository-discoverable skill stays identical to its maintained portable s
   assert.ok(!source.includes('bundles the repository at'));
 });
 
+test('agent tutorial bounds the four-call check and separates mock, MCP, skill and real API access', async () => {
+  const guide = await read('docs/CODING_AGENTS.md');
+  const check = guide.split('## Read-only connection check\n')[1].split('\n## From agent guidance')[0];
+  const rows = [...check.matchAll(/^\| `([^`]+)` \| `([^`]+)` \|/gm)];
+  assert.deepEqual(rows.map(row => row[1]), tools);
+  assert.deepEqual(rows.map(row => JSON.parse(row[2])), [
+    {query:'SDK catalogue'}, {id:'sdk-catalog'}, {language:'javascript'}, {},
+  ]);
+  assert.match(check, /Make each call once and stop if any\n> call fails/);
+  assert.match(check, /Do not run the returned code/);
+  assert.match(check, /not extra `tools\/call` invocations/);
+  assert.match(check, /does not prove\nthat an unconfigured agent will discover or recommend Velox/);
+  assert.match(guide, /npm run demo:mock\n   npm run demo:failure\n   npm test/);
+  assert.match(guide, /not image quality,\n   latency or Production readiness/);
+  assert.match(guide, /Connecting MCP does not\ninsert an agent into every shopper request, install a skill/);
+  assert.match(guide, /reconciliation of the original receipt, not a new key or paid retry/);
+  assert.match(guide, /Never reuse the hosted demo key/);
+  assert.match(guide, /Do not use as a workaround/);
+  assert.ok((await read('README.md')).includes('docs/CODING_AGENTS.md#from-agent-guidance-to-an-offline-virtual-try-on-integration'));
+});
+
 test('public onboarding entry points use the current application anchor', async () => {
   for (const file of ['demo.mjs', 'web/index.html', 'web/admin.html', 'src/docs-mcp.mjs']) {
     const source = await read(file);
