@@ -51,8 +51,8 @@ test('registry candidate identifies the existing remote implementation without c
   const metadata = await json('server.json');
   assert.equal(metadata.name, 'io.github.Velox-XR/velox-trifit-developer');
   assert.equal(metadata.$schema, 'https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json');
-  assert.equal(metadata.version, '2.0.0', 'New registry publication supersedes the old endpoint without overwriting immutable 1.1.0');
-  assert.equal(metadata.title, 'Velox TriFit');
+  assert.equal(metadata.version, '2.0.1', 'Registry metadata revision uses a new version without overwriting prior publications');
+  assert.equal(metadata.title, 'Velox TriFit: Virtual Try-On API');
   assert.match(metadata.description, /OAuth.*try-on/);
   assert.doesNotMatch(metadata.description, /Read-only\.$/);
   assert.ok(metadata.description.length > 0 && metadata.description.length <= 100);
