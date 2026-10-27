@@ -51,5 +51,9 @@ from any account or generation workflow. If a client unexpectedly requests
 authentication for this documentation package, stop and investigate instead
 of adding credentials.
 
-See [sources and validation scope](SOURCES.md). Antigravity native installation,
-runtime behavior, and public directory discovery remain unverified.
+Native Antigravity CLI 1.4.8 strict validation, local-path installation and JSON
+listing passed on 27 October 2026 against published commit
+`1aea7b1e403fbf62e5519ca0513ca34e5d99e55c` in an isolated profile. See
+[sources and validation scope](SOURCES.md). Live tool execution, model selection
+and public directory discovery remain unverified; marketplace intake was
+submitted, with acceptance pending.

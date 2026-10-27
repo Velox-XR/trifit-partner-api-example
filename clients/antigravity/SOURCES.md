@@ -2,13 +2,24 @@
 
 Source published 27 October 2026 in
 [pull request #21](https://github.com/Velox-XR/trifit-partner-api-example/pull/21).
-This Antigravity package has not been installed or tested in a native Antigravity
-client. Its source publication does not establish marketplace acceptance.
+On 27 October 2026, official Antigravity CLI 1.4.8 accepted this package from
+published commit `1aea7b1e403fbf62e5519ca0513ca34e5d99e55c` with strict native
+validation and no findings. Local-path installation and JSON listing also
+passed in an isolated profile. The enabled plugin retained the current endpoint,
+five public documentation tools and developer skill; all six installed package
+files matched that published source.
 
-The separate Gemini package passed native extension validation, linking, and
-listing with Gemini CLI 0.65.0 in isolated local state. A subsequent Gemini
-`skills list` also initialized MCP server metadata discovery; protocol traffic
-was not traced, and no deliberate tool invocation or model prompt was issued.
+Gemini CLI 0.65.0 also installed the same commit directly from the public GitHub
+repository into fresh isolated state. JSON listing confirmed active version
+1.1.4, the Git source, current endpoint, five-tool allowlist and existing skill.
+Earlier local validation, linking and listing had also passed. A separate
+Gemini `skills list` initialized MCP server metadata discovery.
+
+No model prompts or deliberate MCP tool invocations were issued by these
+checks; protocol traffic was not traced. Native package loading does not prove
+live tool behavior or cold discovery. Marketplace intake was submitted on
+27 October and its receipt confirmed; acceptance and public listing remain
+pending. Source publication and installation do not establish either.
 See the [Google client validation record](../../docs/GOOGLE_AGENTS.md#publication-and-validation-status)
 for the commands, observed configuration, and remaining limits.
 
@@ -38,10 +49,11 @@ developer skill and its application reference, inspected read-only. Version
 
 The schema URI in Antigravity's documentation is
 [plugin.json schema](https://antigravity.google/schemas/v1/plugin.json).
-Its direct retrieval was unavailable during research. Validation here checks
-the documented minimal fields, exact endpoint, tool allowlist, JSON syntax,
-skill frontmatter, and local reference paths. It is not Antigravity native-client
-or downloaded-schema validation.
+Its direct retrieval was unavailable during initial research. Initial package
+preparation checked the documented minimal fields, exact endpoint, tool allowlist,
+JSON syntax, skill frontmatter and local reference paths without a downloaded
+schema. The later Antigravity CLI 1.4.8 strict native validation described above
+adds client validation; it does not establish live MCP tool execution.
 
 Package preparation verified the five public tool names against connected tool
 metadata without invoking them. The production endpoint was copied from the
