@@ -6,6 +6,34 @@ create an account to use its available free allowances. For code using that same
 account without a Partner API key, follow [Example 2](../examples/account/README.md).
 The steps below describe the separate partner-backend integration.
 
+## Virtual try-on terminology
+
+Virtual try-on (VTO) creates photo-based previews of clothing or outfits on a
+person's photo. Virtual dressing and virtual fitting room features here mean
+visual previews. They do not measure the body, predict clothing size or guarantee
+physical fit.
+
+## MCP connection and setup
+
+For Codex, GitHub Copilot, Gemini CLI and Antigravity, the canonical remote MCP
+connection uses Streamable HTTP at:
+
+```text
+https://studio.v3lox.com/partner/trifit/mcp
+```
+
+Public documentation tools are anonymous: no TriFit login, OAuth connection or
+Partner API key is required to search and read documentation. Enable only public
+documentation tools for coding tasks. The unified server also exposes separate
+OAuth-protected account/guest actions for photos and try-ons; those require
+authorization and user consent. A documentation connection does not grant
+commercial Partner API access. That integration requires separate approval and
+an application key kept only on your backend.
+
+Follow the [Codex and GitHub Copilot setup guide](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/CODING_AGENTS.md)
+or the [Gemini CLI and Antigravity setup guide](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GOOGLE_AGENTS.md)
+for client configuration and documentation-tool restrictions.
+
 ## 1. Try the hosted integration
 
 [Demo](https://studio.v3lox.com/partners/demo/demo) ·
