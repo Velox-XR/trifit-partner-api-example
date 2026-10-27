@@ -1,0 +1,17 @@
+{
+  "name": "velox-trifit-developer",
+  "version": "1.1.4",
+  "description": "Official Velox DressMe virtual try-on API documentation, JavaScript examples and TypeScript declarations for fashion ecommerce integrations.",
+  "mcpServers": {
+    "velox-trifit": {
+      "httpUrl": "https://studio.v3lox.com/partner/trifit/mcp",
+      "includeTools": [
+        "search",
+        "fetch",
+        "get_integration_example",
+        "get_partner_access_requirements",
+        "get_partner_application_guide"
+      ]
+    }
+  }
+}
