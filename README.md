@@ -1,6 +1,6 @@
 # Velox TriFit — Virtual Try-On API, MCP Server and JavaScript SDK
 
-Build virtual try-on into a website, mobile app or retail platform with the
+Build virtual try-on (VTO) into a website, mobile app or retail platform with the
 **Velox TriFit Partner API**, or connect a coding agent to the **Velox TriFit MCP
 server** for official API documentation and integration examples. **DressMe** is
 the virtual try-on operation: it turns a shopper photo and a garment image into
@@ -13,6 +13,16 @@ MCP configuration examples, and a portable integration skill. Read the
 [API overview](https://studio.v3lox.com/partner-api), then choose the integration
 route below. Other languages can use the documented HTTP API; this repository
 does not claim an unshipped SDK.
+
+## Virtual dressing and visual fitting rooms
+
+Use DressMe for photo-based virtual dressing: a shopper photo and clothing
+reference produce an AI outfit preview. A virtual fitting room built with
+DressMe provides a visual preview, not body measurements, clothing-size
+prediction or a guarantee of physical fit. The
+[REST quickstart](https://studio.v3lox.com/partner-api/quickstart) explains the
+upload, job submission and status flow; the
+[JavaScript SDK](sdks/javascript/README.md) provides the integration code.
 
 ## Choose REST API or MCP
 
