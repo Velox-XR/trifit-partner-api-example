@@ -51,5 +51,5 @@ from any account or generation workflow. If a client unexpectedly requests
 authentication for this documentation package, stop and investigate instead
 of adding credentials.
 
-See [sources and validation scope](SOURCES.md). Public directory discovery,
-native runtime behavior, and OAuth are not validated by this local package.
+See [sources and validation scope](SOURCES.md). Antigravity native installation,
+runtime behavior, and public directory discovery remain unverified.
