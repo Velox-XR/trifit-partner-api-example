@@ -14,8 +14,8 @@ export function checkCandidate(manifest, env) {
   assert.equal(manifest.name, name);
   assert.match(manifest.version, /^\d+\.\d+\.\d+$/);
   assert.deepEqual(manifest.remotes, [{type:'streamable-http', url:'https://studio.v3lox.com/partner/trifit/mcp'}]);
-  assert.equal(manifest.title, 'Velox TriFit');
-  assert.equal(manifest.description, 'DressMe API docs and SDK guidance; OAuth account/guest photo upload and virtual try-on tools.');
+  assert.equal(manifest.title, 'Velox TriFit: Virtual Try-On API');
+  assert.equal(manifest.description, 'Virtual try-on (VTO) API docs and SDK examples; OAuth account/guest photo uploads and try-ons.');
   assert.deepEqual(manifest.repository, {url:`https://github.com/${repository}`, source:'github'});
   assert.equal(manifest.websiteUrl, 'https://studio.v3lox.com/partner-api');
   assert.equal(manifest.packages, undefined);

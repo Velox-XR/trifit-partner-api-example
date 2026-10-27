@@ -26,7 +26,7 @@ test('only matching active/latest registry metadata confirms publication', () =>
 test('only an explicit 404 means absent; network or permission failures never authorize publication', async () => {
   let seen;
   assert.equal(await readEntry(manifest, async (url, options) => { seen={url,options}; return {status:404}; }), null);
-  assert.match(seen.url, /io.github.Velox-XR%2Fvelox-trifit-developer\/versions\/2.0.0$/);
+  assert.match(seen.url, /io.github.Velox-XR%2Fvelox-trifit-developer\/versions\/2.0.1$/);
   assert.equal(seen.options.redirect, 'error');
   for (const status of [401,403,429,500]) await assert.rejects(readEntry(manifest, async () => ({status})));
   await assert.rejects(readEntry(manifest, async () => {throw new Error('network');}));
