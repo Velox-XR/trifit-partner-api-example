@@ -18,6 +18,23 @@ test('public docs MCP works through the official client and exposes only read-on
  assert.deepEqual(tools.map(x=>x.name),['search','fetch','get_integration_example','get_partner_access_requirements']);
  for(const tool of tools){assert.equal(tool.annotations.readOnlyHint,true);assert.equal(tool.annotations.destructiveHint,false);assert.equal(tool.annotations.openWorldHint,false);}
  const call=async(name,args={})=>{const result=await client.callTool({name,arguments:args});assert.ok(!result.isError,JSON.stringify(result));return JSON.parse(result.content[0].text);};
+ await t.test('isolated try-on terms and MCP setup find the guide with accurate access boundaries',async()=>{
+  for(const query of ['VTO','virtual dressing','virtual fitting room','MCP connection Codex Copilot Gemini']){
+   const {results}=await call('search',{query});
+   assert.equal(results[0]?.id,'getting-started',`Expected the setup guide first for: ${query}`);
+  }
+  const guide=await call('fetch',{id:'getting-started'});
+  assert.equal(guide.url,'https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GETTING_STARTED.md');
+  assert.match(guide.text,/Virtual try-on \(VTO\)/);
+  assert.match(guide.text,/do not measure the body, predict clothing size or guarantee\s+physical fit/);
+  assert.match(guide.text,/https:\/\/studio\.v3lox\.com\/partner\/trifit\/mcp/);
+  assert.match(guide.text,/Public documentation tools are anonymous: no TriFit login, OAuth connection or\s+Partner API key is required/);
+  assert.match(guide.text,/OAuth-protected account\/guest actions[\s\S]*authorization and user consent/);
+  assert.match(guide.text,/does not grant\s+commercial Partner API access[\s\S]*separate approval[\s\S]*application key kept only on your backend/);
+  for(const name of ['CODING_AGENTS','GOOGLE_AGENTS']){
+   assert.ok(guide.text.includes(`https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/${name}.md`));
+  }
+ });
  assert.ok((await call('search',{query:'application authentication'})).results.some(d=>d.id==='sdk-reference'));
  assert.match((await call('fetch',{id:'sdk-reference'})).text,/without email or Velox accounts/);
  assert.match((await call('get_integration_example',{language:'javascript'})).example.text,/LOCAL SIMULATION ONLY/);
