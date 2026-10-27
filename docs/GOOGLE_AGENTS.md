@@ -61,7 +61,8 @@ existing root OpenAI manifest.
 Antigravity's curated marketplace is separate. Its
 [Marketplace documentation](https://antigravity.google/docs/marketplace/) links
 a [listing interest form](https://forms.gle/2EX5RFYPoJe1UgxR9).
-The repository and native package path can be supplied for review. Source
+The listing interest form was submitted on 27 October 2026 and its receipt was
+confirmed. Marketplace acceptance and public listing remain pending. Source
 publication and local installation do not establish marketplace acceptance.
 
 ## Check the behavior
@@ -105,9 +106,38 @@ no deliberate tool invocation or model prompt was issued. The combined
 validation was therefore not fully offline. It does not verify execution
 of the five tools or model selection of Velox for an unbranded request.
 
-Antigravity native installation and runtime acceptance remain unverified.
-GitHub-source installation, directory discovery, and tool selection after
-installation also require separate checks.
+Later on 27 October, Gemini CLI 0.65.0 installed the public GitHub repository
+at commit `1aea7b1e403fbf62e5519ca0513ca34e5d99e55c` into fresh isolated state:
+
+```text
+gemini extensions install https://github.com/Velox-XR/trifit-partner-api-example --consent
+gemini extensions list --output-format json
+```
+
+The installed Git source, active version 1.1.4, current `httpUrl`, five-tool
+`includeTools` allowlist and `velox-partner-api` skill matched that published
+commit. This verifies GitHub-source installation and configuration loading.
+
+Official Antigravity CLI 1.4.8 then checked `clients/antigravity` from the same
+published checkout in an isolated profile:
+
+```text
+agy plugin validate ./clients/antigravity --strict --json
+agy plugin install ./clients/antigravity
+agy plugin list --json
+```
+
+Strict validation returned no findings. The installed plugin was enabled with
+its developer skill and MCP server. Its current `serverUrl` and five-tool
+`enabledTools` allowlist were preserved, and all six package files matched the
+published source bytes.
+
+These later installation checks supplied no credentials and issued no model
+prompts or deliberate MCP tool invocations. Network traffic was not traced.
+They establish package validation, installation and loading, not live
+documentation-tool behavior, model selection, cold discovery or directory
+acceptance. Gemini gallery inclusion and Antigravity marketplace acceptance
+remain unverified.
 
 For format details, see the
 [Gemini extension reference](https://geminicli.com/docs/extensions/reference/),
