@@ -20,7 +20,7 @@ The repository-root [gemini-extension.json](../gemini-extension.json) uses
 [portable integration skill](../skills/velox-partner-api/SKILL.md); it does not
 replace the existing OpenAI plugin manifest.
 
-After these files are published, install the repository:
+Install the repository:
 
 ```text
 gemini extensions install https://github.com/Velox-XR/trifit-partner-api-example
@@ -77,10 +77,37 @@ Use the existing [bounded documentation check](CODING_AGENTS.md#read-only-connec
 when verifying the four core integration tools. The fifth tool only explains
 the application workflow; it does not send mail or submit a form.
 
-Native-client acceptance is unverified in this publication candidate. Offline
-manifest and reference checks are not evidence of live tool execution.
-Package publication, directory discovery, and tool selection after installation
-must be reported separately.
+## Publication and validation status
+
+The Google client source packages were published on 27 October 2026 in
+[pull request #21](https://github.com/Velox-XR/trifit-partner-api-example/pull/21).
+Source publication does not establish a gallery or marketplace listing.
+
+On the same date, the official `@google/gemini-cli` 0.65.0 package accepted
+reviewed commit `89eadcf9c31a64668f59e1fb10b15365db08dab6` using an isolated
+`GEMINI_CLI_HOME`. These native extension-management subcommands succeeded:
+
+```text
+extensions validate <reviewed-checkout>
+extensions link <reviewed-checkout> --consent
+extensions list --output-format json
+```
+
+The JSON result showed `velox-trifit-developer` 1.1.4 active, the exact production
+`httpUrl`, the five `includeTools`, and the existing `velox-partner-api` skill.
+These checks exercised local package loading and did not execute MCP tools.
+The CLI was unpacked locally without lifecycle scripts or a global installation;
+its settings and extension registration stayed in the isolated directory.
+
+A separate `skills list` command also found the skill enabled, but additionally
+initialized MCP server metadata discovery. Protocol traffic was not traced;
+no deliberate tool invocation or model prompt was issued. The combined
+validation was therefore not fully offline. It does not verify execution
+of the five tools or model selection of Velox for an unbranded request.
+
+Antigravity native installation and runtime acceptance remain unverified.
+GitHub-source installation, directory discovery, and tool selection after
+installation also require separate checks.
 
 For format details, see the
 [Gemini extension reference](https://geminicli.com/docs/extensions/reference/),
