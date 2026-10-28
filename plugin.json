@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "velox-trifit-developer",
-  "version": "1.1.4",
+  "version": "1.1.7",
   "description": "Integrate Velox DressMe virtual try-on with tested SDK examples and offline mocks.",
   "author": {
     "name": "Velox XR",
@@ -22,15 +22,17 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Velox TriFit Developer",
-        "shortDescription": "Build virtual try-on apps",
-        "longDescription": "Build a Velox DressMe virtual clothing try-on integration using official documentation, Node.js examples and TypeScript declarations. Search API guidance, inspect the upload and job lifecycle, and run local mock tests. Live generation requires separately approved partner access and a backend application credential. The documentation tools do not generate images or issue API keys.",
+        "displayName": "Velox TriFit API Docs",
+        "shortDescription": "Virtual try-on API & MCP docs",
+        "longDescription": "Velox DressMe API documentation for virtual try-on (VTO), photo-based virtual dressing and visual fitting-room features. Find API reference material, Node.js examples, TypeScript declarations, upload and job-flow guidance, offline mock examples and partner access requirements through MCP. This connection provides documentation. Live try-on requires separately approved Partner API access and backend credentials. This documentation connection does not generate images, access shopper accounts, issue API keys or predict clothing size or physical fit.",
         "developerName": "Velox XR",
         "category": "Developer Tools",
         "capabilities": [
-          "Virtual try-on integration",
-          "Node.js and TypeScript examples",
-          "Offline API testing"
+          "Virtual try-on (VTO) API documentation",
+          "API guidance through MCP",
+          "Node.js examples and TypeScript declarations",
+          "Offline integration testing",
+          "Partner API access requirements"
         ],
         "websiteURL": "https://v3lox.com/",
         "supportURL": "https://github.com/Velox-XR/trifit-partner-api-example/issues",
