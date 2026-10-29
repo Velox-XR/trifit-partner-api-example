@@ -45,16 +45,18 @@ Example prompts after installation:
 - Explain Velox application authentication without exposing a key in browser code.
 - Show the available SDKs and how to apply for partner access.
 
-## Published release — verified 24 October 2026
+## Published release — verified 28 October 2026
 
-The OpenAI listing shows **Velox TriFit Developer v1.1.2** with an Install option.
+The OpenAI listing shows **Velox TriFit API Docs 1.1.6** under the existing listing
+identity. Its reviewed MCP binding remains `https://studio.v3lox.com/partner/docs/mcp`
+with four public documentation tools; migration to the unified endpoint is pending.
 This is the read-only Developer plugin, not the separate account/guest try-on
 package. These documentation changes do not upload a replacement package, change
 its registered MCP URL or reopen its review. Build source ZIPs with
 `node scripts/package-plugin.mjs`; never upload private configuration or media.
 A local install or registry entry alone does not prove search ranking or recommendations.
 
-The maintained GitHub Developer package is version **1.1.4** for the portable
+The maintained GitHub Developer package is version **1.1.8** for the portable
 skill and coding-agent guidance in this source. It is not an assertion that the
 OpenAI directory release has changed. The remote documentation server's own
 implementation version and registry metadata use a separate version sequence.
