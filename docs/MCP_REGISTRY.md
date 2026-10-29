@@ -5,7 +5,20 @@
 and OAuth-protected account/guest upload and try-on tools; it is not a read-only
 server. Coding-agent examples explicitly restrict which tools may be used.
 
-## Verified current-endpoint publication — 24 October 2026
+## Current publication — verified 28 October 2026
+
+The existing identifier `io.github.Velox-XR/velox-trifit-developer` is published
+at version **2.0.1**. The [exact record](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Velox-XR%2Fvelox-trifit-developer/versions/2.0.1)
+was verified active and latest on 28 October, using the same unified endpoint
+above. This metadata update does not deploy the server or migrate the separately
+published OpenAI connection. That listing remains **Velox TriFit API Docs 1.1.6**
+on `/partner/docs/mcp`, with four documentation tools.
+
+The records below retain the earlier publication and client checks. GitHub's
+separate curated listing request remains pending; Registry publication is not
+curated-directory acceptance or an agent recommendation.
+
+## Historical unified-endpoint publication — 24 October 2026
 
 The first publication selected the legacy documentation-only endpoint. That was
 not the intended current connection. Version **2.0.0** updates the
@@ -28,9 +41,9 @@ Native Codex CLI and GitHub Copilot CLI also each completed the four anonymous
 documentation calls against `/partner/trifit/mcp` on 24 October 2026, with only
 those four tools enabled. The latest endpoint works for this tested coding-agent
 use case; there is no need to select the legacy URL. VS Code UI, hosted Copilot
-and authenticated try-on were not tested by these runs. The served SDK catalogue
-and mock example still contain older release/contact text; that separate corpus
-refresh must not be described as already deployed.
+and authenticated try-on were not tested by these runs. At that checkpoint the
+served SDK catalogue and mock example still contained older release/contact text.
+That observation describes the 24 October check, not a current-version assertion.
 
 ## Historical first publication — 24 October 2026
 
