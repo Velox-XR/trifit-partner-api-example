@@ -1,4 +1,4 @@
-# Velox TriFit API with Codex and GitHub Copilot
+# Virtual try on MCP — Velox TriFit for Codex, Copilot and Gemini
 
 Build web or mobile virtual try-on integrations from official DressMe API
 documentation. Use the current unified MCP endpoint below. Its public documentation
@@ -20,6 +20,42 @@ The old `/partner/docs/mcp` endpoint is legacy; do not use it for new direct set
 Existing reviewed OpenAI package connections are managed separately and are not
 silently migrated by these instructions.
 Real application access is separate: [apply here](https://studio.v3lox.com/partner-api#apply).
+
+## What the virtual try-on MCP server provides
+
+The **Velox TriFit MCP server** lets a coding agent retrieve official DressMe
+API contracts, JavaScript SDK examples and partner access requirements. For a
+developer searching for a **VTO MCP** connection, start with the anonymous
+documentation tools and the client configuration below. Connecting those tools
+does not submit a try-on or grant API access.
+
+| Client | Connection and authentication | Setup |
+| --- | --- | --- |
+| Codex | Remote Streamable HTTP; four public documentation tools, no TriFit login | [TOML configuration](../examples/mcp/codex.toml) and [Codex steps](#codex) |
+| GitHub Copilot | Remote HTTP; restrict the selected tools to documentation, no TriFit secret | [VS Code configuration](../examples/mcp/vscode.json), [cloud-agent configuration](../examples/mcp/github-copilot.json) and their client limitations below |
+| Gemini CLI / Antigravity | Native source packages; five public guidance tools, no TriFit login | [Google installation and tool allowlists](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GOOGLE_AGENTS.md) |
+
+Client installation and public documentation access are separate from gallery
+approval, an agent recommending this server, or the client's own account and
+subscription requirements. These configurations do not promise a free model plan.
+
+### API, SDK, virtual dressing and fitting-room terminology
+
+The **VTO API** performs photo-based virtual try-on from an application backend.
+The **VTO SDK** is the [JavaScript SDK with TypeScript declarations](../sdks/javascript/README.md);
+other languages use the documented HTTP API. MCP supplies the contracts and
+examples to the coding agent; it does not replace your backend's REST integration.
+
+A **virtual dressing API** or **virtual dressing room API** integration can use
+DressMe to preview clothing on a shopper photo. For a **virtual fitting room API**
+or a **virtual fitting room MCP** workflow, the same limitation applies: outputs
+are visual outfit previews, not measurements, size recommendations or proof that
+a garment will physically fit. See the [runnable integration](../demo.mjs) and
+[workflow guide](../WALKTHROUGH.md) for requests, results and error handling.
+
+The existing [offline mock](../README.md#test-without-paid-api-calls) exercises
+the integration without generation. Real API access, live image processing and
+commercial terms require separate approval; no numeric free quota is promised.
 
 ## Choose your client
 
@@ -63,6 +99,15 @@ agents do not support remote OAuth MCP authentication. This example targets only
 the endpoint's anonymous tools; mixed-auth hosted-agent compatibility must be
 validated in that client and is not established by a CLI test. If rejected, stop
 and report the client limitation rather than silently substituting the legacy URL.
+
+### Gemini CLI and Antigravity
+
+Follow the [Google client guide](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GOOGLE_AGENTS.md) for the repository-root Gemini
+extension or the native Antigravity subdirectory. Both point to the unified
+endpoint above and expose five public guidance tools. That source installation
+route is available independently of a gallery listing; source publication is
+not a claim that Google's marketplace has approved the package. Review the
+client's own sign-in and model-access requirements separately.
 
 ### Optional portable integration skill
 
