@@ -1,4 +1,4 @@
 {
   "name": "velox-trifit-developer",
-  "description": "Official Velox DressMe virtual try-on API documentation, JavaScript examples and TypeScript declarations for fashion ecommerce integrations."
+  "description": "Virtual try on MCP for developers: a virtual try-on MCP server with Velox virtual try-on API (VTO API) docs and SDK examples. Public documentation only; live try-on needs separately approved API access."
 }

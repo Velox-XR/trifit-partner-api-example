@@ -8,8 +8,8 @@ an AI outfit preview. The [TriFit app](https://trifit.v3lox.com/) is the consume
 experience; using it is separate from obtaining Partner API credentials.
 
 This official developer repository contains the **JavaScript SDK with TypeScript
-declarations**, runnable REST integrations, tutorials, Codex and GitHub Copilot
-MCP configuration examples, and a portable integration skill. Read the
+declarations**, runnable REST integrations, tutorials, Codex, GitHub Copilot and
+Gemini CLI MCP configuration examples, and a portable integration skill. Read the
 [API overview](https://studio.v3lox.com/partner-api), then choose the integration
 route below. Other languages can use the documented HTTP API; this repository
 does not claim an unshipped SDK.
@@ -29,7 +29,7 @@ upload, job submission and status flow; the
 | Integration route | What it provides | Start here |
 | --- | --- | --- |
 | REST API in your application backend | Submit virtual try-on requests using your separately approved partner configuration; keep keys out of browsers and mobile apps | [REST quickstart](https://studio.v3lox.com/partner-api/quickstart) · [JavaScript SDK](sdks/javascript/README.md) · [Access requirements](docs/GETTING_STARTED.md) |
-| MCP in a coding agent | Search official docs, fetch API contracts and get integration examples while building an application | [MCP integration guide](https://studio.v3lox.com/partner-api/mcp) · [Codex and GitHub Copilot setup](docs/CODING_AGENTS.md) |
+| MCP in a coding agent | Search official docs, fetch API contracts and get integration examples while building an application | [Virtual try on MCP: Codex, Copilot and Gemini setup](docs/CODING_AGENTS.md) · [Public MCP guide](https://studio.v3lox.com/partner-api/mcp) |
 | Portable integration skill | Reusable instructions for an agent to plan and implement the integration; it can also use the public source without MCP | [Skill source and installation](docs/CODING_AGENTS.md#optional-portable-integration-skill) |
 
 For a new direct MCP connection, use

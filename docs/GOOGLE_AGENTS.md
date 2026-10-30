@@ -1,4 +1,4 @@
-# Velox developer documentation in Gemini CLI and Antigravity
+# Virtual try-on MCP documentation in Gemini CLI and Antigravity
 
 Both packages connect to the current production MCP endpoint over Streamable HTTP:
 
@@ -79,6 +79,12 @@ when verifying the four core integration tools. The fifth tool only explains
 the application workflow; it does not send mail or submit a form.
 
 ## Publication and validation status
+
+The current source metadata is Gemini extension **1.1.5**. Its description and
+the Antigravity description now identify the virtual try-on MCP documentation
+route. The endpoint, five-tool allowlist and bundled skill are unchanged. This
+metadata revision does not establish marketplace approval or repeat the native
+installation checks below; those receipts belong to their stated versions.
 
 The Google client source packages were published on 27 October 2026 in
 [pull request #21](https://github.com/Velox-XR/trifit-partner-api-example/pull/21).
