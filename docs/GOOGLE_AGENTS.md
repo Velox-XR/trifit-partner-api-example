@@ -13,6 +13,23 @@ Partner API key, authentication header, OAuth configuration, or client
 registration is part of these packages. Account/guest uploads, generation,
 allowance, and history tools are excluded.
 
+## Google account and model access
+
+Anonymous Velox documentation access is separate from the Google client's
+account eligibility and model access. As checked on 1 November 2026,
+[Google's consumer-access retirement notice](https://developers.google.com/gemini-code-assist/docs/deprecations/code-assist-individuals)
+states that consumer access to Gemini CLI and the Code Assist IDE extensions
+ended on 18 June 2026. This covers the individual, Google AI Pro and Google AI
+Ultra tiers; Google directs those users to Antigravity. Follow the current
+migration and access requirements linked from that notice.
+
+The Gemini CLI instructions below describe package configuration for an eligible,
+supported client and account. Installing an extension or validating a manifest
+does not establish model access or a free model plan. If Google reports that a
+client is unsupported, resolve that client eligibility first; TriFit credentials
+cannot resolve a Google access error. The five public Velox guidance tools remain
+anonymous in either package.
+
 ## Gemini CLI
 
 The repository-root [gemini-extension.json](../gemini-extension.json) uses
