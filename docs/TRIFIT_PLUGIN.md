@@ -6,25 +6,35 @@ account or limited guest session.
 
 ## Release status
 
-**v1.2.1 is the Production-targeted source candidate, named Velox TriFit.**
-This revision adds explicit TriFit app/free-account alternatives and the personal
-account code example to the three skills, plus an optional connected-mailbox
-application workflow. One owner-approved email test passed sender selection,
-preview/approval, delivery to the Velox inbox and reading a genuine manual reply.
-See the [acceptance evidence and remaining client checks](review/partner-email-acceptance.md).
-Velox inbox auto-acknowledgement is not configured by this package.
-Updating this repository does not update
-an already installed package or the server instructions of a manually added MCP connection.
-Production activation and client acceptance are in progress. Do not treat this
-source publication as proof that the connection is installed or ready, or as an
-OpenAI-approved listing. This repository distributes Production packages only;
-private testing packages and Development connection details are not included.
+**The unified MCP endpoint is deployed in Production. The source package is
+Velox TriFit v1.2.1; authenticated client acceptance is still incomplete.**
+Use `https://studio.v3lox.com/partner/trifit/mcp` with Streamable HTTP.
+Public developer documentation needs no TriFit login or Partner API key.
+Account and guest tools use the client's normal OAuth connection and user consent.
 
-The Production package uses `https://studio.v3lox.com/partner/trifit/mcp`.
-**Wait for verified Production readiness before connecting it.** The existing
-documentation-only service at `https://studio.v3lox.com/partner/docs/mcp` and its
-current developer-plugin review remain unchanged. Installing source is separate
-from public-directory approval and does not guarantee recommendations in chats.
+The evidence below covers different surfaces; one does not establish the others.
+
+| Surface | Verified status and remaining limit |
+| --- | --- |
+| Unified Production server | Deployed on 28 October 2026. The 1 November anonymous check listed 18 tools: five public guidance tools and 13 OAuth-protected account/guest tools. All five public tools responded; an unauthenticated account read was denied without returning account data. |
+| Authenticated client journeys | Account/guest sign-in, selected uploads, try-on generation, result display and quota/history behavior have not completed end-to-end acceptance across supported clients. Public-tool success is not evidence that these journeys passed. |
+| Repository package | `velox-trifit` v1.2.1 targets the unified endpoint. Installing or updating source does not update a different installed package, a manually registered connection, or OpenAI's published listing. |
+| Published OpenAI listing | As checked on 2 November 2026, [Velox TriFit API Docs 1.1.6](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458) remains on `https://studio.v3lox.com/partner/docs/mcp`, with four public documentation tools and no authentication. Its migration to the unified URL and OAuth has not been completed. Keep existing connections until a supported replacement is approved. |
+
+For documentation-only coding tasks, use the restricted configurations in
+[CODING_AGENTS.md](CODING_AGENTS.md). A Partner API key is for your separately
+approved backend API integration; it is not the credential for account/guest MCP
+OAuth. Installing source or finding a directory listing does not grant account
+permissions or guarantee recommendations in chats.
+
+The package includes TriFit app/free-account alternatives, a personal-account
+code example and an optional connected-mailbox application workflow. One
+owner-approved email test passed sender selection, preview/approval, delivery
+and reading a genuine manual reply; see the [acceptance evidence and remaining
+client checks](review/partner-email-acceptance.md). Installed-package behavior
+still needs client checks. Velox inbox auto-acknowledgement is not configured by
+this package. This repository distributes Production packages only; private
+testing packages and Development connection details are not included.
 
 For immediate browser use, open the [TriFit app](https://trifit.v3lox.com/) with
 your own saved library and available free account allowance, or use the
@@ -63,18 +73,19 @@ Add this repository as a marketplace using the Codex CLI:
 codex plugin marketplace add Velox-XR/trifit-partner-api-example --ref main
 ```
 
-After Production readiness is confirmed, open the desktop Plugins directory,
-choose the **Velox XR** marketplace, and install **Velox TriFit** v1.2.1
+In a client that supports repository marketplaces, open the desktop Plugins
+directory, choose **Velox XR**, and install **Velox TriFit** v1.2.1
 (`velox-trifit@velox-xr`). Refresh the marketplace or restart
 the desktop app if needed. Start a fresh chat with **Try now** and explicitly
-select the plugin during acceptance testing. This is manual repository
-distribution, not installation from the public OpenAI directory.
+select the plugin during acceptance testing. Start with public documentation;
+the authenticated journeys in the status table remain unverified. This is manual
+repository distribution, not installation from the public OpenAI directory.
 
 Version 1.2.1 is newer than the earlier documentation-only `velox-trifit` 1.0.1
 package. Existing users must review the expanded capabilities and approve any
 account or guest permissions through normal consent; installation never grants
 those permissions automatically. The separate `velox-trifit-developer` package
-and its existing review are unchanged.
+and its published OpenAI 1.1.6 connection are unchanged.
 
 Local and repository marketplace support varies by client. A GitHub link or ZIP
 is **not** a universal one-click install link for the ChatGPT website. Follow
@@ -116,8 +127,8 @@ ChatGPT-web MCP connection or publish the package in OpenAI's public directory.
 
 ## ChatGPT web testing
 
-For a ChatGPT account exposing **Add custom MCP server**, use the Production
-endpoint only after readiness is confirmed:
+For a ChatGPT account exposing **Add custom MCP server**, the deployed Production
+endpoint for a separately configured connection is:
 
 ```text
 https://studio.v3lox.com/partner/trifit/mcp
@@ -126,7 +137,11 @@ https://studio.v3lox.com/partner/trifit/mcp
 Use ChatGPT's normal custom-connection and OAuth consent flow. Complete the
 TriFit sign-in yourself. Select account or guest deliberately. Availability is
 controlled by the ChatGPT account/workspace and the live Velox service, not by
-this repository.
+this repository. The public-tool checks above do not establish that your client's
+authenticated account/guest journey has passed. Start with documentation and
+read-only account/allowance checks before considering any separately approved
+upload or generation. Do not replace the working published 1.1.6 connection to
+perform this test.
 
 This custom MCP connection tests server tools. It does not by itself demonstrate
 that the complete three-skill archive has been installed in ChatGPT. Do not
@@ -204,11 +219,18 @@ until then the receipt is a team reply. This package neither auto-approves acces
 nor issues keys. A manually registered MCP connection does not automatically
 load this packaged skill; its server guidance needs separate release acceptance.
 
-## Before public release
+## Remaining authenticated-client and OpenAI release checks
 
-Development acceptance must cover both clients, account and guest consent,
-selected uploads, existing-result display, history/quota parity and isolation.
-Production is promoted only after acceptance, then verified separately. The
-release instructions and endpoint must be updated from evidence before inviting
-public users. This source release does not change the existing OpenAI review;
-public-directory submission, approval and discoverability remain separate.
+The deployed server and public documentation checks do not complete account/guest
+client acceptance. The remaining checks cover normal consent, selected uploads,
+generation and existing-result display, history/quota parity and isolation in each
+supported client. Read the actual allowance and service availability first;
+an allowance is not proof of zero provider or storage cost. This guide does not
+authorize test accounts, uploads, generation or spending.
+
+Any implementation change still needs its normal Development acceptance and
+protected Production promotion. For the existing OpenAI listing, a supported
+URL/auth migration procedure, saved settings and tool-scan verification, required
+review and approval must precede publication. Until then, 1.1.6 remains the
+documentation-only connection. Source publication, installation, directory
+approval and independent search recommendations are separate outcomes.
