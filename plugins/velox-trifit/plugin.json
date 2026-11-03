@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "velox-trifit",
-  "version": "1.2.1",
-  "description": "Official Velox virtual try-on API guidance and consented TriFit account or limited guest DressMe tools.",
+  "version": "1.2.2",
+  "description": "Velox TriFit virtual try on MCP: a virtual try-on MCP server with virtual try-on API (VTO API) docs and OAuth try-on tools.",
   "author": {
     "name": "Velox XR",
     "url": "https://v3lox.com/"

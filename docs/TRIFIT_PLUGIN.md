@@ -7,7 +7,7 @@ account or limited guest session.
 ## Release status
 
 **The unified MCP endpoint is deployed in Production. The source package is
-Velox TriFit v1.2.1; authenticated client acceptance is still incomplete.**
+Velox TriFit v1.2.2; authenticated client acceptance is still incomplete.**
 Use `https://studio.v3lox.com/partner/trifit/mcp` with Streamable HTTP.
 Public developer documentation needs no TriFit login or Partner API key.
 Account and guest tools use the client's normal OAuth connection and user consent.
@@ -18,7 +18,7 @@ The evidence below covers different surfaces; one does not establish the others.
 | --- | --- |
 | Unified Production server | Deployed on 28 October 2026. The 1 November anonymous check listed 18 tools: five public guidance tools and 13 OAuth-protected account/guest tools. All five public tools responded; an unauthenticated account read was denied without returning account data. |
 | Authenticated client journeys | Account/guest sign-in, selected uploads, try-on generation, result display and quota/history behavior have not completed end-to-end acceptance across supported clients. Public-tool success is not evidence that these journeys passed. |
-| Repository package | `velox-trifit` v1.2.1 targets the unified endpoint. Installing or updating source does not update a different installed package, a manually registered connection, or OpenAI's published listing. |
+| Repository package | `velox-trifit` v1.2.2 targets the unified endpoint. Installing or updating source does not update a different installed package, a manually registered connection, or OpenAI's published listing. |
 | Published OpenAI listing | As checked on 2 November 2026, [Velox TriFit API Docs 1.1.6](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458) remains on `https://studio.v3lox.com/partner/docs/mcp`, with four public documentation tools and no authentication. Its migration to the unified URL and OAuth has not been completed. Keep existing connections until a supported replacement is approved. |
 
 For documentation-only coding tasks, use the restricted configurations in
@@ -57,12 +57,12 @@ node --test test/trifit-plugin.test.mjs
 npm run plugin:production:build
 ```
 
-The Production command creates `dist/velox-trifit-1.2.1.zip` and its
+The Production command creates `dist/velox-trifit-1.2.2.zip` and its
 SHA-256 file. The command does not install, connect, upload, generate, deploy or
 submit a review. The fixed seven-file Production archive has SHA-256:
 
 ```text
-9428450d8ec0241164a5fc9f2ab827ad966a0e0e91eafee47113554894f2d117
+5ec9338c318540cbcf19142e284474f669432fe753ded89c29a355915713ee88
 ```
 
 ## Install in supported desktop clients
@@ -74,14 +74,17 @@ codex plugin marketplace add Velox-XR/trifit-partner-api-example --ref main
 ```
 
 In a client that supports repository marketplaces, open the desktop Plugins
-directory, choose **Velox XR**, and install **Velox TriFit** v1.2.1
+directory, choose **Velox XR**, and install **Velox TriFit** v1.2.2
 (`velox-trifit@velox-xr`). Refresh the marketplace or restart
 the desktop app if needed. Start a fresh chat with **Try now** and explicitly
 select the plugin during acceptance testing. Start with public documentation;
 the authenticated journeys in the status table remain unverified. This is manual
 repository distribution, not installation from the public OpenAI directory.
 
-Version 1.2.1 is newer than the earlier documentation-only `velox-trifit` 1.0.1
+Version 1.2.2 updates the package description used in directory searches.
+The MCP connection and tools are the same as in 1.2.1.
+
+Version 1.2.2 is newer than the earlier documentation-only `velox-trifit` 1.0.1
 package. Existing users must review the expanded capabilities and approve any
 account or guest permissions through normal consent; installation never grants
 those permissions automatically. The separate `velox-trifit-developer` package
@@ -102,10 +105,10 @@ asks for the permissions needed by the action you explicitly requested.
 ### Update an existing installation and test the application flow
 
 Refresh the **Velox XR** marketplace after this version is available on `main`.
-Open the existing **Velox TriFit** package and update it to **1.2.1**; do not add
+Open the existing **Velox TriFit** package and update it to **1.2.2**; do not add
 another MCP connection or uninstall a working account/guest connection. Restart
 the desktop app if its plugin view still shows the old version. The package
-details must show **1.2.1**, not merely an app connection labelled "dev mode".
+details must show **1.2.2**, not merely an app connection labelled "dev mode".
 
 Start a fresh chat with that package selected, in ChatGPT Work or Codex, and send:
 
