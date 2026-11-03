@@ -40,10 +40,12 @@ package with:
 agy plugin install ./clients/antigravity
 ```
 
-Keep `plugin.json` and `mcp_config.json` at the distribution root. This native
-manifest intentionally uses the documented minimal Antigravity fields; it is
-separate from an OpenAI-format plugin manifest. Review the source snapshot
-before creating a release.
+Keep `plugin.json`, `mcp_config.json`, the `assets/` directory and the bundled
+skill together. The Antigravity manifest declares version 1.0.0 and supplies
+the card title, publisher, logo, search keywords and starter prompts for the
+[Antigravity Marketplace](https://antigravity.google/docs/build-plugins).
+To inspect this checkout before installation, run
+`agy plugin validate --strict ./clients/antigravity` from the repository root.
 
 After installation, inspect the client's MCP tools list and confirm only the
 five documented tools are exposed. Public documentation checks are separate

@@ -37,7 +37,11 @@ developer skill and its application reference, inspected read-only. Version
   validation. Source publication does not create a listing.
 - [Antigravity plugin format](https://antigravity.google/docs/plugins):
   native root `plugin.json`, separate `mcp_config.json`, bundled skills.
-  The documented minimal manifest uses `name` and `description`.
+  The 27 October local validation used `name` and `description`. Google's
+  [Marketplace field reference and publishing checklist](https://antigravity.google/docs/build-plugins)
+  also call for a display name, version, bundled logo, publisher and starter
+  prompts. The current manifest declares its own version, 1.0.0. Its logo
+  embeds the existing repository TriFit icon in a square with transparent padding.
 - [Antigravity MCP configuration](https://antigravity.google/docs/mcp):
   `serverUrl` selects remote Streamable HTTP; `enabledTools` is the allowlist.
   Current Antigravity CLI does not support `httpUrl` or legacy SSE.
