@@ -128,6 +128,22 @@ Mail reading/sending requires a separately connected email plugin with those
 capabilities. The source/ZIP release does not automatically update the bare
 ChatGPT-web MCP connection or publish the package in OpenAI's public directory.
 
+### Browse the repository in GitHub Copilot CLI
+
+To see the packages from this repository in Copilot CLI, add the Velox
+marketplace and browse its catalog:
+
+```sh
+copilot plugin marketplace add Velox-XR/trifit-partner-api-example
+copilot plugin marketplace browse velox-xr
+```
+
+Choose `velox-trifit-developer` for public documentation or `velox-trifit`
+for the unified server with public documentation and OAuth account/guest
+tools. Adding the marketplace lets you inspect both entries before installing
+a plugin. This is the publisher's catalog. GitHub's built-in marketplace and
+curated MCP registry are separate sources.
+
 ## ChatGPT web testing
 
 For a ChatGPT account exposing **Add custom MCP server**, the deployed Production

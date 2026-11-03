@@ -34,8 +34,11 @@ test('default builder produces only the exact seven-file Production candidate', 
   assert.equal(bytes.readUInt32LE(offset), 0x02014b50);
 });
 
-test('public marketplace contains only Production packages and no Development source', async () => {
+test('Codex and Copilot marketplaces list the same two Production plugins', async () => {
   const catalogue = JSON.parse(await readFile(new URL('../.agents/plugins/marketplace.json', import.meta.url)));
+  const copilot = JSON.parse(await readFile(new URL('../.github/plugin/marketplace.json', import.meta.url)));
+  assert.equal(copilot.name, catalogue.name);
+  assert.deepEqual(copilot.plugins.map(p => [p.name, p.source]), catalogue.plugins.map(p => [p.name, p.source.path]));
   const developer = catalogue.plugins.find(p => p.name === 'velox-trifit-developer');
   assert.equal(developer.source.path, './');
   const production = catalogue.plugins.find(p => p.name === 'velox-trifit');
@@ -44,7 +47,9 @@ test('public marketplace contains only Production packages and no Development so
   const roots = [new URL('../', import.meta.url), new URL('../' + production.source.path + '/', import.meta.url)];
   for (const root of roots) {
     const manifest = JSON.parse(await readFile(new URL('plugin.json', root)));
-    assert.ok(catalogue.plugins.some(p => p.name === manifest.name));
+    const entry = copilot.plugins.find(p => p.name === manifest.name);
+    assert.ok(entry);
+    assert.equal(entry.description, manifest.description);
     const mcp = JSON.parse(await readFile(new URL('mcp.json', root)));
     for (const server of Object.values(mcp.mcpServers)) assert.equal(new URL(server.url).origin, 'https://studio.v3lox.com');
   }
