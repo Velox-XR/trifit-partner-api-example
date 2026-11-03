@@ -130,7 +130,7 @@ package is separate from universal directory review and approval.
 ### Velox TriFit — API guidance and try-on in one plugin
 
 The [Velox TriFit ChatGPT/Codex plugin](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md) combines API guidance
-with consented account or guest try-on in one package. The [v1.2.1 Production-targeted source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit)
+with consented account or guest try-on in one package. The [v1.2.3 Production-targeted source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit)
 and reproducible ZIP builder are available for inspection. The current Production
 endpoint's 18-tool inventory and four anonymous documentation calls were verified
 on 24 October 2026; that check does not prove authenticated try-on/client acceptance

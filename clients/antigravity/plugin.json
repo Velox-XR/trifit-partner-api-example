@@ -1,4 +1,29 @@
 {
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
   "name": "velox-trifit-developer",
-  "description": "Virtual try on MCP for developers: a virtual try-on MCP server with Velox virtual try-on API (VTO API) docs and SDK examples. Public documentation only; live try-on needs separately approved API access."
+  "displayName": "Velox TriFit Developer",
+  "version": "1.0.0",
+  "description": "Virtual try on MCP for developers: a virtual try-on MCP server for Velox virtual try-on API (VTO API) docs, JavaScript SDK examples and partner access guidance.",
+  "logo": "assets/trifit-icon.svg",
+  "suggestedPrompts": [
+    "Find the DressMe virtual try-on API workflow for an ecommerce app.",
+    "Show the JavaScript SDK integration and its offline mock example.",
+    "Explain the requirements for Partner API access."
+  ],
+  "author": {
+    "name": "Velox XR",
+    "url": "https://v3lox.com/"
+  },
+  "homepage": "https://studio.v3lox.com/partner-api/mcp",
+  "repository": "https://github.com/Velox-XR/trifit-partner-api-example",
+  "license": "MIT",
+  "keywords": [
+    "virtual try on mcp",
+    "virtual try-on api",
+    "vto api",
+    "virtual dressing",
+    "fashion ecommerce",
+    "javascript sdk",
+    "dressme"
+  ]
 }
