@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "velox-trifit",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Velox TriFit virtual try on MCP: a virtual try-on MCP server with virtual try-on API (VTO API) docs and OAuth try-on tools.",
   "author": {
     "name": "Velox XR",
@@ -16,14 +16,22 @@
     "dressme",
     "fashion",
     "api",
-    "sdk"
+    "sdk",
+    "virtual try on mcp",
+    "virtual try on api",
+    "virtual try-on api",
+    "vto api",
+    "vto mcp server",
+    "virtual dressing api",
+    "virtual dressing room api",
+    "virtual fitting room api"
   ],
   "extensions": {
     "com.openai": {
       "onboardingSkill": "./skills/velox-trifit-setup/SKILL.md",
       "interface": {
         "displayName": "Velox TriFit",
-        "shortDescription": "Try on outfits and build apps",
+        "shortDescription": "Virtual try-on MCP server for API docs and outfit previews",
         "longDescription": "Explore official Velox DressMe API documentation, JavaScript examples and TypeScript declarations without signing in. To try clothing on a selected photo, explicitly connect either your TriFit account or limited guest access. Account mode uses the same TriFit library, history and daily, weekly and monthly allowance as the TriFit website. Guests share the hosted demo queue and its limits; check current allowance and dispatch spacing. Connecting and reading documentation do not generate images. Uploads and new try-ons require permission; no automatic retries or guest-history transfer. AI previews do not guarantee garment fit. Commercial Partner API access requires separate Velox approval.",
         "developerName": "Velox XR",
         "category": "Lifestyle",

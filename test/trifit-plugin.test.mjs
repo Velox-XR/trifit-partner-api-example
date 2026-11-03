@@ -14,7 +14,7 @@ test('plugin skills offer TriFit app as well as limited demo', async () => {
 
 test('default builder produces only the exact seven-file Production candidate', async () => {
   const first = await buildTriFitPlugin(), second = await buildTriFitPlugin();
-  assert.equal(first.sha256, '5ec9338c318540cbcf19142e284474f669432fe753ded89c29a355915713ee88');
+  assert.equal(first.sha256, 'a470a9e7a49261929c68751b614e14224de0e44578d95f2d159597facd41a18a');
   assert.equal(first.files.length, 7);
   assert.deepEqual(first.bytes, second.bytes);
   assert.deepEqual(first.files, trifitFiles);
@@ -59,7 +59,7 @@ test('Codex and Copilot marketplaces list the same two Production plugins', asyn
 test('Production package is reproducible, separately bound and preserves the reviewed docs plugin', async () => {
   const first = await buildTriFitPlugin(productionRoot, 'production');
   assert.deepEqual(first.bytes, (await buildTriFitPlugin(productionRoot, 'production')).bytes);
-  assert.equal(first.fileName, 'velox-trifit-1.2.2.zip');
+  assert.equal(first.fileName, 'velox-trifit-1.2.3.zip');
   assert.deepEqual(first.files, trifitFiles);
   const manifest = JSON.parse(await readFile(new URL('plugin.json', productionRoot)));
   assert.equal(manifest.extensions['com.openai'].interface.displayName, 'Velox TriFit');
