@@ -42,6 +42,69 @@ your own saved library and available free account allowance, or use the
 Neither requires a plugin. See [all DressMe access routes](DRESSME_ACCESS.md),
 read the [walkthrough](../WALKTHROUGH.md), or [apply for Partner API access](https://studio.v3lox.com/partner-api).
 
+## Connect the hosted virtual try-on MCP server
+
+Use this reference when the task is to preview clothing through MCP. For building
+an application with the REST API, use the separate
+[documentation-only coding guide](CODING_AGENTS.md). The connection below targets
+the existing hosted server; it does not require building the plugin ZIP or running
+a local MCP server. Client support and authenticated acceptance are separate; see
+the [release status](#release-status) above.
+
+| Connection fact | Value |
+| --- | --- |
+| Server URL | `https://studio.v3lox.com/partner/trifit/mcp` |
+| Transport | Streamable HTTP |
+| Public guidance | Five public tools; no TriFit sign-in or Partner API key |
+| Personal account or guest preview | Normal OAuth connection and user consent; no Partner API key in MCP headers or chat |
+| Allowance | Read `get_trifit_allowance` for an account or `get_guest_demo_status` for a guest; connection does not grant credits |
+| Client routes | [Codex/desktop package](#install-in-supported-desktop-clients), [Copilot CLI marketplace](#browse-the-repository-in-github-copilot-cli), or [ChatGPT custom-connection limitations](#chatgpt-web-testing) |
+
+### Tool workflow and inputs
+
+This is a selected reference from the 1 November 2026 advertised contract, not a
+record of completed authenticated calls. Read the current `tools/list` schema
+before use. An advertised tool does not establish that its action is enabled in
+every environment or supported by every client. Production account-upload
+preparation is not an accepted upload path; the account example here uses
+existing, user-selected library assets.
+
+| Purpose and access | Tool and input | Returned information |
+| --- | --- | --- |
+| Find API guidance; public | `search({"query":"SDK catalogue"})`, then `fetch({"id":"sdk-catalog"})` | Search results, then the selected document and its source URL |
+| Read runnable examples; public | `get_integration_example({"language":"javascript"})` or `"typescript"` | Example code/declarations and setup guidance; retrieval does not run the code |
+| Read access/application guidance; public | `get_partner_access_requirements({})`, `get_partner_application_guide({})` | Requirements and application instructions; no key issuance or email send |
+| Identify connected mode; OAuth | `get_trifit_account({})` | `quotaSource`: `trifit-account` or `shared-hosted-demo`; follow that mode |
+| Read account allowance/assets; account OAuth | `get_trifit_allowance({})`, `list_trifit_library({"kind":"photos","limit":20})`; use `"products"` for garments | Allowance stages and owned library metadata/IDs |
+| Submit an approved account request; account OAuth | `create_trifit_try_on`: `requestId`, `personalAssetId`, `productAssetId` (UUIDs), `permissionConfirmed:true` | Request/job receipt, status and any uncertainty; can consume allowance |
+| Read/display that account result; account OAuth | `get_trifit_try_on` or `show_trifit_try_on`: exactly one existing `requestId` or `jobId` | Status/result metadata; display uses the completed result without another generation |
+| Check guest availability; guest OAuth | `get_guest_demo_status({})` | Session/shared remaining allowance and queue state |
+| Submit an approved guest request; guest OAuth | `create_try_on`: `consent:true` and the personal/garment input pair described below | Guest request receipt and status; can consume shared/session allowance |
+| Read/display that guest result; guest OAuth | `get_try_on({"request_id":"<returned requestId>","include_image":true})` | Status and the result image when available |
+
+Guest input is either the permitted client attachment pair `personal_image` and
+`garment_image` (each with `download_url` and `file_id`), or the existing guest
+upload pair `personal_asset_id` and `product_asset_id`. Do not substitute personal
+account asset IDs or arbitrary web image URLs. `prepare_guest_upload` is a
+separate upload preparation step, with client and consent requirements; it is not
+a generation or an alternative account login.
+
+Keep the same account `requestId` after an uncertain outcome and read its original
+receipt. Do not automatically resubmit, change the ID or switch to guest mode.
+Uploads and generation are real operations, so a discovery check should stop at
+public guidance or explicitly requested read-only account/guest checks. Report
+the returned allowance and limits rather than promising a fixed free quota.
+
+### First prompt without generating an image
+
+> Identify whether this TriFit connection is my account or a guest session. Show
+> the available allowance for that mode. Do not upload, generate or switch accounts.
+
+After a normal connection and a separate user request to create a preview, select
+the intended inputs, confirm permission and allowance, submit once, and use the
+returned identifiers to retrieve the result. This sequence describes the
+contract; [authenticated end-to-end acceptance remains incomplete](#release-status).
+
 ## Inspect or build the Production package
 
 Production source: [`plugins/velox-trifit`](../plugins/velox-trifit).

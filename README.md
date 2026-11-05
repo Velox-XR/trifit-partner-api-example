@@ -2,7 +2,9 @@
 
 Build virtual try-on (VTO) into a website, mobile app or retail platform with the
 **Velox TriFit Partner API**, or connect a coding agent to the **Velox TriFit MCP
-server** for official API documentation and integration examples. **DressMe** is
+server** for official API guidance or a user-approved account/guest clothing
+preview. Use the [hosted MCP connection and tool reference](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md#connect-the-hosted-virtual-try-on-mcp-server)
+for the latter; authenticated client acceptance remains incomplete. **DressMe** is
 the virtual try-on operation: it turns a shopper photo and a garment image into
 an AI outfit preview. The [TriFit app](https://trifit.v3lox.com/) is the consumer
 experience; using it is separate from obtaining Partner API credentials.
@@ -30,6 +32,7 @@ upload, job submission and status flow; the
 | --- | --- | --- |
 | REST API in your application backend | Submit virtual try-on requests using your separately approved partner configuration; keep keys out of browsers and mobile apps | [REST quickstart](https://studio.v3lox.com/partner-api/quickstart) · [JavaScript SDK](sdks/javascript/README.md) · [Access requirements](docs/GETTING_STARTED.md) |
 | MCP in a coding agent | Search official docs, fetch API contracts and get integration examples while building an application | [Virtual try on MCP: Codex, Copilot and Gemini setup](docs/CODING_AGENTS.md) · [Public MCP guide](https://studio.v3lox.com/partner-api/mcp) |
+| MCP for a personal clothing preview | Use the connected TriFit account or limited guest session through normal OAuth and consent; generation uses that route's allowance | [Hosted endpoint, inputs and result tools](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md#connect-the-hosted-virtual-try-on-mcp-server) · [Verified release status](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md#release-status) |
 | Portable integration skill | Reusable instructions for an agent to plan and implement the integration; it can also use the public source without MCP | [Skill source and installation](docs/CODING_AGENTS.md#optional-portable-integration-skill) |
 
 For a new direct MCP connection, use
@@ -62,7 +65,7 @@ separately; a new direct MCP setup or this README update does not migrate it.
 | Use Gemini CLI or Google Antigravity for API guidance | [Native Google client setup](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/GOOGLE_AGENTS.md) — documentation tools only |
 | Verify the agent connection, then build safely offline | [Four-call MCP check](docs/CODING_AGENTS.md#read-only-connection-check) · [Agent-to-backend tutorial](docs/CODING_AGENTS.md#from-agent-guidance-to-an-offline-virtual-try-on-integration) |
 | Install the published OpenAI Developer plugin | [Velox TriFit Developer](https://chatgpt.com/plugins/plugin_asdk_app_6acded3353148191b15d782c1cc1f458) — read-only API guidance |
-| Connect the current MCP server | [Velox TriFit MCP](https://studio.v3lox.com/partner/trifit/mcp) — protocol endpoint; [client setup and tool restrictions](docs/CODING_AGENTS.md) |
+| Connect the current MCP server | [Velox TriFit MCP](https://studio.v3lox.com/partner/trifit/mcp) — protocol endpoint; [documentation-only client setup](docs/CODING_AGENTS.md) · [account/guest connection reference](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md#connect-the-hosted-virtual-try-on-mcp-server) |
 | Find the current MCP server in the official registry | [Velox TriFit registry listing](https://registry.modelcontextprotocol.io/?q=velox-trifit) · [Publication record](docs/MCP_REGISTRY.md) |
 | Find the public API overview | [Velox TriFit Partner API](https://studio.v3lox.com/partner-api) |
 
@@ -132,9 +135,10 @@ package is separate from universal directory review and approval.
 The [Velox TriFit ChatGPT/Codex plugin](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md) combines API guidance
 with consented account or guest try-on in one package. The [v1.2.3 Production-targeted source](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/plugins/velox-trifit)
 and reproducible ZIP builder are available for inspection. The current Production
-endpoint's 18-tool inventory and four anonymous documentation calls were verified
-on 24 October 2026; that check does not prove authenticated try-on/client acceptance
-or public-directory approval. This repository distributes Production
+endpoint's initial 18-tool inventory and four anonymous documentation calls were
+verified on 24 October 2026. The 1 November check covered all five public tools;
+see the [dated release status](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md#release-status).
+Neither check proves authenticated try-on/client acceptance or public-directory approval. This repository distributes Production
 packages only. Private Development packages and connection instructions are not
 included. The existing developer package and its OpenAI review remain unchanged.
 

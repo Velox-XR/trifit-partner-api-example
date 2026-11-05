@@ -21,6 +21,12 @@ Existing reviewed OpenAI package connections are managed separately and are not
 silently migrated by these instructions.
 Real application access is separate: [apply here](https://studio.v3lox.com/partner-api#apply).
 
+For a clothing preview in a conversation, use the separate
+[account/guest connection and tool reference](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/docs/TRIFIT_PLUGIN.md#connect-the-hosted-virtual-try-on-mcp-server).
+That workflow uses normal OAuth consent and the connected route's allowance.
+This coding guide deliberately keeps its documentation-only tool restrictions;
+it does not enable generation or establish authenticated client acceptance.
+
 ## What the virtual try-on MCP server provides
 
 The **Velox TriFit MCP server** lets a coding agent retrieve official DressMe
