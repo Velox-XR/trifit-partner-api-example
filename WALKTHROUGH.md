@@ -113,6 +113,35 @@ Real `status: ready` proves upload completion, not prepared cache, output qualit
 or latency. Product preparation is separate (`preparation.status`); simulation
 does not prove it.
 
+### Reuse prepared shopper and product inputs
+
+Upload each new image once and save its final asset ID. For another look with the
+same photo, use that personal asset ID with the chosen product ID in the same
+shopper, integration and environment. Do not upload either image again merely
+because a new generation is requested.
+
+On an assigned v2.2 route in Development or Production, completing a personal
+upload schedules private shopper preparation automatically. Submit the job once
+after upload completion; that same job can wait for preparation without a manual
+retry. Velox selects the normal or Flash profile. Partners do not send a route
+override. The personal asset's public response reports upload status, not worker
+cache readiness; product assets separately expose `preparation.status`.
+
+```js
+// shopperApi is bound to your authenticated shopper on your backend.
+const job = await shopperApi.createDressMeJob({
+  personalAssetId: savedPersonalAssetId,
+  productAssetId: selectedProductAssetId
+}, { idempotencyKey: savedKeyForThisIntendedLook });
+```
+
+Use a distinct persisted key for a deliberately new look. Keep the same key and
+payload when reconciling an uncertain response. Never replace the saved input
+IDs or submit a second generation just because the first remains queued.
+Fresh images can need preparation time; a prepared-input benchmark does not
+measure upload, first-time preparation or browser display. The offline mock
+cannot prove cache hits or live latency.
+
 ## 4. Submit exactly one job for the intended action
 
 Persist a UUID idempotency key **and the exact payload** before making the request:
@@ -206,8 +235,17 @@ time. The queue durably saves the receipt before HTTP 204. Identical duplicates
 are acknowledged; conflicting payloads fail. A callback arriving before the
 submission response is retained by request ID, then checked against the job ID.
 
-A verified callback triggers a subject-authorized GET of the saved job. The
-callback itself never grants media access or provides the URL used for display.
+The current API's signed success callback includes `result.id`, `result.url`
+and `result.expiresAt`. After verifying the signature, environment and saved job
+identity, an integration can use that URL immediately; a second job or asset
+read is not required merely to obtain it. Old or expired result capabilities
+use authenticated read recovery, never another generation.
+
+This public demo's current queue implementation still performs a
+subject-authorized GET after its verified callback and uses that response for
+display. Its extra read is an example choice, not a Partner API requirement.
+The separately deployed hosted demo may use a newer implementation; compare
+the downloaded source version before reproducing its timing.
 If no callback arrives within ten minutes, GET-only recovery starts, at most once
 per 30 seconds. Transient reads never create another generation. Completion is
 labelled `webhook`, `polling-recovery` or `polling-only`; a late callback does not
