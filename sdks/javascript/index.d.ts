@@ -1,4 +1,5 @@
 export type AssetRole = 'personal' | 'product' | 'result';
+/** Returned for product assets. The public personal asset view omits private shopper cache evidence. */
 export interface ProductPreparation {status:'not_scheduled'|'queued'|'preparing'|'ready'|'unavailable'|'failed'|'simulated'|'not_required'; updatedAt?:string; operationId?:string; error?:{code:string;message:string}; evidence?:{provider:string|null;model:string|null;cacheHit:boolean;cacheScope:'shared'|'worker-local'}}
 export interface Asset { id: string; role: AssetRole; status: 'pending' | 'ready' | 'deleted'; contentType: string; sizeBytes: number; url?: string; expiresAt?: string; retentionExpiresAt?:string; deletedAt?:string; purgeState?:string; fileName?:string; contentHash?:string; preparation?:ProductPreparation }
 export interface ImageUploadOptions {fileName?:string;signal?:AbortSignal;onAssetCreated?:(assetId:string)=>void|Promise<void>}
@@ -9,6 +10,14 @@ export interface RequestContext {runId?:string;scenarioId?:string;requestId?:str
 /** Generation routes are assigned by Velox Admin, never selected by a caller. */
 export interface GenerationOptions {context?:RequestContext;notificationEndpointId?:string}
 export interface GenerationJob { id: string; kind: 'dressme' | 'animateme'; status: 'queued' | 'running' | 'succeeded' | 'failed'; createdAt: string; environment?:string; context?:RequestContext; timings?:Record<string,string>; simulated: boolean; result?: Asset; error?: { code: string; message: string } }
+/** Authenticate the raw webhook signature and match jobId/environment before
+ * using result.url. Old/expired events recover through getDressMeJob. */
+export interface GenerationCompletionEvent {
+ eventId:string; jobId:string; type:'dressme.succeeded'|'dressme.failed'|'animateme.succeeded'|'animateme.failed';
+ kind:'dressme'|'animateme'; status:'succeeded'|'failed'; environment:string;
+ createdAt:string; simulated:boolean; context?:RequestContext; resultAssetId?:string;
+ result?:Asset; timings?:Record<string,unknown>; error?:{code:string;message:string};
+}
 export interface DressMeJob extends GenerationJob { kind: 'dressme' }
 export interface AnimateMeJob extends GenerationJob { kind: 'animateme' }
 export interface PollOptions<T extends GenerationJob = GenerationJob> { timeoutMs?: number; intervalMs?: number; signal?: AbortSignal; onStatus?: (job: T) => void | Promise<void> }

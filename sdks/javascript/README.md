@@ -60,6 +60,26 @@ cache is prepared. Top-level asset `status: ready` confirms upload completion,
 not cache readiness. Missing descriptions can still be prepared during generation;
 simulation does not prove a real cache.
 
+## Reuse a shopper photo for another look
+
+Save the final ID from `uploadPersonalPhoto` with the environment, integration,
+verified shopper subject and the selected photo. Upload a new photo once. For the
+same saved photo, pass that ID with the chosen product ID to `createDressMeJob`.
+A separate look gets its own idempotency key. If a response is lost, reconcile
+the original job with its saved payload and key.
+
+On a configured v2.2 route in Development or Production, completing the upload schedules private shopper preparation
+in the background. Generation can be submitted immediately and wait for the
+inputs. The service selects the normal or Flash profile. The public personal
+asset response reports upload status and does not expose worker readiness.
+Only product assets expose `preparation.status`. Stop using a deleted photo ID.
+
+```js
+// These IDs belong to this environment and the authenticated shopper.
+const input = { personalAssetId: savedShopperPhotoId, productAssetId: selectedProductId };
+const job = await shopper.createDressMeJob(input, { idempotencyKey: savedKeyForThisLook });
+```
+
 This preview can target the separately configured Development or Production Partner API through your own backend, or the companion local sandbox. Use only the base URL and scoped application credential supplied for the intended environment, and verify `applicationInfo().environment` before uploading or generating. Never fall back between environments. Downloading this package does not provision access or certify your integration's Production acceptance. There are no live API, Azure, RunPod, Vast or Shopify credentials in the SDK.
 
 ## Application integration (explicit environment and scoped backend credential)
@@ -231,7 +251,7 @@ the same enabled partner URL); listings contain endpoint metadata and the last
 reachability. Delivery acknowledgments and receiver-side processing are separate
 checks. The hosted reference demo retains its own receiver configuration.
 
-Register your callback through your backend's `POST /notification-endpoints`, under separately approved webhook access. The public demo does not configure callbacks. Use the returned endpoint ID:
+Register your callback through the supplied `setup-webhook.mjs` script or your backend's `POST /notification-endpoints`, under your assigned webhook access. Use the returned endpoint ID:
 
 ```js
 const job = await velox.createDressMeJob({
@@ -242,6 +262,8 @@ const job = await velox.createDressMeJob({
 
 Omit `notificationEndpointId` for polling only. Register a public HTTPS URL; arbitrary per-request URLs are not accepted. The receiver verifies `X-Velox-Signature` (HMAC-SHA256 over `timestamp + '.' + exact raw body`), the five-minute timestamp window and key ID, and deduplicates `eventId`. Delivery is at least once. A callback failure never repeats generation.
 
+The signed success event includes `result` with its short-lived URL, and polling returns the result in the first completed response. After verifying the signature, environment and saved job identity, your backend can use that URL immediately without another read. Record URL receipt and image download/display separately. Expired or older events can recover a fresh URL through the existing authenticated read endpoint. The public demo queue currently performs a subject-authorized job read after its callback; that is an example implementation choice, not a required API round trip.
+
 For partner backend result retrieval only:
 
 ```js
@@ -251,8 +273,10 @@ const reader = new VeloxDressMe({
   integrationKey: process.env.VELOX_INTEGRATION_KEY,
   serverToken: process.env.VELOX_RESULT_READ_TOKEN
 });
-const job = await reader.getDressMeJob(event.jobId);
-const result = await reader.getAsset(event.resultAssetId);
+// After verifying the signature and binding the event to your saved job:
+const result = event.result?.url && Date.parse(event.result.expiresAt) > Date.now()
+  ? event.result
+  : await reader.getAsset(event.resultAssetId); // Expired/old payload recovery only.
 ```
 
 Velox supplies and manages this read-only credential when needed. Never embed it in frontend or mobile code. It cannot upload images, submit jobs or read input photos. The companion example ZIP includes signature verification and durable event inbox handling.
