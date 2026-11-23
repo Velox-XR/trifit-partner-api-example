@@ -22,6 +22,8 @@ Add a virtual dressing room with the [native PHP WordPress example](https://gith
 
 [**Page demo (illustration only)**](https://velox-xr.github.io/trifit-partner-api-example/) · [**Installable plugin ZIP**](https://github.com/Velox-XR/trifit-partner-api-example/raw/refs/heads/main/examples/wordpress/downloads/velox-dress-me-php.zip) · [**PHP/JS/CSS source**](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/examples/wordpress/velox-dress-me-php/) · [**Hosted webhook guide**](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/examples/wordpress/WEBHOOKS.md)
 
+Start with the [local WordPress setup guide](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/examples/wordpress/LOCAL-DEVELOPMENT.md), then reuse the plugin on your own site.
+
 Install the plugin and place `[velox_dress_me_php]` in an Elementor Shortcode widget or WordPress Shortcode block. The public page is a static preview; live generation runs from your own WordPress host with separately supplied server-side Partner credentials. No keys or customer photos are included.
 
 ## Virtual dressing and visual fitting rooms
