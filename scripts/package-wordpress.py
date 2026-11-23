@@ -10,7 +10,7 @@ target.parent.mkdir(exist_ok=True)
 with zipfile.ZipFile(target, 'w', zipfile.ZIP_DEFLATED) as archive:
     for name in files:
         path = root / 'velox-dress-me-php' / name
-        data = path.read_bytes()
+        data = path.read_bytes().replace(b'\r\n', b'\n')
         entry = zipfile.ZipInfo('velox-dress-me-php/' + name, (2026, 11, 23, 0, 0, 0))
         entry.compress_type = zipfile.ZIP_DEFLATED
         entry.external_attr = 0o644 << 16
