@@ -9,6 +9,10 @@ Run DressMe in WordPress without a Node.js service or build step. The plugin inc
 
 The public page demo is an **offline illustration**, not a hosted WordPress installation or generated result. Its upload/generate controls are disabled. Install the plugin on your WordPress host for the working form. The separate [Velox hosted live demo](https://studio.v3lox.com/partners/demo/demo) lets visitors try the API using its limited shared allowance.
 
+## Start locally, then adapt your own site
+
+Follow [Run the example in local WordPress](LOCAL-DEVELOPMENT.md) to create a local site, install the plugin, enable your private configuration and then transfer the integration to your WordPress/Elementor site. No Node.js backend is required.
+
 ## Install
 
 1. In WordPress, choose **Plugins → Add New → Upload Plugin**, upload `velox-dress-me-php.zip`, and activate it.
