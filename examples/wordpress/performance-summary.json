@@ -1,0 +1,25 @@
+{
+  "observedDate": "2026-11-23",
+  "environment": "Production",
+  "sampleRequests": 100,
+  "successfulResults": 100,
+  "savedResults": 100,
+  "verifiedCallbacks": 100,
+  "inputCondition": "warm prepared inputs",
+  "profile": "Flash",
+  "workers": 2,
+  "arrivalIntervalSeconds": 3,
+  "urlReadySeconds": {
+    "mean": 9.31,
+    "p95": 13.98,
+    "p99": 28.62,
+    "max": 52.6,
+    "source": "native Traffic Lab final report"
+  },
+  "notes": [
+    "Backend benchmark, not a WordPress browser benchmark or SLA.",
+    "Independent WordPress check encountered transport timeouts:41.0438 seconds browser /37.571seconds submission to URL ready.",
+    "The WordPress plugin uses polling, not callbacks.",
+    "No raw customer data included."
+  ]
+}

@@ -16,6 +16,14 @@ Gemini CLI MCP configuration examples, and a portable integration skill. Read th
 route below. Other languages can use the documented HTTP API; this repository
 does not claim an unshipped SDK.
 
+## WordPress / Elementor example — no Node.js required
+
+Add a virtual dressing room with the [native PHP WordPress example](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/examples/wordpress/README.md): independent shopper/product uploads with background preparation, saved asset-ID submission, a before-and-after slider, downloads and device sharing.
+
+[**Page demo (illustration only)**](https://velox-xr.github.io/trifit-partner-api-example/) · [**Installable plugin ZIP**](https://github.com/Velox-XR/trifit-partner-api-example/raw/refs/heads/main/examples/wordpress/downloads/velox-dress-me-php.zip) · [**PHP/JS/CSS source**](https://github.com/Velox-XR/trifit-partner-api-example/tree/main/examples/wordpress/velox-dress-me-php/) · [**Hosted webhook guide**](https://github.com/Velox-XR/trifit-partner-api-example/blob/main/examples/wordpress/WEBHOOKS.md)
+
+Install the plugin and place `[velox_dress_me_php]` in an Elementor Shortcode widget or WordPress Shortcode block. The public page is a static preview; live generation runs from your own WordPress host with separately supplied server-side Partner credentials. No keys or customer photos are included.
+
 ## Virtual dressing and visual fitting rooms
 
 Use DressMe for photo-based virtual dressing: a shopper photo and clothing
